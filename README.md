@@ -54,11 +54,18 @@ Elements['submit-btn'].addEventListener('click', () => {
 ### CDN (Recommended for quick start)
 
 ```html
-<!-- Latest version -->
-<script src="https://cdn.jsdelivr.net/npm/elements-helper/dist/elements-helper.min.js"></script>
 
-<!-- Specific version -->
-<script src="https://cdn.jsdelivr.net/npm/elements-helper@1.0.0/dist/elements-helper.min.js"></script>
+<!-- Latest version (recommended) -->
+<script src="https://cdn.jsdelivr.net/gh/giovanni1707/elements-helper@main/dist/elements-helper.min.js"></script>
+
+<!-- Specific commit (for stability) -->
+<script src="https://cdn.jsdelivr.net/gh/giovanni1707/elements-helper@d155beb/dist/elements-helper.min.js"></script>
+
+<!-- Unminified version (for debugging) -->
+<script src="https://cdn.jsdelivr.net/gh/giovanni1707/elements-helper@main/dist/elements-helper.js"></script>
+
+
+
 ```
 
 ### NPM
