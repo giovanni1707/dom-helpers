@@ -1,0 +1,149 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Elements Helper - CDN Example</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      max-width: 600px;
+      margin: 50px auto;
+      padding: 20px;
+      background: #f5f5f5;
+    }
+    .container {
+      background: white;
+      padding: 30px;
+      border-radius: 10px;
+      box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+    }
+    h1 { color: #333; text-align: center; }
+    button {
+      background: #007bff;
+      color: white;
+      border: none;
+      padding: 10px 20px;
+      border-radius: 5px;
+      cursor: pointer;
+      margin: 5px;
+    }
+    button:hover { background: #0056b3; }
+    .output {
+      background: #f8f9fa;
+      padding: 15px;
+      border-radius: 5px;
+      margin: 10px 0;
+      border-left: 4px solid #007bff;
+    }
+    .success { color: green; font-weight: bold; }
+    .code {
+      background: #f1f1f1;
+      padding: 10px;
+      border-radius: 5px;
+      font-family: monospace;
+      margin: 10px 0;
+      overflow-x: auto;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>🚀 Elements Helper - CDN Example</h1>
+    
+    <p>This example demonstrates using Elements Helper directly from CDN with clean dot notation:</p>
+    
+    <div class="code">
+&lt;script src="https://cdn.jsdelivr.net/gh/giovanni1707/elements-helper@main/dist/elements-helper.min.js"&gt;&lt;/script&gt;
+    </div>
+
+    <h3>✅ Test Elements Helper</h3>
+    <button id="test-button">Click Me!</button>
+    <button id="add-item">Add Dynamic Item</button>
+    <button id="show-stats">Show Performance Stats</button>
+    
+    <div id="output" class="output">Ready to test Elements Helper from CDN...</div>
+    
+    <div id="dynamic-container"></div>
+
+    <h3>📊 CDN Benefits</h3>
+    <ul>
+      <li>✅ <strong>No Download Required:</strong> Load directly from CDN</li>
+      <li>✅ <strong>Global CDN:</strong> Fast loading worldwide</li>
+      <li>✅ <strong>Cached:</strong> Shared across websites</li>
+      <li>✅ <strong>Always Updated:</strong> Latest version automatically</li>
+      <li>✅ <strong>Zero Setup:</strong> Just add one script tag</li>
+    </ul>
+
+    <h3>🔗 Available CDN URLs</h3>
+    <div class="code">
+<!-- Latest version -->
+https://cdn.jsdelivr.net/gh/giovanni1707/elements-helper@main/dist/elements-helper.min.js
+
+<!-- Specific commit -->
+https://cdn.jsdelivr.net/gh/giovanni1707/elements-helper@d155beb/dist/elements-helper.min.js
+
+<!-- Unminified version -->
+https://cdn.jsdelivr.net/gh/giovanni1707/elements-helper@main/dist/elements-helper.js
+    </div>
+  </div>
+
+  <!-- Load Elements Helper from CDN -->
+  <script src="https://cdn.jsdelivr.net/gh/giovanni1707/elements-helper@main/dist/elements-helper.min.js"></script>
+  
+  <script>
+    // Test Elements Helper with clean dot notation
+    let itemCounter = 0;
+
+    // Basic functionality test
+    Elements.testButton.addEventListener('click', () => {
+      Elements.output.innerHTML = '<span class="success">✅ CDN working perfectly!</span><br>Elements Helper loaded from CDN and working with clean dot notation.';
+    });
+
+    // Dynamic content test
+    Elements.addItem.addEventListener('click', () => {
+      itemCounter++;
+      const newDiv = document.createElement('div');
+      newDiv.id = `dynamic-item-${itemCounter}`;
+      newDiv.innerHTML = `<p>Dynamic Item #${itemCounter} - <button onclick="removeItem(${itemCounter})">Remove</button></p>`;
+      newDiv.style.background = '#e7f3ff';
+      newDiv.style.padding = '10px';
+      newDiv.style.margin = '5px 0';
+      newDiv.style.borderRadius = '5px';
+      
+      Elements.dynamicContainer.appendChild(newDiv);
+      
+      // Access immediately with Elements Helper
+      setTimeout(() => {
+        Elements[`dynamicItem${itemCounter}`].style.border = '2px solid #007bff';
+      }, 100);
+    });
+
+    // Performance stats
+    Elements.showStats.addEventListener('click', () => {
+      const stats = Elements.stats();
+      Elements.output.innerHTML = `
+        <span class="success">📊 Performance Stats:</span><br>
+        • Cache Size: ${stats.cacheSize} elements<br>
+        • Cache Hits: ${stats.hits}<br>
+        • Cache Misses: ${stats.misses}<br>
+        • Hit Rate: ${(stats.hitRate * 100).toFixed(1)}%<br>
+        • Library loaded from: <strong>CDN</strong> ✅
+      `;
+    });
+
+    // Remove item function
+    function removeItem(id) {
+      const element = Elements[`dynamicItem${id}`];
+      if (element) {
+        element.remove();
+      }
+    }
+
+    // Show initial message
+    setTimeout(() => {
+      Elements.output.innerHTML = '<span class="success">🎉 Elements Helper loaded successfully from CDN!</span><br>Try clicking the buttons above to test the functionality.';
+    }, 500);
+  </script>
+</body>
+</html>

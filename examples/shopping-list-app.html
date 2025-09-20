@@ -1,0 +1,432 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Shopping List App - Elements Helper Demo</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      min-height: 100vh;
+      padding: 20px;
+    }
+
+    .container {
+      max-width: 500px;
+      margin: 0 auto;
+      background: white;
+      border-radius: 15px;
+      box-shadow: 0 20px 40px rgba(0,0,0,0.1);
+      overflow: hidden;
+    }
+
+    .header {
+      background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+      color: white;
+      padding: 30px;
+      text-align: center;
+    }
+
+    .header h1 {
+      font-size: 2rem;
+      margin-bottom: 10px;
+    }
+
+    .header p {
+      opacity: 0.9;
+      font-size: 1.1rem;
+    }
+
+    .add-section {
+      padding: 30px;
+      border-bottom: 1px solid #eee;
+    }
+
+    .input-group {
+      display: flex;
+      gap: 10px;
+      margin-bottom: 15px;
+    }
+
+    #item-input {
+      flex: 1;
+      padding: 15px;
+      border: 2px solid #e1e5e9;
+      border-radius: 10px;
+      font-size: 16px;
+      transition: border-color 0.3s;
+    }
+
+    #item-input:focus {
+      outline: none;
+      border-color: #4facfe;
+    }
+
+    #add-btn {
+      padding: 15px 25px;
+      background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+      color: white;
+      border: none;
+      border-radius: 10px;
+      font-size: 16px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: transform 0.2s;
+    }
+
+    #add-btn:hover {
+      transform: translateY(-2px);
+    }
+
+    #add-btn:disabled {
+      opacity: 0.6;
+      cursor: not-allowed;
+      transform: none;
+    }
+
+    .stats {
+      display: flex;
+      justify-content: space-between;
+      background: #f8f9fa;
+      padding: 15px;
+      border-radius: 10px;
+      margin-bottom: 20px;
+    }
+
+    .stat {
+      text-align: center;
+    }
+
+    .stat-number {
+      font-size: 1.5rem;
+      font-weight: bold;
+      color: #4facfe;
+    }
+
+    .stat-label {
+      font-size: 0.9rem;
+      color: #666;
+      margin-top: 5px;
+    }
+
+    .list-section {
+      padding: 0 30px 30px;
+    }
+
+    .list-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 20px;
+    }
+
+    .list-header h2 {
+      color: #333;
+      font-size: 1.3rem;
+    }
+
+    #clear-all {
+      background: #ff6b6b;
+      color: white;
+      border: none;
+      padding: 8px 16px;
+      border-radius: 6px;
+      cursor: pointer;
+      font-size: 14px;
+      transition: background 0.3s;
+    }
+
+    #clear-all:hover {
+      background: #ff5252;
+    }
+
+    #shopping-list {
+      list-style: none;
+    }
+
+    .list-item {
+      display: flex;
+      align-items: center;
+      padding: 15px;
+      background: #f8f9fa;
+      border-radius: 10px;
+      margin-bottom: 10px;
+      transition: all 0.3s;
+      animation: slideIn 0.3s ease-out;
+    }
+
+    .list-item:hover {
+      background: #e9ecef;
+      transform: translateX(5px);
+    }
+
+    .list-item.completed {
+      opacity: 0.6;
+      text-decoration: line-through;
+    }
+
+    .item-checkbox {
+      margin-right: 15px;
+      width: 20px;
+      height: 20px;
+      cursor: pointer;
+    }
+
+    .item-text {
+      flex: 1;
+      font-size: 16px;
+      color: #333;
+    }
+
+    .item-delete {
+      background: #ff6b6b;
+      color: white;
+      border: none;
+      padding: 8px 12px;
+      border-radius: 6px;
+      cursor: pointer;
+      font-size: 12px;
+      transition: background 0.3s;
+    }
+
+    .item-delete:hover {
+      background: #ff5252;
+    }
+
+    .empty-state {
+      text-align: center;
+      padding: 40px;
+      color: #666;
+    }
+
+    .empty-state img {
+      width: 80px;
+      height: 80px;
+      margin-bottom: 20px;
+      opacity: 0.5;
+    }
+
+    @keyframes slideIn {
+      from {
+        opacity: 0;
+        transform: translateY(-10px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    .footer {
+      text-align: center;
+      padding: 20px;
+      color: #666;
+      font-size: 14px;
+      border-top: 1px solid #eee;
+    }
+
+    .footer a {
+      color: #4facfe;
+      text-decoration: none;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="header">
+      <h1>🛒 Shopping List</h1>
+      <p>Powered by Elements Helper</p>
+    </div>
+
+    <div class="add-section">
+      <div class="input-group">
+        <input type="text" id="item-input" placeholder="Add a new item..." maxlength="50">
+        <button id="add-btn">Add Item</button>
+      </div>
+
+      <div class="stats">
+        <div class="stat">
+          <div id="total-count" class="stat-number">0</div>
+          <div class="stat-label">Total Items</div>
+        </div>
+        <div class="stat">
+          <div id="completed-count" class="stat-number">0</div>
+          <div class="stat-label">Completed</div>
+        </div>
+        <div class="stat">
+          <div id="remaining-count" class="stat-number">0</div>
+          <div class="stat-label">Remaining</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="list-section">
+      <div class="list-header">
+        <h2>Your Items</h2>
+        <button id="clear-all" style="display: none;">Clear All</button>
+      </div>
+
+      <ul id="shopping-list">
+        <div id="empty-state" class="empty-state">
+          <div style="font-size: 3rem; margin-bottom: 10px;">📝</div>
+          <p>Your shopping list is empty</p>
+          <p style="font-size: 14px; margin-top: 10px;">Add some items to get started!</p>
+        </div>
+      </ul>
+    </div>
+
+    <div class="footer">
+      Built with <a href="https://github.com/giovanni1707/elements-helper" target="_blank">Elements Helper</a> 
+      - Clean dot notation, no setup required!
+    </div>
+  </div>
+
+  <!-- Load Elements Helper from CDN -->
+   <script src="https://cdn.jsdelivr.net/gh/giovanni1707/elements-helper@main/dist/elements-helper.min.js"></script>
+ 
+   <script>
+    // Shopping list app using Elements Helper with clean dot notation!
+    let items = [];
+    let itemCounter = 0;
+
+    // Add item functionality
+    Elements.addBtn.addEventListener('click', addItem);
+    Elements.itemInput.addEventListener('keypress', (e) => {
+      if (e.key === 'Enter') addItem();
+    });
+
+    // Clear all functionality
+    Elements.clearAll.addEventListener('click', clearAllItems);
+
+    function addItem() {
+      const text = Elements.itemInput.value.trim();
+      if (!text) return;
+
+      const item = {
+        id: ++itemCounter,
+        text: text,
+        completed: false
+      };
+
+      items.push(item);
+      Elements.itemInput.value = '';
+      
+      renderItems();
+      updateStats();
+      updateUI();
+    }
+
+    function toggleItem(id) {
+      const item = items.find(item => item.id === id);
+      if (item) {
+        item.completed = !item.completed;
+        updateStats();
+        
+        // Update the specific item's appearance
+        const itemElement = document.getElementById(`item-${id}`);
+        itemElement.classList.toggle('completed', item.completed);
+      }
+    }
+
+    function deleteItem(id) {
+      items = items.filter(item => item.id !== id);
+      renderItems();
+      updateStats();
+      updateUI();
+    }
+
+    function clearAllItems() {
+      if (confirm('Are you sure you want to clear all items?')) {
+        items = [];
+        renderItems();
+        updateStats();
+        updateUI();
+      }
+    }
+
+    function renderItems() {
+      if (items.length === 0) {
+        Elements.shoppingList.innerHTML = `
+          <div id="empty-state" class="empty-state">
+            <div style="font-size: 3rem; margin-bottom: 10px;">📝</div>
+            <p>Your shopping list is empty</p>
+            <p style="font-size: 14px; margin-top: 10px;">Add some items to get started!</p>
+          </div>
+        `;
+        return;
+      }
+
+      Elements.shoppingList.innerHTML = items.map(item => `
+        <li id="item-${item.id}" class="list-item ${item.completed ? 'completed' : ''}">
+          <input type="checkbox" class="item-checkbox" 
+                 ${item.completed ? 'checked' : ''} 
+                 onchange="toggleItem(${item.id})">
+          <span class="item-text">${item.text}</span>
+          <button class="item-delete" onclick="deleteItem(${item.id})">Delete</button>
+        </li>
+      `).join('');
+    }
+
+    function updateStats() {
+      const total = items.length;
+      const completed = items.filter(item => item.completed).length;
+      const remaining = total - completed;
+
+      Elements.totalCount.textContent = total;
+      Elements.completedCount.textContent = completed;
+      Elements.remainingCount.textContent = remaining;
+    }
+
+    function updateUI() {
+      // Show/hide clear all button
+      Elements.clearAll.style.display = items.length > 0 ? 'block' : 'none';
+      
+      // Update add button state
+      Elements.addBtn.disabled = Elements.itemInput.value.trim() === '';
+    }
+
+    // Update add button state on input
+    Elements.itemInput.addEventListener('input', updateUI);
+
+    // Initialize
+    updateStats();
+    updateUI();
+
+    // Demo: Add some sample items after 2 seconds
+    setTimeout(() => {
+      if (items.length === 0) {
+        const sampleItems = ['Milk', 'Bread', 'Eggs', 'Apples'];
+        sampleItems.forEach(itemText => {
+          const item = {
+            id: ++itemCounter,
+            text: itemText,
+            completed: false
+          };
+          items.push(item);
+        });
+        
+        renderItems();
+        updateStats();
+        updateUI();
+        
+        // Show a message
+        setTimeout(() => {
+          alert('🎉 Sample items added! Try checking them off or adding your own.');
+        }, 500);
+      }
+    }, 2000);
+
+    // Show Elements Helper stats in console
+    setTimeout(() => {
+      console.log('🚀 Elements Helper Performance Stats:', Elements.stats());
+    }, 3000);
+  </script>
+</body>
+</html>
