@@ -44,36 +44,9 @@
       });
     }
 
-    // Convert camelCase to kebab-case
-    _camelToKebab(str) {
-      return str.replace(/[A-Z]/g, letter => `-${letter.toLowerCase()}`);
-    }
-
-    // Convert kebab-case to camelCase
-    _kebabToCamel(str) {
-      return str.replace(/-([a-z])/g, (match, letter) => letter.toUpperCase());
-    }
-
-    // Find element ID by trying both camelCase and kebab-case
+    // Use exact ID matching - no conversion
     _findElementId(prop) {
-      // First try the property as-is (for exact matches)
-      if (document.getElementById(prop)) {
-        return prop;
-      }
-      
-      // If prop is camelCase, try converting to kebab-case
-      const kebabCase = this._camelToKebab(prop);
-      if (kebabCase !== prop && document.getElementById(kebabCase)) {
-        return kebabCase;
-      }
-      
-      // If prop is kebab-case, try converting to camelCase
-      const camelCase = this._kebabToCamel(prop);
-      if (camelCase !== prop && document.getElementById(camelCase)) {
-        return camelCase;
-      }
-      
-      return prop; // Return original if no matches found
+      return prop; // Always use the exact property name as ID
     }
 
     _getElement(prop) {
@@ -82,7 +55,7 @@
         return null;
       }
 
-      // Check cache first with the property name
+      // Check cache first
       if (this.cache.has(prop)) {
         const element = this.cache.get(prop);
         if (element && document.contains(element)) {
@@ -93,35 +66,16 @@
         }
       }
 
-      // Find the actual element ID
-      const actualId = this._findElementId(prop);
-      
-      // Check cache with actual ID
-      if (actualId !== prop && this.cache.has(actualId)) {
-        const element = this.cache.get(actualId);
-        if (element && document.contains(element)) {
-          this.stats.hits++;
-          // Cache with both the property name and actual ID
-          this.cache.set(prop, element);
-          return element;
-        } else {
-          this.cache.delete(actualId);
-        }
-      }
-
-      const element = document.getElementById(actualId);
+      // Use exact ID matching - no conversion
+      const element = document.getElementById(prop);
       if (element) {
         this._addToCache(prop, element);
-        // Also cache with actual ID if different
-        if (actualId !== prop) {
-          this._addToCache(actualId, element);
-        }
         this.stats.misses++;
         return element;
       }
 
       this.stats.misses++;
-      this._warn(`Element with id '${actualId}' not found`);
+      this._warn(`Element with id '${prop}' not found`);
       return null;
     }
 
@@ -136,24 +90,13 @@
         this.cache.delete(prop);
       }
       
-      const actualId = this._findElementId(prop);
-      return !!document.getElementById(actualId);
+      // Use exact ID matching - no conversion
+      return !!document.getElementById(prop);
     }
 
     _getKeys() {
-      // Return both original IDs and camelCase versions
-      const ids = Array.from(document.querySelectorAll("[id]")).map(el => el.id);
-      const keys = new Set(ids);
-      
-      // Add camelCase versions
-      ids.forEach(id => {
-        const camelCase = this._kebabToCamel(id);
-        if (camelCase !== id) {
-          keys.add(camelCase);
-        }
-      });
-      
-      return Array.from(keys);
+      // Return exact IDs only - no conversion
+      return Array.from(document.querySelectorAll("[id]")).map(el => el.id);
     }
 
     _addToCache(id, element) {

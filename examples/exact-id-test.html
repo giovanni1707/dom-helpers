@@ -1,0 +1,215 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Elements Helper - Exact ID Matching</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      max-width: 800px;
+      margin: 20px auto;
+      padding: 20px;
+      background: #f5f5f5;
+    }
+    .container {
+      background: white;
+      padding: 30px;
+      border-radius: 10px;
+      box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+      margin-bottom: 20px;
+    }
+    h1 { color: #333; text-align: center; }
+    h2 { color: #444; border-bottom: 2px solid #007bff; padding-bottom: 10px; }
+    button {
+      background: #007bff;
+      color: white;
+      border: none;
+      padding: 10px 20px;
+      border-radius: 5px;
+      cursor: pointer;
+      margin: 5px;
+    }
+    button:hover { background: #0056b3; }
+    .output {
+      background: #f8f9fa;
+      padding: 15px;
+      border-radius: 5px;
+      margin: 10px 0;
+      border-left: 4px solid #007bff;
+    }
+    .success { color: green; font-weight: bold; }
+    .error { color: red; font-weight: bold; }
+    .code {
+      background: #f1f1f1;
+      padding: 10px;
+      border-radius: 5px;
+      font-family: monospace;
+      margin: 10px 0;
+      overflow-x: auto;
+    }
+    .example {
+      background: #e7f3ff;
+      padding: 15px;
+      border-radius: 5px;
+      margin: 10px 0;
+      border-left: 4px solid #0066cc;
+    }
+  </style>
+</head>
+<body>
+  <h1>🎯 Elements Helper - Exact ID Matching</h1>
+  
+  <div class="container">
+    <h2>✅ Kebab-case IDs (use bracket notation)</h2>
+    <div class="example">
+      <p><strong>HTML:</strong> <code>&lt;button id="add-btn"&gt;Add Item&lt;/button&gt;</code></p>
+      <p><strong>JavaScript:</strong> <code>Elements['add-btn'].addEventListener('click', addItem);</code></p>
+    </div>
+    
+    <button id="add-btn">Add Item (kebab-case)</button>
+    <button id="clear-btn">Clear Items (kebab-case)</button>
+    <div id="kebab-output" class="output">Click buttons to test kebab-case IDs...</div>
+  </div>
+
+  <div class="container">
+    <h2>✅ CamelCase IDs (use dot notation)</h2>
+    <div class="example">
+      <p><strong>HTML:</strong> <code>&lt;button id="addBtn"&gt;Add Item&lt;/button&gt;</code></p>
+      <p><strong>JavaScript:</strong> <code>Elements.addBtn.addEventListener('click', addItem);</code></p>
+    </div>
+    
+    <button id="addBtn">Add Item (camelCase)</button>
+    <button id="clearBtn">Clear Items (camelCase)</button>
+    <div id="camelOutput" class="output">Click buttons to test camelCase IDs...</div>
+  </div>
+
+  <div class="container">
+    <h2>🚫 What Doesn't Work (Exact ID Required)</h2>
+    <div class="example">
+      <p><strong>Wrong:</strong> <code>Elements.addBtn</code> for <code>id="add-btn"</code></p>
+      <p><strong>Wrong:</strong> <code>Elements['addBtn']</code> for <code>id="add-btn"</code></p>
+      <p><strong>Correct:</strong> <code>Elements['add-btn']</code> for <code>id="add-btn"</code></p>
+    </div>
+    
+    <button id="test-wrong">Test Wrong Access</button>
+    <div id="error-output" class="output">Click to see what happens with wrong ID access...</div>
+  </div>
+
+  <div class="container">
+    <h2>📊 Dynamic Content Test</h2>
+    <button id="add-dynamic">Add Dynamic Element</button>
+    <div id="dynamic-container"></div>
+    <div id="dynamic-output" class="output">Dynamic elements will appear here...</div>
+  </div>
+
+  <!-- Load Elements Helper -->
+  <script src="../src/elements-helper.js"></script>
+  
+  <script>
+    let itemCount = 0;
+
+    // ✅ CORRECT: Kebab-case IDs with bracket notation
+    Elements['add-btn'].addEventListener('click', () => {
+      itemCount++;
+      Elements['kebab-output'].innerHTML = `
+        <span class="success">✅ Kebab-case ID working!</span><br>
+        Item count: ${itemCount}<br>
+        Accessed via: Elements['add-btn']
+      `;
+    });
+
+    Elements['clear-btn'].addEventListener('click', () => {
+      itemCount = 0;
+      Elements['kebab-output'].innerHTML = `
+        <span class="success">✅ Cleared!</span><br>
+        Item count: ${itemCount}<br>
+        Accessed via: Elements['clear-btn']
+      `;
+    });
+
+    // ✅ CORRECT: CamelCase IDs with dot notation
+    Elements.addBtn.addEventListener('click', () => {
+      itemCount++;
+      Elements.camelOutput.innerHTML = `
+        <span class="success">✅ CamelCase ID working!</span><br>
+        Item count: ${itemCount}<br>
+        Accessed via: Elements.addBtn
+      `;
+    });
+
+    Elements.clearBtn.addEventListener('click', () => {
+      itemCount = 0;
+      Elements.camelOutput.innerHTML = `
+        <span class="success">✅ Cleared!</span><br>
+        Item count: ${itemCount}<br>
+        Accessed via: Elements.clearBtn
+      `;
+    });
+
+    // 🚫 WRONG: Testing incorrect access
+    Elements['test-wrong'].addEventListener('click', () => {
+      // Try to access kebab-case ID with camelCase property
+      const wrongAccess1 = Elements.addBtn; // This won't find id="add-btn"
+      const wrongAccess2 = Elements['addBtn']; // This won't find id="add-btn"
+      const correctAccess = Elements['add-btn']; // This will find id="add-btn"
+
+      Elements['error-output'].innerHTML = `
+        <span class="error">❌ Wrong Access Results:</span><br>
+        Elements.addBtn (for id="add-btn"): ${wrongAccess1 ? 'Found' : 'null'}<br>
+        Elements['addBtn'] (for id="add-btn"): ${wrongAccess2 ? 'Found' : 'null'}<br>
+        <span class="success">✅ Correct Access:</span><br>
+        Elements['add-btn'] (for id="add-btn"): ${correctAccess ? 'Found!' : 'null'}
+      `;
+    });
+
+    // Dynamic content test
+    let dynamicCount = 0;
+    Elements['add-dynamic'].addEventListener('click', () => {
+      dynamicCount++;
+      
+      // Create element with kebab-case ID
+      const kebabDiv = document.createElement('div');
+      kebabDiv.id = `dynamic-item-${dynamicCount}`;
+      kebabDiv.innerHTML = `<p>Dynamic Item ${dynamicCount} (kebab-case ID)</p>`;
+      kebabDiv.style.background = '#e7f3ff';
+      kebabDiv.style.padding = '10px';
+      kebabDiv.style.margin = '5px 0';
+      kebabDiv.style.borderRadius = '5px';
+      
+      // Create element with camelCase ID
+      const camelDiv = document.createElement('div');
+      camelDiv.id = `dynamicItem${dynamicCount}`;
+      camelDiv.innerHTML = `<p>Dynamic Item ${dynamicCount} (camelCase ID)</p>`;
+      camelDiv.style.background = '#fff3cd';
+      camelDiv.style.padding = '10px';
+      camelDiv.style.margin = '5px 0';
+      camelDiv.style.borderRadius = '5px';
+      
+      Elements['dynamic-container'].appendChild(kebabDiv);
+      Elements['dynamic-container'].appendChild(camelDiv);
+      
+      // Access immediately with correct syntax
+      setTimeout(() => {
+        // Kebab-case ID requires bracket notation
+        Elements[`dynamic-item-${dynamicCount}`].style.border = '2px solid #007bff';
+        
+        // CamelCase ID can use dot notation
+        Elements[`dynamicItem${dynamicCount}`].style.border = '2px solid #28a745';
+        
+        Elements['dynamic-output'].innerHTML = `
+          <span class="success">✅ Dynamic elements added!</span><br>
+          Kebab-case: Elements['dynamic-item-${dynamicCount}']<br>
+          CamelCase: Elements.dynamicItem${dynamicCount} or Elements['dynamicItem${dynamicCount}']
+        `;
+      }, 100);
+    });
+
+    // Show performance stats
+    setTimeout(() => {
+      const stats = Elements.stats();
+      console.log('📊 Elements Helper Stats:', stats);
+    }, 1000);
+  </script>
+</body>
+</html>

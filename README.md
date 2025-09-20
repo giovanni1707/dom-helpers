@@ -16,11 +16,14 @@ const button = document.getElementById('submit-btn');
 const form = document.getElementById('user-form');
 const modal = document.getElementById('confirmation-modal');
 
-// Write this:
-Elements.submitBtn.addEventListener('click', () => {
-  Elements.userForm.style.display = 'none';
-  Elements.confirmationModal.style.display = 'block';
+// Write this (exact ID matching):
+Elements['submit-btn'].addEventListener('click', () => {
+  Elements['user-form'].style.display = 'none';
+  Elements['confirmation-modal'].style.display = 'block';
 });
+
+// Or for camelCase IDs:
+// Elements.submitBtn, Elements.userForm, Elements.confirmationModal
 ```
 
 ## ✨ Why Elements Helper?
