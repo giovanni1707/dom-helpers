@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Elements Helper - Simple Test</title>
+</head>
+<body>
+    <h1>Elements Helper Test</h1>
+    <button id="test-button">Click Me</button>
+    <div id="output">Initial text</div>
+
+    <script src="../src/elements-helper.js"></script>
+    <script>
+        console.log('Elements object:', Elements);
+        console.log('Elements type:', typeof Elements);
+        
+        document.addEventListener('DOMContentLoaded', function() {
+            console.log('DOM loaded');
+            
+            // Test basic element access
+            const button = Elements['test-button'];
+            const output = Elements['output'];
+            
+            console.log('Button:', button);
+            console.log('Output:', output);
+            
+            if (button && output) {
+                button.addEventListener('click', function() {
+                    output.textContent = 'Button clicked at ' + new Date().toLocaleTimeString();
+                });
+                console.log('Event listener added successfully');
+            } else {
+                console.error('Elements not found');
+            }
+        });
+    </script>
+</body>
+</html>

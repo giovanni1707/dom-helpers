@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Kebab Case Test</title>
+</head>
+<body>
+  <h1 id="main-title">Welcome</h1>
+  <button id="submit-button">Click Me!</button>
+  <div id="output-area"></div>
+  <ul id="todo-list"></ul>
+  <div id="user-profile">Profile</div>
+
+  <!-- Drop-in the file -->
+  <script src="../src/elements-helper.js"></script>
+  
+  <script>
+    // Test kebab-case IDs with camelCase property access
+    Elements.submitButton.addEventListener('click', () => {
+      Elements.mainTitle.textContent = 'Button Clicked!';
+      Elements.outputArea.innerHTML = '<p>Hello from Elements with kebab-case IDs!</p>';
+      Elements.userProfile.style.color = 'blue';
+    });
+
+    // Add dynamic content with kebab-case ID
+    const li = document.createElement('li');
+    li.id = 'new-item';
+    li.textContent = 'Dynamic kebab-case item';
+    Elements.todoList.appendChild(li);
+
+    // Access immediately using camelCase
+    setTimeout(() => {
+      Elements.newItem.style.fontWeight = 'bold';
+      Elements.newItem.style.color = 'red';
+    }, 100);
+
+    // Test both ways work
+    console.log('Direct kebab access:', Elements['main-title']);
+    console.log('CamelCase access:', Elements.mainTitle);
+    console.log('Both should be the same element:', Elements['main-title'] === Elements.mainTitle);
+  </script>
+</body>
+</html>

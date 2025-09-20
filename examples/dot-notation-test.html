@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>My App</title>
+</head>
+<body>
+  <h1 id="title">Welcome</h1>
+  <button id="clickMe">Click Me!</button>
+  <div id="output"></div>
+  <ul id="todoList"></ul>
+
+  <!-- Drop-in the file -->
+  <script src="../src/elements-helper.js"></script>
+  
+  <script>
+    // Use immediately - no setup required!
+    Elements.clickMe.addEventListener('click', () => {
+      Elements.title.textContent = 'Button Clicked!';
+      Elements.output.innerHTML = '<p>Hello from Elements!</p>';
+    });
+
+    // Add dynamic content
+    const li = document.createElement('li');
+    li.id = 'newItem';
+    li.textContent = 'Dynamic item';
+    Elements.todoList.appendChild(li);
+
+    // Access immediately
+    setTimeout(() => {
+      Elements.newItem.style.fontWeight = 'bold';
+    }, 100);
+  </script>
+</body>
+</html>

@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Elements Helper - Final Demo</title>
+  <style>
+    body { font-family: Arial, sans-serif; padding: 20px; }
+    .section { margin: 20px 0; padding: 15px; border: 1px solid #ddd; border-radius: 5px; }
+    button { padding: 8px 16px; margin: 5px; background: #007bff; color: white; border: none; border-radius: 3px; cursor: pointer; }
+    button:hover { background: #0056b3; }
+    .output { background: #f8f9fa; padding: 10px; margin: 10px 0; border-radius: 3px; }
+    .success { color: green; font-weight: bold; }
+    .error { color: red; font-weight: bold; }
+  </style>
+</head>
+<body>
+  <h1 id="main-title">Elements Helper - Final Demo</h1>
+  
+  <div class="section">
+    <h2>✅ Basic Dot Notation (camelCase IDs)</h2>
+    <button id="basicButton">Click Me!</button>
+    <div id="basicOutput" class="output">Ready for basic test...</div>
+  </div>
+
+  <div class="section">
+    <h2>✅ Kebab-Case IDs with CamelCase Access</h2>
+    <button id="kebab-button">Test Kebab</button>
+    <div id="kebab-output" class="output">Ready for kebab-case test...</div>
+  </div>
+
+  <div class="section">
+    <h2>✅ Dynamic Content</h2>
+    <button id="add-dynamic">Add Dynamic Element</button>
+    <div id="dynamic-container"></div>
+  </div>
+
+  <div class="section">
+    <h2>✅ Form Example</h2>
+    <form id="test-form">
+      <input type="text" id="user-name" placeholder="Enter your name" />
+      <input type="email" id="user-email" placeholder="Enter your email" />
+      <button type="submit" id="form-submit">Submit</button>
+    </form>
+    <div id="form-result" class="output">Form not submitted yet...</div>
+  </div>
+
+  <div class="section">
+    <h2>✅ Performance Stats</h2>
+    <button id="show-stats">Show Performance Stats</button>
+    <div id="stats-display" class="output">Click button to see stats...</div>
+  </div>
+
+  <!-- Drop-in the file -->
+  <script src="../src/elements-helper.js"></script>
+  
+  <script>
+    console.log('🚀 Elements Helper loaded successfully!');
+    
+    // Test 1: Basic camelCase IDs with dot notation
+    Elements.basicButton.addEventListener('click', () => {
+      Elements.basicOutput.innerHTML = '<span class="success">✅ Basic dot notation works perfectly!</span>';
+      Elements.basicOutput.style.background = '#d4edda';
+    });
+
+    // Test 2: Kebab-case IDs accessed with camelCase properties
+    Elements.kebabButton.addEventListener('click', () => {
+      Elements.kebabOutput.innerHTML = '<span class="success">✅ Kebab-case → camelCase conversion works!</span>';
+      Elements.kebabOutput.style.background = '#d1ecf1';
+      
+      // Verify both access methods work
+      const same = Elements.kebabButton === Elements['kebab-button'];
+      Elements.kebabOutput.innerHTML += `<br>Both access methods return same element: ${same}`;
+    });
+
+    // Test 3: Dynamic content
+    Elements.addDynamic.addEventListener('click', () => {
+      // Create dynamic element
+      const newDiv = document.createElement('div');
+      newDiv.id = 'dynamic-element';
+      newDiv.innerHTML = '<span class="success">✅ Dynamic element created!</span>';
+      newDiv.style.padding = '10px';
+      newDiv.style.background = '#fff3cd';
+      newDiv.style.border = '1px solid #ffeaa7';
+      newDiv.style.borderRadius = '3px';
+      newDiv.style.margin = '10px 0';
+      
+      Elements.dynamicContainer.appendChild(newDiv);
+      
+      // Access immediately with dot notation
+      setTimeout(() => {
+        Elements.dynamicElement.style.fontWeight = 'bold';
+        Elements.dynamicElement.innerHTML += '<br>✅ Immediate access after creation works!';
+      }, 100);
+    });
+
+    // Test 4: Form handling
+    Elements.testForm.addEventListener('submit', (e) => {
+      e.preventDefault();
+      
+      const name = Elements.userName.value || 'Anonymous';
+      const email = Elements.userEmail.value || 'no-email@example.com';
+      
+      Elements.formResult.innerHTML = `
+        <span class="success">✅ Form submitted successfully!</span><br>
+        Name: ${name}<br>
+        Email: ${email}<br>
+        Timestamp: ${new Date().toLocaleString()}
+      `;
+      Elements.formResult.style.background = '#d4edda';
+      
+      // Reset form
+      Elements.userName.value = '';
+      Elements.userEmail.value = '';
+    });
+
+    // Test 5: Performance stats
+    Elements.showStats.addEventListener('click', () => {
+      const stats = Elements.stats();
+      Elements.statsDisplay.innerHTML = `
+        <span class="success">✅ Performance Stats:</span><br>
+        Cache Size: ${stats.cacheSize} elements<br>
+        Cache Hits: ${stats.hits}<br>
+        Cache Misses: ${stats.misses}<br>
+        Hit Rate: ${(stats.hitRate * 100).toFixed(1)}%<br>
+        Uptime: ${Math.round(stats.uptime / 1000)}s
+      `;
+      Elements.statsDisplay.style.background = '#e2e3e5';
+    });
+
+    // Auto-demo: Show that everything works immediately
+    setTimeout(() => {
+      Elements.mainTitle.style.color = '#28a745';
+      Elements.mainTitle.innerHTML += ' ✅ Ready!';
+      
+      // Show initial stats
+      Elements.showStats.click();
+    }, 500);
+
+    // Test both access methods work
+    console.log('Testing access methods:');
+    console.log('Elements.kebabButton:', Elements.kebabButton);
+    console.log('Elements["kebab-button"]:', Elements['kebab-button']);
+    console.log('Same element?', Elements.kebabButton === Elements['kebab-button']);
+  </script>
+</body>
+</html>

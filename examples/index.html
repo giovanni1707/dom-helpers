@@ -1,0 +1,398 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Elements Helper - Examples</title>
+    <style>
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+            line-height: 1.6;
+            background: #f5f5f5;
+        }
+        
+        .container {
+            background: white;
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            margin-bottom: 30px;
+        }
+        
+        h1 {
+            color: #333;
+            text-align: center;
+            margin-bottom: 40px;
+        }
+        
+        h2 {
+            color: #444;
+            border-bottom: 2px solid #007bff;
+            padding-bottom: 10px;
+        }
+        
+        .example {
+            background: #f8f9fa;
+            padding: 20px;
+            border-radius: 8px;
+            margin: 20px 0;
+            border-left: 4px solid #007bff;
+        }
+        
+        button {
+            background: #007bff;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 5px;
+            cursor: pointer;
+            margin: 5px;
+            font-size: 14px;
+        }
+        
+        button:hover {
+            background: #0056b3;
+        }
+        
+        button:disabled {
+            background: #6c757d;
+            cursor: not-allowed;
+        }
+        
+        input, textarea {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            margin: 5px 0;
+            box-sizing: border-box;
+        }
+        
+        .output {
+            background: #e9ecef;
+            padding: 15px;
+            border-radius: 4px;
+            margin: 10px 0;
+            font-family: monospace;
+            white-space: pre-wrap;
+        }
+        
+        .stats {
+            background: #d4edda;
+            border: 1px solid #c3e6cb;
+            color: #155724;
+            padding: 15px;
+            border-radius: 4px;
+            margin: 10px 0;
+        }
+        
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.5);
+            z-index: 1000;
+        }
+        
+        .modal.active {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .modal-content {
+            background: white;
+            padding: 30px;
+            border-radius: 10px;
+            max-width: 500px;
+            width: 90%;
+        }
+        
+        .dynamic-content {
+            display: none;
+            background: #fff3cd;
+            border: 1px solid #ffeaa7;
+            color: #856404;
+            padding: 15px;
+            border-radius: 4px;
+            margin: 10px 0;
+        }
+        
+        .loading {
+            text-align: center;
+            padding: 20px;
+            color: #6c757d;
+        }
+        
+        .code {
+            background: #f8f9fa;
+            border: 1px solid #e9ecef;
+            border-radius: 4px;
+            padding: 15px;
+            font-family: 'Courier New', monospace;
+            font-size: 14px;
+            overflow-x: auto;
+            margin: 10px 0;
+        }
+    </style>
+</head>
+<body>
+    <h1>🚀 Elements Helper - Live Examples</h1>
+    
+    <div class="container">
+        <h2>📊 Performance Stats</h2>
+        <div class="example">
+            <p>Monitor the library's performance in real-time:</p>
+            <button id="refresh-stats">Refresh Stats</button>
+            <button id="clear-cache">Clear Cache</button>
+            <div id="stats-output" class="stats">Click "Refresh Stats" to see performance data</div>
+        </div>
+    </div>
+
+    <div class="container">
+        <h2>🎯 Basic Element Access</h2>
+        <div class="example">
+            <p>Access elements directly using the Elements proxy:</p>
+            <button id="basic-demo">Click Me!</button>
+            <div id="basic-output" class="output">Click the button to see Elements in action</div>
+            
+            <div class="code">
+// JavaScript Code:
+Elements.basicDemo.addEventListener('click', () => {
+    Elements.basicOutput.textContent = 'Element accessed via Elements.basicOutput!';
+});
+            </div>
+        </div>
+    </div>
+
+    <div class="container">
+        <h2>📦 Destructuring Support</h2>
+        <div class="example">
+            <p>Get multiple elements at once with destructuring:</p>
+            <input type="text" id="name-input" placeholder="Enter your name">
+            <input type="email" id="email-input" placeholder="Enter your email">
+            <button id="destructure-demo">Submit Form</button>
+            <div id="form-output" class="output">Fill the form and click submit</div>
+            
+            <div class="code">
+// JavaScript Code:
+const { nameInput, emailInput, formOutput } = Elements.destructure(
+    'name-input', 'email-input', 'form-output'
+);
+            </div>
+        </div>
+    </div>
+
+    <div class="container">
+        <h2>⏰ Async Element Access</h2>
+        <div class="example">
+            <p>Wait for elements to appear dynamically:</p>
+            <button id="load-dynamic">Load Dynamic Content</button>
+            <div id="loading-spinner" class="loading" style="display: none;">Loading...</div>
+            <div id="dynamic-content" class="dynamic-content">
+                <h3>Dynamic Content Loaded!</h3>
+                <p>This content was loaded dynamically and Elements Helper waited for it.</p>
+            </div>
+            
+            <div class="code">
+// JavaScript Code:
+const { dynamicContent, loadingSpinner } = await Elements.waitFor(
+    'dynamic-content', 'loading-spinner'
+);
+            </div>
+        </div>
+    </div>
+
+    <div class="container">
+        <h2>🎭 Modal Management</h2>
+        <div class="example">
+            <p>Manage modals with Elements Helper:</p>
+            <button id="open-modal">Open Modal</button>
+            <div id="modal-output" class="output">Modal is closed</div>
+        </div>
+    </div>
+
+    <div class="container">
+        <h2>🔧 Configuration Demo</h2>
+        <div class="example">
+            <p>Configure Elements Helper options:</p>
+            <button id="enable-logging">Enable Logging</button>
+            <button id="disable-logging">Disable Logging</button>
+            <button id="test-logging">Test Logging</button>
+            <div id="config-output" class="output">Check browser console for logging output</div>
+        </div>
+    </div>
+
+    <div class="container">
+        <h2>🚨 Error Handling</h2>
+        <div class="example">
+            <p>See how Elements Helper handles missing elements:</p>
+            <button id="test-missing">Test Missing Element</button>
+            <button id="test-required">Test Required Elements</button>
+            <div id="error-output" class="output">Click buttons to test error handling</div>
+        </div>
+    </div>
+
+    <!-- Modal -->
+    <div id="demo-modal" class="modal">
+        <div class="modal-content">
+            <h3>Demo Modal</h3>
+            <p>This modal was opened using Elements Helper!</p>
+            <button id="close-modal">Close Modal</button>
+        </div>
+    </div>
+
+    <!-- Load Elements Helper from CDN -->
+    <script src="../src/elements-helper.js"></script>
+    
+    <script>
+        // Wait for DOM to be ready
+        document.addEventListener('DOMContentLoaded', function() {
+            // Performance Stats Demo
+            Elements['refresh-stats'].addEventListener('click', () => {
+            const stats = Elements.stats();
+            Elements['stats-output'].innerHTML = `
+                <strong>Cache Performance:</strong><br>
+                • Cache Size: ${stats.cacheSize} elements<br>
+                • Cache Hits: ${stats.hits}<br>
+                • Cache Misses: ${stats.misses}<br>
+                • Hit Rate: ${(stats.hitRate * 100).toFixed(1)}%<br>
+                • Uptime: ${Math.round(stats.uptime / 1000)}s
+            `;
+        });
+
+        Elements['clear-cache'].addEventListener('click', () => {
+            Elements.clear();
+            Elements['stats-output'].textContent = 'Cache cleared! Click "Refresh Stats" to see updated data.';
+        });
+
+        // Basic Element Access Demo
+        Elements['basic-demo'].addEventListener('click', () => {
+            Elements['basic-output'].textContent = `Element accessed at ${new Date().toLocaleTimeString()}`;
+            Elements['basic-output'].style.background = '#d4edda';
+            Elements['basic-output'].style.color = '#155724';
+        });
+
+        // Destructuring Demo
+        Elements['destructure-demo'].addEventListener('click', () => {
+            const { nameInput, emailInput, formOutput } = Elements.destructure(
+                'name-input', 'email-input', 'form-output'
+            );
+            
+            const name = nameInput.value || 'Anonymous';
+            const email = emailInput.value || 'no-email@example.com';
+            
+            formOutput.innerHTML = `
+                <strong>Form Data Captured:</strong><br>
+                • Name: ${name}<br>
+                • Email: ${email}<br>
+                • Timestamp: ${new Date().toLocaleString()}
+            `;
+            formOutput.style.background = '#d1ecf1';
+            formOutput.style.color = '#0c5460';
+        });
+
+        // Async Element Access Demo
+        Elements['load-dynamic'].addEventListener('click', async () => {
+            Elements['loading-spinner'].style.display = 'block';
+            Elements['load-dynamic'].disabled = true;
+            
+            // Simulate dynamic content loading
+            setTimeout(async () => {
+                Elements['dynamic-content'].style.display = 'block';
+                
+                try {
+                    const { dynamicContent, loadingSpinner } = await Elements.waitFor(
+                        'dynamic-content', 'loading-spinner'
+                    );
+                    
+                    loadingSpinner.style.display = 'none';
+                    dynamicContent.innerHTML += `<p><em>Loaded at: ${new Date().toLocaleTimeString()}</em></p>`;
+                    Elements['load-dynamic'].disabled = false;
+                } catch (error) {
+                    console.error('Failed to load dynamic content:', error);
+                }
+            }, 1000);
+        });
+
+        // Modal Management Demo
+        const { openModal, closeModal, demoModal, modalOutput } = Elements.destructure(
+            'open-modal', 'close-modal', 'demo-modal', 'modal-output'
+        );
+
+        openModal.addEventListener('click', () => {
+            demoModal.classList.add('active');
+            modalOutput.textContent = 'Modal is open';
+            modalOutput.style.background = '#fff3cd';
+            modalOutput.style.color = '#856404';
+        });
+
+        closeModal.addEventListener('click', () => {
+            demoModal.classList.remove('active');
+            modalOutput.textContent = 'Modal is closed';
+            modalOutput.style.background = '#f8d7da';
+            modalOutput.style.color = '#721c24';
+        });
+
+        // Configuration Demo
+        Elements['enable-logging'].addEventListener('click', () => {
+            Elements.configure({ enableLogging: true });
+            Elements['config-output'].textContent = 'Logging enabled! Check browser console.';
+        });
+
+        Elements['disable-logging'].addEventListener('click', () => {
+            Elements.configure({ enableLogging: false });
+            Elements['config-output'].textContent = 'Logging disabled.';
+        });
+
+        Elements['test-logging'].addEventListener('click', () => {
+            // Access a non-existent element to trigger logging
+            const nonExistent = Elements.nonExistentElement;
+            Elements['config-output'].textContent = 'Attempted to access non-existent element. Check console for logs.';
+        });
+
+        // Error Handling Demo
+        Elements['test-missing'].addEventListener('click', () => {
+            const missing = Elements.thisElementDoesNotExist;
+            Elements['error-output'].innerHTML = `
+                <strong>Missing Element Test:</strong><br>
+                Result: ${missing === null ? 'null (as expected)' : 'unexpected result'}<br>
+                Elements Helper gracefully returns null for missing elements.
+            `;
+        });
+
+        Elements['test-required'].addEventListener('click', () => {
+            try {
+                const required = Elements.getRequired('missing-element-1', 'missing-element-2');
+            } catch (error) {
+                Elements['error-output'].innerHTML = `
+                    <strong>Required Elements Test:</strong><br>
+                    Error caught: ${error.message}<br>
+                    Elements Helper throws descriptive errors for missing required elements.
+                `;
+                Elements['error-output'].style.background = '#f8d7da';
+                Elements['error-output'].style.color = '#721c24';
+            }
+        });
+
+        // Auto-refresh stats every 5 seconds
+        setInterval(() => {
+            if (Elements['stats-output'].textContent !== 'Click "Refresh Stats" to see performance data') {
+                Elements['refresh-stats'].click();
+            }
+        }, 5000);
+
+            // Initial stats load
+            setTimeout(() => {
+                Elements['refresh-stats'].click();
+            }, 1000);
+        });
+    </script>
+</body>
+</html>

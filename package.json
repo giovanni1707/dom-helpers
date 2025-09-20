@@ -1,0 +1,57 @@
+{
+  "name": "elements-helper",
+  "version": "1.0.0",
+  "description": "A high-performance vanilla JavaScript library for efficient DOM element access with intelligent caching and automatic cleanup",
+  "main": "dist/elements-helper.js",
+  "module": "dist/elements-helper.esm.js",
+  "unpkg": "dist/elements-helper.min.js",
+  "jsdelivr": "dist/elements-helper.min.js",
+  "types": "dist/elements-helper.d.ts",
+  "files": [
+    "dist/",
+    "src/",
+    "README.md",
+    "LICENSE"
+  ],
+  "scripts": {
+    "build": "npm run build:umd && npm run build:esm && npm run build:min",
+    "build:umd": "cp src/elements-helper.js dist/elements-helper.js",
+    "build:esm": "node scripts/build-esm.js",
+    "build:min": "node scripts/build-min.js",
+    "test": "echo \"Tests coming soon\" && exit 0",
+    "prepublishOnly": "npm run build"
+  },
+  "keywords": [
+    "dom",
+    "elements",
+    "javascript",
+    "vanilla-js",
+    "performance",
+    "caching",
+    "mutation-observer",
+    "browser",
+    "frontend",
+    "utility"
+  ],
+  "author": "Your Name <your.email@example.com>",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/yourusername/elements-helper.git"
+  },
+  "bugs": {
+    "url": "https://github.com/yourusername/elements-helper/issues"
+  },
+  "homepage": "https://github.com/yourusername/elements-helper#readme",
+  "devDependencies": {
+    "terser": "^5.19.0"
+  },
+  "engines": {
+    "node": ">=12.0.0"
+  },
+  "browserslist": [
+    "> 1%",
+    "last 2 versions",
+    "not dead"
+  ]
+}
