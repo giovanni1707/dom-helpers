@@ -1,0 +1,378 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Simple DOM Helpers Test App</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            min-height: 100vh;
+        }
+        
+        .container {
+            background: rgba(255, 255, 255, 0.1);
+            padding: 30px;
+            border-radius: 15px;
+            backdrop-filter: blur(10px);
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+        }
+        
+        h1 {
+            text-align: center;
+            margin-bottom: 30px;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
+        }
+        
+        .section {
+            margin: 30px 0;
+            padding: 20px;
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 10px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        
+        .section h2 {
+            color: #ffd700;
+            margin-top: 0;
+        }
+        
+        button {
+            background: linear-gradient(45deg, #ff6b6b, #ee5a24);
+            color: white;
+            border: none;
+            padding: 12px 20px;
+            margin: 5px;
+            border-radius: 25px;
+            cursor: pointer;
+            font-weight: bold;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+        }
+        
+        button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(0, 0, 0, 0.3);
+        }
+        
+        input, textarea {
+            width: 100%;
+            padding: 10px;
+            margin: 10px 0;
+            border: none;
+            border-radius: 8px;
+            background: rgba(255, 255, 255, 0.9);
+            color: #333;
+            font-size: 16px;
+        }
+        
+        .card {
+            background: rgba(255, 255, 255, 0.1);
+            padding: 15px;
+            margin: 10px 0;
+            border-radius: 8px;
+            border-left: 4px solid #ffd700;
+        }
+        
+        .highlight {
+            background: rgba(255, 215, 0, 0.3) !important;
+            transform: scale(1.02);
+            transition: all 0.3s ease;
+            border: 2px solid #ffd700 !important;
+        }
+        
+        .status {
+            padding: 10px;
+            margin: 10px 0;
+            border-radius: 8px;
+            font-weight: bold;
+        }
+        
+        .success {
+            background: rgba(40, 167, 69, 0.8);
+            border: 1px solid #28a745;
+        }
+        
+        .info {
+            background: rgba(23, 162, 184, 0.8);
+            border: 1px solid #17a2b8;
+        }
+        
+        .demo-items {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+            margin: 20px 0;
+        }
+        
+        .demo-item {
+            background: rgba(255, 255, 255, 0.1);
+            padding: 15px;
+            border-radius: 8px;
+            text-align: center;
+            transition: all 0.3s ease;
+        }
+        
+        .demo-item:hover {
+            background: rgba(255, 255, 255, 0.2);
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🚀 Simple DOM Helpers Test App</h1>
+        
+        <!-- Elements Helper Test Section -->
+        <div class="section">
+            <h2>🆔 Elements Helper Test</h2>
+            <p>Testing ID-based element access with Elements.js</p>
+            
+            <input id="username" placeholder="Enter your username" />
+            <input id="email" placeholder="Enter your email" />
+            <textarea id="message" placeholder="Enter your message" rows="3"></textarea>
+            
+            <div>
+                <button onclick="testElementsAccess()">Test Elements Access</button>
+                <button onclick="fillForm()">Fill Form</button>
+                <button onclick="clearForm()">Clear Form</button>
+                <button onclick="highlightInputs()">Highlight Inputs</button>
+            </div>
+            
+            <div id="elements-result" class="status info">
+                Click "Test Elements Access" to see Elements helper in action!
+            </div>
+        </div>
+        
+        <!-- Collections Helper Test Section -->
+        <div class="section">
+            <h2>📦 Collections Helper Test</h2>
+            <p>Testing class/tag/name-based collections with Collections.js</p>
+            
+            <div class="demo-items">
+                <div class="card">Card 1</div>
+                <div class="card">Card 2</div>
+                <div class="card">Card 3</div>
+                <div class="card">Card 4</div>
+            </div>
+            
+            <div>
+                <button class="action-btn">Action Button 1</button>
+                <button class="action-btn">Action Button 2</button>
+                <button class="action-btn">Action Button 3</button>
+            </div>
+            
+            <div>
+                <button onclick="testCollections()">Test Collections</button>
+                <button onclick="highlightCards()">Highlight Cards</button>
+                <button onclick="highlightButtons()">Highlight Buttons</button>
+                <button onclick="countElements()">Count Elements</button>
+            </div>
+            
+            <div id="collections-result" class="status info">
+                Click "Test Collections" to see Collections helper in action!
+            </div>
+        </div>
+        
+        <!-- Performance Stats Section -->
+        <div class="section">
+            <h2>📊 Performance Stats</h2>
+            <div id="performance-stats" class="status info">
+                Click any test button to see performance statistics!
+            </div>
+            <button onclick="showStats()">Show Detailed Stats</button>
+        </div>
+    </div>
+
+    <!-- Load the DOM Helpers from CDN -->
+    <script src="https://cdn.jsdelivr.net/npm/dom-helpers@2/dist/elements.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/dom-helpers@2/dist/collections.min.js"></script>
+
+    <script>
+        // Elements Helper Tests
+        function testElementsAccess() {
+            try {
+                // Test accessing elements by ID
+                const username = Elements.username;
+                const email = Elements.email;
+                const message = Elements.message;
+                
+                let result = "✅ Elements Helper Working!\n\n";
+                result += `📝 Username field: ${username ? 'Found' : 'Not found'}\n`;
+                result += `📧 Email field: ${email ? 'Found' : 'Not found'}\n`;
+                result += `💬 Message field: ${message ? 'Found' : 'Not found'}\n\n`;
+                
+                // Test values
+                result += `Current values:\n`;
+                result += `• Username: "${username.value}"\n`;
+                result += `• Email: "${email.value}"\n`;
+                result += `• Message: "${message.value}"`;
+                
+                document.getElementById('elements-result').textContent = result;
+                document.getElementById('elements-result').className = 'status success';
+                
+            } catch (error) {
+                document.getElementById('elements-result').textContent = `❌ Error: ${error.message}`;
+                document.getElementById('elements-result').className = 'status error';
+            }
+        }
+        
+        function fillForm() {
+            Elements.username.value = "john_doe";
+            Elements.email.value = "john@example.com";
+            Elements.message.value = "Hello from DOM Helpers! This form was filled using Elements.js";
+            
+            // Add some visual feedback
+            [Elements.username, Elements.email, Elements.message].forEach(el => {
+                el.style.background = 'rgba(40, 167, 69, 0.2)';
+                setTimeout(() => el.style.background = '', 1000);
+            });
+        }
+        
+        function clearForm() {
+            Elements.username.value = "";
+            Elements.email.value = "";
+            Elements.message.value = "";
+            
+            document.getElementById('elements-result').textContent = "Form cleared using Elements helper!";
+            document.getElementById('elements-result').className = 'status info';
+        }
+        
+        function highlightInputs() {
+            [Elements.username, Elements.email, Elements.message].forEach(el => {
+                el.classList.add('highlight');
+                setTimeout(() => el.classList.remove('highlight'), 2000);
+            });
+        }
+        
+        // Collections Helper Tests
+        function testCollections() {
+            try {
+                // Test collections
+                const cards = Collections.ClassName.card;
+                const buttons = Collections.ClassName['action-btn'];
+                const allButtons = Collections.TagName.button;
+                
+                let result = "✅ Collections Helper Working!\n\n";
+                result += `🃏 Cards found: ${cards.length}\n`;
+                result += `🔘 Action buttons found: ${buttons.length}\n`;
+                result += `🔲 Total buttons found: ${allButtons.length}\n\n`;
+                
+                // Test collection methods
+                result += `Collection methods:\n`;
+                result += `• First card: "${cards.first()?.textContent}"\n`;
+                result += `• Last card: "${cards.last()?.textContent}"\n`;
+                result += `• Cards array: ${cards.toArray().length} items`;
+                
+                document.getElementById('collections-result').textContent = result;
+                document.getElementById('collections-result').className = 'status success';
+                
+            } catch (error) {
+                document.getElementById('collections-result').textContent = `❌ Error: ${error.message}`;
+                document.getElementById('collections-result').className = 'status error';
+            }
+        }
+        
+        function highlightCards() {
+            const cards = Collections.ClassName.card;
+            cards.forEach((card, index) => {
+                setTimeout(() => {
+                    card.classList.add('highlight');
+                    setTimeout(() => card.classList.remove('highlight'), 1500);
+                }, index * 200);
+            });
+        }
+        
+        function highlightButtons() {
+            const buttons = Collections.ClassName['action-btn'];
+            buttons.forEach(button => {
+                button.classList.add('highlight');
+                setTimeout(() => button.classList.remove('highlight'), 2000);
+            });
+        }
+        
+        function countElements() {
+            const cards = Collections.ClassName.card;
+            const buttons = Collections.TagName.button;
+            const inputs = Collections.TagName.input;
+            
+            let result = `📊 Element Count:\n\n`;
+            result += `🃏 Cards: ${cards.length}\n`;
+            result += `🔘 Buttons: ${buttons.length}\n`;
+            result += `📝 Inputs: ${inputs.length}\n`;
+            result += `📄 Divs: ${Collections.TagName.div.length}`;
+            
+            document.getElementById('collections-result').textContent = result;
+            document.getElementById('collections-result').className = 'status info';
+        }
+        
+        // Performance Stats
+        function showStats() {
+            try {
+                const elementsStats = Elements.stats();
+                const collectionsStats = Collections.stats();
+                
+                let result = "📊 Performance Statistics:\n\n";
+                
+                result += "🆔 Elements Helper:\n";
+                result += `• Cache hits: ${elementsStats.hits}\n`;
+                result += `• Cache misses: ${elementsStats.misses}\n`;
+                result += `• Hit rate: ${(elementsStats.hitRate * 100).toFixed(1)}%\n`;
+                result += `• Cache size: ${elementsStats.cacheSize}\n\n`;
+                
+                result += "📦 Collections Helper:\n";
+                result += `• Cache hits: ${collectionsStats.hits}\n`;
+                result += `• Cache misses: ${collectionsStats.misses}\n`;
+                result += `• Hit rate: ${(collectionsStats.hitRate * 100).toFixed(1)}%\n`;
+                result += `• Cache size: ${collectionsStats.cacheSize}`;
+                
+                document.getElementById('performance-stats').textContent = result;
+                document.getElementById('performance-stats').className = 'status success';
+                
+            } catch (error) {
+                document.getElementById('performance-stats').textContent = `❌ Error: ${error.message}`;
+                document.getElementById('performance-stats').className = 'status error';
+            }
+        }
+        
+        // Auto-run a simple test on page load
+        window.addEventListener('load', () => {
+            setTimeout(() => {
+                // Quick validation that helpers are loaded
+                if (typeof Elements !== 'undefined' && typeof Collections !== 'undefined') {
+                    document.getElementById('performance-stats').textContent = 
+                        "✅ Both Elements.js and Collections.js loaded successfully! Try the test buttons above.";
+                    document.getElementById('performance-stats').className = 'status success';
+                } else {
+                    document.getElementById('performance-stats').textContent = 
+                        "❌ DOM Helpers not loaded properly. Check console for errors.";
+                    document.getElementById('performance-stats').className = 'status error';
+                }
+            }, 100);
+        });
+        
+        // Add some interactivity to action buttons
+        document.addEventListener('DOMContentLoaded', () => {
+            // Use Collections to add click handlers to action buttons
+            setTimeout(() => {
+                if (typeof Collections !== 'undefined') {
+                    Collections.ClassName['action-btn'].forEach((btn, index) => {
+                        btn.addEventListener('click', () => {
+                            btn.textContent = `Clicked! (${index + 1})`;
+                            btn.style.background = 'linear-gradient(45deg, #28a745, #20c997)';
+                            setTimeout(() => {
+                                btn.textContent = `Action Button ${index + 1}`;
+                                btn.style.background = '';
+                            }, 1500);
+                        });
+                    });
+                }
+            }, 200);
+        });
+    </script>
+</body>
+</html>
