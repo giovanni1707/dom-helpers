@@ -47,17 +47,6 @@ Collections.TagName.input.forEach(input => validateInput(input));
 |--------|-------------|-------------------|--------------|
 | `document.getElementById()` | ~0.1ms | ~0.1ms | Low |
 | `document.getElementsByClassName()` | ~0.2ms | ~0.2ms | Low |
-<!-- Combined bundle (both helpers) -->
-<script src="https://cdn.jsdelivr.net/npm/dom-helpers@2/dist/dom-helpers.min.js"></script>
-
-<!-- Individual helpers -->
-<script src="https://cdn.jsdelivr.net/npm/dom-helpers@2/dist/elements.min.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/dom-helpers@2/dist/collections.min.js"></script>
-
-<!-- Alternative CDN -->
-<script src="https://unpkg.com/dom-helpers@2/dist/dom-helpers.min.js"></script>
->>>>>>> 8996520 (Transform repository into comprehensive DOM Helpers package v2.0.0)
-```
 | **DOM Helpers** | ~0.1ms | **~0.001ms** | **Optimized** |
 
 ## 🚀 Installation
@@ -65,27 +54,42 @@ Collections.TagName.input.forEach(input => validateInput(input));
 ### CDN (Recommended for quick start)
 
 ```html
-<!-- Combined bundle (both helpers) -->
-<script src="https://cdn.jsdelivr.net/npm/dom-helpers@2/dist/dom-helpers.min.js"></script>
-
+<!-- GitHub CDN (Available Now) -->
 <!-- Individual helpers -->
-<script src="https://cdn.jsdelivr.net/npm/dom-helpers@2/dist/elements.min.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/dom-helpers@2/dist/collections.min.js"></script>
+<script src="https://cdn.jsdelivr.net/gh/giovanni1707/elements-helper@main/dist/elements.min.js"></script>
+<script src="https://cdn.jsdelivr.net/gh/giovanni1707/elements-helper@main/dist/collections.min.js"></script>
 
-<!-- Alternative CDN -->
-<script src="https://unpkg.com/dom-helpers@2/dist/dom-helpers.min.js"></script>
+<!-- Combined bundle -->
+<script src="https://cdn.jsdelivr.net/gh/giovanni1707/elements-helper@main/dist/dom-helpers.min.js"></script>
+
+<!-- Combined unminified bundle -->
+<script src="https://cdn.jsdelivr.net/gh/giovanni1707/elements-helper@main/dist/dom-helpers.bundle.js"></script>
 ```
-=======
-<!-- Combined bundle (both helpers) -->
-<script src="https://cdn.jsdelivr.net/npm/dom-helpers@2/dist/dom-helpers.min.js"></script>
 
-<!-- Individual helpers -->
-<script src="https://cdn.jsdelivr.net/npm/dom-helpers@2/dist/elements.min.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/dom-helpers@2/dist/collections.min.js"></script>
+**Usage Examples:**
 
-<!-- Alternative CDN -->
-<script src="https://unpkg.com/dom-helpers@2/dist/dom-helpers.min.js"></script>
->>>>>>> 8996520 (Transform repository into comprehensive DOM Helpers package v2.0.0)
+```html
+<!-- Individual Helpers Example -->
+<script src="https://cdn.jsdelivr.net/gh/giovanni1707/elements-helper@main/dist/elements.min.js"></script>
+<script src="https://cdn.jsdelivr.net/gh/giovanni1707/elements-helper@main/dist/collections.min.js"></script>
+<script>
+  // Use Elements Helper
+  Elements.myButton.addEventListener('click', () => alert('Clicked!'));
+  
+  // Use Collections Helper
+  Collections.ClassName.card.forEach(card => card.style.color = 'red');
+</script>
+```
+
+```html
+<!-- Combined Bundle Example -->
+<script src="https://cdn.jsdelivr.net/gh/giovanni1707/elements-helper@main/dist/dom-helpers.min.js"></script>
+<script>
+  // Use both helpers
+  console.log('Ready:', DOMHelpers.isReady());
+  Elements.myInput.value = 'Hello';
+  Collections.TagName.button.forEach(btn => btn.disabled = false);
+</script>
 ```
 
 ### NPM
@@ -119,16 +123,10 @@ const { Elements, Collections } = require('dom-helpers');
     <button id="clickMe">Click Me!</button>
     <button id="submitBtn">Submit</button>
     <div class="message">Hello World</div>
-    <script src="https://cdn.jsdelivr.net/npm/dom-helpers@2/dist/dom-helpers.min.js"></script>
->>>>>>> 8996520 (Transform repository into comprehensive DOM Helpers package v2.0.0)
-    <script>
     <div class="message">Another message</div>
     
-    <script src="https://cdn.jsdelivr.net/npm/dom-helpers@2/dist/dom-helpers.min.js"></script>
-    <script>
-=======
-    <script src="https://cdn.jsdelivr.net/npm/dom-helpers@2/dist/dom-helpers.min.js"></script>
->>>>>>> 8996520 (Transform repository into comprehensive DOM Helpers package v2.0.0)
+    <!-- Load DOM Helpers from GitHub CDN -->
+    <script src="https://cdn.jsdelivr.net/gh/giovanni1707/elements-helper@main/dist/dom-helpers.min.js"></script>
     <script>
         // Elements Helper - ID-based access
         Elements.clickMe.addEventListener('click', () => {
@@ -233,7 +231,7 @@ DOMHelpers.configure({
 DOMHelpers.destroyAll()  // Cleanup everything
 ```
 
-## � Usage Examples
+## 💡 Usage Examples
 
 ### Form Handling
 
@@ -359,31 +357,31 @@ DOM Helpers provides multiple distribution formats to fit your needs:
 
 ```html
 <!-- Elements Helper only (5.3KB minified) -->
-<script src="https://cdn.jsdelivr.net/npm/dom-helpers@2/dist/elements.min.js"></script>
+<script src="https://cdn.jsdelivr.net/gh/giovanni1707/elements-helper@main/dist/elements.min.js"></script>
 
 <!-- Collections Helper only (6.9KB minified) -->
-<script src="https://cdn.jsdelivr.net/npm/dom-helpers@2/dist/collections.min.js"></script>
+<script src="https://cdn.jsdelivr.net/gh/giovanni1707/elements-helper@main/dist/collections.min.js"></script>
 ```
 
 ### Combined Bundle Options
 
 ```html
 <!-- Combined bundle - unminified (28.5KB) -->
-<script src="https://cdn.jsdelivr.net/npm/dom-helpers@2/dist/dom-helpers.bundle.js"></script>
+<script src="https://cdn.jsdelivr.net/gh/giovanni1707/elements-helper@main/dist/dom-helpers.bundle.js"></script>
 
 <!-- Combined bundle - minified (14.0KB) -->
-<script src="https://cdn.jsdelivr.net/npm/dom-helpers@2/dist/dom-helpers.min.js"></script>
+<script src="https://cdn.jsdelivr.net/gh/giovanni1707/elements-helper@main/dist/dom-helpers.min.js"></script>
 ```
 
 ### ES Modules
 
 ```javascript
 // Individual ES modules
-import { Elements } from 'https://cdn.jsdelivr.net/npm/dom-helpers@2/dist/elements.esm.js';
-import { Collections } from 'https://cdn.jsdelivr.net/npm/dom-helpers@2/dist/collections.esm.js';
+import { Elements } from 'https://cdn.jsdelivr.net/gh/giovanni1707/elements-helper@main/dist/elements.esm.js';
+import { Collections } from 'https://cdn.jsdelivr.net/gh/giovanni1707/elements-helper@main/dist/collections.esm.js';
 
 // Combined ES module
-import { DOMHelpers, Elements, Collections } from 'https://cdn.jsdelivr.net/npm/dom-helpers@2/dist/dom-helpers.esm.js';
+import { DOMHelpers, Elements, Collections } from 'https://cdn.jsdelivr.net/gh/giovanni1707/elements-helper@main/dist/dom-helpers.esm.js';
 ```
 
 ## 🏗️ Browser Support
