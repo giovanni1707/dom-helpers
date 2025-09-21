@@ -102,7 +102,9 @@ Download the latest release from [GitHub Releases](https://github.com/youruserna
     <button id="clickMe">Click Me!</button>
     <div id="output">Hello World</div>
     
-    <script src="https://cdn.jsdelivr.net/npm/elements-helper/dist/elements-helper.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/gh/giovanni1707/elements-helper@main/dist/elements-helper.min.js"></script>
+
+
     <script>
         // Access elements directly with dot notation
         Elements.clickMe.addEventListener('click', () => {
