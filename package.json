@@ -1,29 +1,53 @@
 {
-  "name": "elements-helper",
-  "version": "1.0.0",
-  "description": "A high-performance vanilla JavaScript library for efficient DOM element access with intelligent caching and automatic cleanup",
-  "main": "dist/elements-helper.js",
-  "module": "dist/elements-helper.esm.js",
-  "unpkg": "dist/elements-helper.min.js",
-  "jsdelivr": "dist/elements-helper.min.js",
-  "types": "dist/elements-helper.d.ts",
+  "name": "dom-helpers",
+  "version": "2.0.0",
+  "description": "High-performance vanilla JavaScript DOM utilities with intelligent caching - Elements Helper (ID access) + Collections Helper (class/tag/name access)",
+  "main": "dist/dom-helpers.js",
+  "module": "dist/dom-helpers.esm.js",
+  "unpkg": "dist/dom-helpers.min.js",
+  "jsdelivr": "dist/dom-helpers.min.js",
+  "types": "dist/dom-helpers.d.ts",
+  "exports": {
+    ".": {
+      "import": "./dist/dom-helpers.esm.js",
+      "require": "./dist/dom-helpers.js",
+      "browser": "./dist/dom-helpers.min.js"
+    },
+    "./elements": {
+      "import": "./dist/elements.esm.js",
+      "require": "./dist/elements.js",
+      "browser": "./dist/elements.min.js"
+    },
+    "./collections": {
+      "import": "./dist/collections.esm.js",
+      "require": "./dist/collections.js",
+      "browser": "./dist/collections.min.js"
+    },
+    "./package.json": "./package.json"
+  },
   "files": [
     "dist/",
     "src/",
+    "docs/",
     "README.md",
     "LICENSE"
   ],
   "scripts": {
-    "build": "npm run build:umd && npm run build:esm && npm run build:min",
-    "build:umd": "cp src/elements-helper.js dist/elements-helper.js",
-    "build:esm": "node scripts/build-esm.js",
-    "build:min": "node scripts/build-min.js",
+    "build": "npm run build:individual && npm run build:combined && npm run build:min",
+    "build:individual": "npm run build:elements && npm run build:collections",
+    "build:elements": "node scripts/build.js elements",
+    "build:collections": "node scripts/build.js collections",
+    "build:combined": "node scripts/build.js combined",
+    "build:min": "node scripts/minify.js",
     "test": "echo \"Tests coming soon\" && exit 0",
-    "prepublishOnly": "npm run build"
+    "prepublishOnly": "npm run build",
+    "dev": "npm run build && node -e \"console.log('Build completed. Check dist/ folder.')\"",
+    "clean": "node -e \"const fs=require('fs'); if(fs.existsSync('dist')) fs.rmSync('dist', {recursive:true}); console.log('Cleaned dist/ folder');\""
   },
   "keywords": [
     "dom",
     "elements",
+    "collections",
     "javascript",
     "vanilla-js",
     "performance",
@@ -31,20 +55,26 @@
     "mutation-observer",
     "browser",
     "frontend",
-    "utility"
+    "utility",
+    "getElementById",
+    "getElementsByClassName",
+    "getElementsByTagName",
+    "getElementsByName",
+    "proxy",
+    "cdn"
   ],
   "author": "Your Name <your.email@example.com>",
   "license": "MIT",
   "repository": {
     "type": "git",
-    "url": "https://github.com/yourusername/elements-helper.git"
+    "url": "https://github.com/giovanni1707/elements-helper.git"
   },
   "bugs": {
-    "url": "https://github.com/yourusername/elements-helper/issues"
+    "url": "https://github.com/giovanni1707/elements-helper/issues"
   },
-  "homepage": "https://github.com/yourusername/elements-helper#readme",
+  "homepage": "https://github.com/giovanni1707/elements-helper#readme",
   "devDependencies": {
-    "terser": "^5.19.0"
+    "terser": "^5.44.0"
   },
   "engines": {
     "node": ">=12.0.0"
@@ -53,5 +83,17 @@
     "> 1%",
     "last 2 versions",
     "not dead"
-  ]
+  ],
+  "cdn": {
+    "jsdelivr": {
+      "combined": "https://cdn.jsdelivr.net/npm/dom-helpers@2/dist/dom-helpers.min.js",
+      "elements": "https://cdn.jsdelivr.net/npm/dom-helpers@2/dist/elements.min.js",
+      "collections": "https://cdn.jsdelivr.net/npm/dom-helpers@2/dist/collections.min.js"
+    },
+    "unpkg": {
+      "combined": "https://unpkg.com/dom-helpers@2/dist/dom-helpers.min.js",
+      "elements": "https://unpkg.com/dom-helpers@2/dist/elements.min.js",
+      "collections": "https://unpkg.com/dom-helpers@2/dist/collections.min.js"
+    }
+  }
 }

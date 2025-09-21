@@ -1,93 +1,109 @@
-# Elements Helper 🚀
+# DOM Helpers 🚀
 
-A high-performance vanilla JavaScript library for efficient DOM element access with intelligent caching and automatic cleanup.
-
-[![npm version](https://badge.fury.io/js/elements-helper.svg)](https://badge.fury.io/js/elements-helper)
+[![npm version](https://badge.fury.io/js/dom-helpers.svg)](https://badge.fury.io/js/dom-helpers)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
-[![CDN](https://img.shields.io/badge/CDN-jsDelivr-orange)](https://cdn.jsdelivr.net/npm/elements-helper/dist/elements-helper.min.js)
+[![CDN](https://img.shields.io/badge/CDN-jsDelivr-orange)](https://cdn.jsdelivr.net/npm/dom-helpers/dist/dom-helpers.min.js)
+[![TypeScript](https://img.shields.io/badge/TypeScript-Ready-blue)](https://www.typescriptlang.org/)
+[![Size](https://img.shields.io/bundlephobia/minzip/dom-helpers)](https://bundlephobia.com/package/dom-helpers)
 
-## 🎯 What is Elements Helper?
+**High-performance vanilla JavaScript DOM utilities with intelligent caching and automatic cleanup.**
 
-Elements Helper is a lightweight, zero-dependency library that revolutionizes how you access DOM elements in vanilla JavaScript. It provides a simple, intuitive API with powerful performance optimizations under the hood.
+## 🎯 What is DOM Helpers?
+
+DOM Helpers is a comprehensive collection of lightweight, zero-dependency utilities that revolutionize DOM access in vanilla JavaScript. It includes two powerful helpers:
+
+- **🆔 Elements Helper**: Lightning-fast ID-based element access (`Elements.myId`)
+- **📦 Collections Helper**: Efficient class/tag/name-based collections (`Collections.ClassName.button`)
 
 ```javascript
 // Instead of this:
 const button = document.getElementById('submit-btn');
-const form = document.getElementById('user-form');
-const modal = document.getElementById('confirmation-modal');
+const forms = document.getElementsByClassName('contact-form');
+const inputs = document.getElementsByTagName('input');
 
-// Write this (exact ID matching):
-Elements['submit-btn'].addEventListener('click', () => {
-  Elements['user-form'].style.display = 'none';
-  Elements['confirmation-modal'].style.display = 'block';
-});
-
-// Or for camelCase IDs:
-// Elements.submitBtn, Elements.userForm, Elements.confirmationModal
+// Write this:
+Elements['submit-btn'].addEventListener('click', handleSubmit);
+Collections.ClassName['contact-form'].forEach(form => setupForm(form));
+Collections.TagName.input.forEach(input => validateInput(input));
 ```
 
-## ✨ Why Elements Helper?
+## ✨ Why DOM Helpers?
 
 ### 🔥 Performance Benefits
-- **Intelligent Caching**: Elements are cached after first access, eliminating repeated DOM queries
-- **Automatic Cache Management**: Smart cleanup removes stale references automatically
-- **Mutation Observer Integration**: Keeps cache synchronized with DOM changes in real-time
-- **Debounced Updates**: Batches DOM mutations for optimal performance
+- **Intelligent Caching**: Elements cached after first access (~100x faster subsequent access)
+- **Automatic Cache Management**: Smart cleanup removes stale references
+- **Mutation Observer Integration**: Real-time DOM change detection
+- **Memory Efficient**: WeakMap usage prevents memory leaks
 
 ### 🛡️ Developer Experience
-- **Simple API**: Access elements with `Elements.myElementId` syntax
-- **TypeScript-like Safety**: Built-in validation and error handling
-- **Async Support**: Wait for elements to appear in the DOM
-- **Memory Efficient**: WeakMap usage prevents memory leaks
+- **Simple API**: Intuitive dot notation and bracket syntax
+- **TypeScript Support**: Full type definitions included
+- **Multiple Distribution Options**: Individual helpers or combined bundle
+- **CDN Ready**: Works with jsDelivr, unpkg, and other CDNs
 
 ### 📊 Performance Comparison
 
 | Method | First Access | Subsequent Access | Memory Usage |
 |--------|-------------|-------------------|--------------|
 | `document.getElementById()` | ~0.1ms | ~0.1ms | Low |
-| **Elements Helper** | ~0.1ms | **~0.001ms** | **Optimized** |
+| `document.getElementsByClassName()` | ~0.2ms | ~0.2ms | Low |
+<!-- Combined bundle (both helpers) -->
+<script src="https://cdn.jsdelivr.net/npm/dom-helpers@2/dist/dom-helpers.min.js"></script>
 
-*Subsequent access is ~100x faster with Elements Helper!*
+<!-- Individual helpers -->
+<script src="https://cdn.jsdelivr.net/npm/dom-helpers@2/dist/elements.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/dom-helpers@2/dist/collections.min.js"></script>
+
+<!-- Alternative CDN -->
+<script src="https://unpkg.com/dom-helpers@2/dist/dom-helpers.min.js"></script>
+>>>>>>> 8996520 (Transform repository into comprehensive DOM Helpers package v2.0.0)
+```
+| **DOM Helpers** | ~0.1ms | **~0.001ms** | **Optimized** |
 
 ## 🚀 Installation
 
 ### CDN (Recommended for quick start)
 
 ```html
+<!-- Combined bundle (both helpers) -->
+<script src="https://cdn.jsdelivr.net/npm/dom-helpers@2/dist/dom-helpers.min.js"></script>
 
-<!-- Latest version (recommended) -->
-<script src="https://cdn.jsdelivr.net/gh/giovanni1707/elements-helper@main/dist/elements-helper.min.js"></script>
+<!-- Individual helpers -->
+<script src="https://cdn.jsdelivr.net/npm/dom-helpers@2/dist/elements.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/dom-helpers@2/dist/collections.min.js"></script>
 
-<!-- Specific commit (for stability) -->
-<script src="https://cdn.jsdelivr.net/gh/giovanni1707/elements-helper@d155beb/dist/elements-helper.min.js"></script>
+<!-- Alternative CDN -->
+<script src="https://unpkg.com/dom-helpers@2/dist/dom-helpers.min.js"></script>
+```
+=======
+<!-- Combined bundle (both helpers) -->
+<script src="https://cdn.jsdelivr.net/npm/dom-helpers@2/dist/dom-helpers.min.js"></script>
 
-<!-- Unminified version (for debugging) -->
-<script src="https://cdn.jsdelivr.net/gh/giovanni1707/elements-helper@main/dist/elements-helper.js"></script>
+<!-- Individual helpers -->
+<script src="https://cdn.jsdelivr.net/npm/dom-helpers@2/dist/elements.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/dom-helpers@2/dist/collections.min.js"></script>
 
-
-
+<!-- Alternative CDN -->
+<script src="https://unpkg.com/dom-helpers@2/dist/dom-helpers.min.js"></script>
+>>>>>>> 8996520 (Transform repository into comprehensive DOM Helpers package v2.0.0)
 ```
 
 ### NPM
 
 ```bash
-npm install elements-helper
+npm install dom-helpers
 ```
 
 ```javascript
-// ES6 Modules
-import { Elements } from 'elements-helper';
+// Combined import
+import { DOMHelpers, Elements, Collections } from 'dom-helpers';
+
+// Individual imports
+import { Elements } from 'dom-helpers/elements';
+import { Collections } from 'dom-helpers/collections';
 
 // CommonJS
-const { Elements } = require('elements-helper');
-```
-
-### Local Download
-
-Download the latest release from [GitHub Releases](https://github.com/yourusername/elements-helper/releases) and include it in your project:
-
-```html
-<script src="path/to/elements-helper.min.js"></script>
+const { Elements, Collections } = require('dom-helpers');
 ```
 
 ## 📖 Quick Start
@@ -96,23 +112,39 @@ Download the latest release from [GitHub Releases](https://github.com/youruserna
 <!DOCTYPE html>
 <html>
 <head>
-    <title>Elements Helper Demo</title>
+    <title>DOM Helpers Demo</title>
 </head>
 <body>
+    <!-- Elements for testing -->
     <button id="clickMe">Click Me!</button>
-    <div id="output">Hello World</div>
-    
-    <script src="https://cdn.jsdelivr.net/gh/giovanni1707/elements-helper@main/dist/elements-helper.min.js"></script>
-
-
+    <button id="submitBtn">Submit</button>
+    <div class="message">Hello World</div>
+    <script src="https://cdn.jsdelivr.net/npm/dom-helpers@2/dist/dom-helpers.min.js"></script>
+>>>>>>> 8996520 (Transform repository into comprehensive DOM Helpers package v2.0.0)
     <script>
-        // Access elements directly with dot notation
+    <div class="message">Another message</div>
+    
+    <script src="https://cdn.jsdelivr.net/npm/dom-helpers@2/dist/dom-helpers.min.js"></script>
+    <script>
+=======
+    <script src="https://cdn.jsdelivr.net/npm/dom-helpers@2/dist/dom-helpers.min.js"></script>
+>>>>>>> 8996520 (Transform repository into comprehensive DOM Helpers package v2.0.0)
+    <script>
+        // Elements Helper - ID-based access
         Elements.clickMe.addEventListener('click', () => {
-            Elements.output.textContent = 'Button clicked!';
+            alert('Button clicked!');
+        });
+        
+        Elements.submitBtn.style.background = 'green';
+        
+        // Collections Helper - Class-based access
+        Collections.ClassName.message.forEach((div, index) => {
+            div.textContent = `Message ${index + 1} updated!`;
         });
         
         // Check performance stats
-        console.log(Elements.stats());
+        console.log('Elements stats:', Elements.stats());
+        console.log('Collections stats:', Collections.stats());
     </script>
 </body>
 </html>
@@ -120,149 +152,139 @@ Download the latest release from [GitHub Releases](https://github.com/youruserna
 
 ## 🔧 API Reference
 
-### Basic Element Access
+### 🆔 Elements Helper (ID Access)
+
+Perfect for accessing elements by their ID with exact matching.
 
 ```javascript
-// Direct access with dot notation (cached automatically)
-const button = Elements.myButton;        // Works with camelCase IDs
-const form = Elements.userForm;          // Works with camelCase IDs
-const nav = Elements.mainNavigation;     // Converts main-navigation → mainNavigation
+// Exact ID matching - use the same syntax as your HTML IDs
+
+// For camelCase IDs, use dot notation:
+Elements.myButton        // id="myButton"
+Elements.userForm        // id="userForm"
+
+// For kebab-case IDs, use bracket notation:
+Elements['submit-btn']   // id="submit-btn"
+Elements['user-form']    // id="user-form"
 
 // Check if element exists
 if ('myButton' in Elements) {
-    // Element exists in DOM
+    // Element exists
 }
 
-// Both notations work for kebab-case IDs
-const sameElement1 = Elements.submitButton;    // camelCase property
-const sameElement2 = Elements['submit-button']; // original kebab-case ID
+// Utility methods
+Elements.stats()         // Performance statistics
+Elements.clear()         // Clear cache
+Elements.destroy()       // Cleanup resources
 ```
 
-### Destructuring Support
+### 📦 Collections Helper (Class/Tag/Name Access)
+
+Efficient access to element collections with enhanced array-like methods.
 
 ```javascript
-// Direct dot notation access (recommended)
-Elements.mainHeader.style.display = 'block';
-Elements.pageFooter.style.background = 'gray';
-Elements.leftSidebar.classList.add('active');
+// Class name collections
+Collections.ClassName.button.length              // class="button"
+Collections.ClassName['btn-primary'].length      // class="btn-primary"
+Collections.ClassName.navItem.forEach(...)       // class="navItem"
 
-// Get multiple elements at once (alternative method)
-const { mainHeader, pageFooter, leftSidebar } = Elements.destructure(
-    'main-header', 'page-footer', 'left-sidebar'
-);
+// Tag name collections  
+Collections.TagName.div.length                   // <div> elements
+Collections.TagName.input.toArray()              // <input> elements as array
 
-// Get required elements (throws error if missing)
-const { loginForm, usernameInput } = Elements.getRequired('login-form', 'username-input');
+// Name attribute collections
+Collections.Name.username.length                 // name="username"
+Collections.Name['user-input'].first()           // name="user-input"
+
+// Enhanced collection methods
+const buttons = Collections.ClassName.button;
+buttons.length          // Live count
+buttons.first()         // First element
+buttons.last()          // Last element
+buttons.at(-1)          // Last element (negative indexing)
+buttons.isEmpty()       // Check if empty
+buttons.toArray()       // Convert to array
+buttons.forEach(...)    // Iterate
+buttons.map(...)        // Transform
+buttons.filter(...)     // Filter elements
 ```
 
-### Async Element Access
+### 🔄 Combined API (DOMHelpers)
+
+When using the combined bundle, you get additional utilities:
 
 ```javascript
-// Wait for elements to appear (useful for dynamic content)
-try {
-    const { popupModal, backdropOverlay } = await Elements.waitFor('popup-modal', 'backdrop-overlay');
-    // Elements are now available - use dot notation
-    popupModal.style.display = 'block';
-    backdropOverlay.style.opacity = '0.5';
-} catch (error) {
-    console.error('Elements not found within timeout');
-}
-```
+// Check if both helpers are ready
+DOMHelpers.isReady()     // true if both Elements and Collections are available
 
-### Configuration
+// Get combined statistics
+DOMHelpers.getStats()    // { elements: {...}, collections: {...} }
 
-```javascript
-// Configure the library
-Elements.configure({
-    enableLogging: true,        // Enable console logging
-    maxCacheSize: 500,         // Maximum cached elements
-    cleanupInterval: 60000,    // Cleanup interval in ms
-    debounceDelay: 32         // Mutation observer debounce
+// Clear all caches
+DOMHelpers.clearAll()    // Clear both Elements and Collections caches
+
+// Configure both helpers
+DOMHelpers.configure({
+    elements: { enableLogging: true },
+    collections: { maxCacheSize: 2000 }
 });
+
+// Destroy all helpers
+DOMHelpers.destroyAll()  // Cleanup everything
 ```
 
-### Cache Management
-
-```javascript
-// Get performance statistics
-const stats = Elements.stats();
-console.log(`Cache hit rate: ${(stats.hitRate * 100).toFixed(1)}%`);
-
-// Check if element is cached
-if (Elements.isCached('my-element')) {
-    console.log('Element is in cache');
-}
-
-// Clear cache manually
-Elements.clear();
-
-// Get cache snapshot
-const cachedIds = Elements.helper.getCacheSnapshot();
-```
-
-### Advanced Usage
-
-```javascript
-// Access the helper instance directly
-const helper = Elements.helper;
-
-// Destroy the helper (cleanup all resources)
-Elements.destroy();
-
-// Create custom instance with different settings
-const customHelper = new ProductionElementsHelper({
-    enableLogging: true,
-    maxCacheSize: 2000
-});
-```
-
-## 💡 Usage Examples
+## � Usage Examples
 
 ### Form Handling
 
 ```javascript
-// Clean dot notation - works with any ID format
-Elements.loginForm.addEventListener('submit', (e) => {
+// Clean syntax for form interactions
+Elements['contact-form'].addEventListener('submit', (e) => {
     e.preventDefault();
     
-    const username = Elements.username.value;
-    const password = Elements.password.value;
+    const name = Elements.username.value;
+    const email = Elements.email.value;
     
-    // Handle form submission
-    submitLogin(username, password);
+    // Validate all required inputs
+    const requiredInputs = Collections.ClassName.required;
+    const isValid = requiredInputs.every(input => input.value.trim());
     
-    // Update UI
-    Elements.submitButton.disabled = true;
-    Elements.statusMessage.textContent = 'Logging in...';
+    if (isValid) {
+        Elements['submit-btn'].disabled = true;
+        Elements['status-message'].textContent = 'Submitting...';
+        submitForm({ name, email });
+    }
 });
 ```
 
-### Dynamic Content
+### Dynamic Content Management
 
 ```javascript
-// Add dynamic content and access immediately
-const newDiv = document.createElement('div');
-newDiv.id = 'dynamic-content';
-newDiv.textContent = 'Dynamic content';
-document.body.appendChild(newDiv);
-
-// Access immediately with dot notation
-setTimeout(() => {
-    Elements.dynamicContent.style.fontWeight = 'bold';
-    Elements.dynamicContent.style.color = 'blue';
-}, 100);
-
-// Wait for dynamically loaded content (alternative)
-async function handleDynamicContent() {
-    try {
-        const { productList, loadingSpinner } = await Elements.waitFor(
-            'product-list', 'loading-spinner'
-        );
+// Handle dynamic content with automatic cache updates
+function addNewMessage(text) {
+    const messageDiv = document.createElement('div');
+    messageDiv.className = 'message';
+    messageDiv.textContent = text;
+    document.body.appendChild(messageDiv);
+    
+    // Collections automatically detect the new element
+    setTimeout(() => {
+        console.log(`Total messages: ${Collections.ClassName.message.length}`);
         
-        loadingSpinner.style.display = 'none';
-        productList.style.display = 'block';
+        // Style all messages
+        Collections.ClassName.message.forEach((msg, index) => {
+            msg.style.animationDelay = `${index * 0.1}s`;
+        });
+    }, 100);
+}
+
+// Wait for dynamic elements to appear
+async function waitForDynamicContent() {
+    try {
+        const loadingSpinner = await Collections.waitFor('className', 'spinner', 1, 5000);
+        loadingSpinner.first().style.display = 'none';
     } catch (error) {
-        console.error('Dynamic content failed to load');
+        console.error('Loading spinner not found');
     }
 }
 ```
@@ -270,36 +292,100 @@ async function handleDynamicContent() {
 ### Modal Management
 
 ```javascript
-// Simple and clean with dot notation
-Elements.openModal.addEventListener('click', () => {
-    Elements.userModal.classList.add('active');
-    Elements.modalOverlay.classList.add('active');
+// Simple modal system
+const modal = {
+    open(modalId) {
+        Elements[modalId].classList.add('active');
+        Elements['modal-overlay'].classList.add('active');
+        
+        // Disable all buttons except close buttons
+        Collections.ClassName.button.forEach(btn => {
+            if (!btn.classList.contains('close-btn')) {
+                btn.disabled = true;
+            }
+        });
+    },
+    
+    close() {
+        // Hide all modals
+        Collections.ClassName.modal.forEach(modal => {
+            modal.classList.remove('active');
+        });
+        
+        Elements['modal-overlay'].classList.remove('active');
+        
+        // Re-enable all buttons
+        Collections.ClassName.button.forEach(btn => {
+            btn.disabled = false;
+        });
+    }
+};
+
+// Setup modal triggers
+Collections.ClassName['open-modal'].forEach(trigger => {
+    trigger.addEventListener('click', (e) => {
+        const modalId = e.target.dataset.modal;
+        modal.open(modalId);
+    });
 });
 
-Elements.closeModal.addEventListener('click', () => {
-    Elements.userModal.classList.remove('active');
-    Elements.modalOverlay.classList.remove('active');
-});
-
-// Works with kebab-case IDs too
-Elements.submitButton.addEventListener('click', () => {
-    Elements.confirmationDialog.style.display = 'block'; // confirmation-dialog → confirmationDialog
+Collections.ClassName['close-btn'].forEach(closeBtn => {
+    closeBtn.addEventListener('click', () => modal.close());
 });
 ```
 
 ### Performance Monitoring
 
 ```javascript
-// Monitor cache performance
-setInterval(() => {
-    const stats = Elements.stats();
-    console.log(`Cache: ${stats.cacheSize} elements, ${(stats.hitRate * 100).toFixed(1)}% hit rate`);
-}, 10000);
+// Monitor cache performance in development
+if (process.env.NODE_ENV === 'development') {
+    setInterval(() => {
+        const elementsStats = Elements.stats();
+        const collectionsStats = Collections.stats();
+        
+        console.log('Cache Performance:', {
+            elements: `${elementsStats.cacheSize} cached, ${(elementsStats.hitRate * 100).toFixed(1)}% hit rate`,
+            collections: `${collectionsStats.cacheSize} cached, ${(collectionsStats.hitRate * 100).toFixed(1)}% hit rate`
+        });
+    }, 10000);
+}
+```
+
+## 📦 Distribution Options
+
+DOM Helpers provides multiple distribution formats to fit your needs:
+
+### Individual Helpers
+
+```html
+<!-- Elements Helper only (5.3KB minified) -->
+<script src="https://cdn.jsdelivr.net/npm/dom-helpers@2/dist/elements.min.js"></script>
+
+<!-- Collections Helper only (6.9KB minified) -->
+<script src="https://cdn.jsdelivr.net/npm/dom-helpers@2/dist/collections.min.js"></script>
+```
+
+### Combined Bundle
+
+```html
+<!-- Both helpers (13.9KB minified) -->
+<script src="https://cdn.jsdelivr.net/npm/dom-helpers@2/dist/dom-helpers.min.js"></script>
+```
+
+### ES Modules
+
+```javascript
+// Individual ES modules
+import { Elements } from 'https://cdn.jsdelivr.net/npm/dom-helpers@2/dist/elements.esm.js';
+import { Collections } from 'https://cdn.jsdelivr.net/npm/dom-helpers@2/dist/collections.esm.js';
+
+// Combined ES module
+import { DOMHelpers, Elements, Collections } from 'https://cdn.jsdelivr.net/npm/dom-helpers@2/dist/dom-helpers.esm.js';
 ```
 
 ## 🏗️ Browser Support
 
-Elements Helper works in all modern browsers that support:
+DOM Helpers works in all modern browsers that support:
 - ES6 Classes
 - Proxy objects
 - MutationObserver
@@ -313,10 +399,11 @@ Elements Helper works in all modern browsers that support:
 
 ## ⚡ Performance Tips
 
-1. **Use Destructuring**: Get multiple elements at once for better performance
-2. **Enable Logging**: Use `enableLogging: true` during development to monitor cache performance
-3. **Adjust Cache Size**: Increase `maxCacheSize` for applications with many elements
-4. **Monitor Stats**: Regularly check `Elements.stats()` to optimize usage patterns
+1. **Choose the Right Helper**: Use Elements for ID access, Collections for class/tag/name access
+2. **Enable Logging in Development**: Set `enableLogging: true` to monitor cache performance
+3. **Adjust Cache Sizes**: Increase `maxCacheSize` for applications with many elements
+4. **Use Individual Helpers**: Load only what you need to minimize bundle size
+5. **Monitor Stats**: Check `stats()` regularly to optimize usage patterns
 
 ## 🤝 Contributing
 
@@ -326,22 +413,26 @@ We welcome contributions! Please see our [Contributing Guidelines](CONTRIBUTING.
 
 ```bash
 # Clone the repository
-git clone https://github.com/yourusername/elements-helper.git
+git clone https://github.com/giovanni1707/elements-helper.git
 cd elements-helper
 
 # Install dependencies
 npm install
 
-# Build the library
+# Build all distribution files
 npm run build
 
-# Run examples
-open examples/index.html
+# Run individual builds
+npm run build:elements      # Elements helper only
+npm run build:collections   # Collections helper only
+npm run build:combined      # Combined bundle
+
+# Minify all files
+npm run build:min
+
+# Clean dist folder
+npm run clean
 ```
-
-### Reporting Issues
-
-Please report issues on our [GitHub Issues](https://github.com/yourusername/elements-helper/issues) page.
 
 ## 📄 License
 
@@ -357,4 +448,4 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 
 **Made with ❤️ for the JavaScript community**
 
-[⭐ Star us on GitHub](https://github.com/yourusername/elements-helper) | [📖 Documentation](https://github.com/yourusername/elements-helper#readme) | [🐛 Report Bug](https://github.com/yourusername/elements-helper/issues)
+[⭐ Star us on GitHub](https://github.com/giovanni1707/elements-helper) | [📖 Documentation](https://github.com/giovanni1707/elements-helper#readme) | [🐛 Report Bug](https://github.com/giovanni1707/elements-helper/issues)
