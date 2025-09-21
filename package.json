@@ -2,7 +2,7 @@
   "name": "dom-helpers",
   "version": "2.0.0",
   "description": "High-performance vanilla JavaScript DOM utilities with intelligent caching - Elements Helper (ID access) + Collections Helper (class/tag/name access)",
-  "main": "dist/dom-helpers.js",
+  "main": "dist/dom-helpers.bundle.js",
   "module": "dist/dom-helpers.esm.js",
   "unpkg": "dist/dom-helpers.min.js",
   "jsdelivr": "dist/dom-helpers.min.js",
@@ -33,7 +33,8 @@
     "LICENSE"
   ],
   "scripts": {
-    "build": "npm run build:individual && npm run build:combined && npm run build:min",
+    "build": "node scripts/build-all.js",
+    "build:all": "node scripts/build-all.js",
     "build:individual": "npm run build:elements && npm run build:collections",
     "build:elements": "node scripts/build.js elements",
     "build:collections": "node scripts/build.js collections",

@@ -355,7 +355,7 @@ if (process.env.NODE_ENV === 'development') {
 
 DOM Helpers provides multiple distribution formats to fit your needs:
 
-### Individual Helpers
+### Individual Minified Files
 
 ```html
 <!-- Elements Helper only (5.3KB minified) -->
@@ -365,10 +365,13 @@ DOM Helpers provides multiple distribution formats to fit your needs:
 <script src="https://cdn.jsdelivr.net/npm/dom-helpers@2/dist/collections.min.js"></script>
 ```
 
-### Combined Bundle
+### Combined Bundle Options
 
 ```html
-<!-- Both helpers (13.9KB minified) -->
+<!-- Combined bundle - unminified (28.5KB) -->
+<script src="https://cdn.jsdelivr.net/npm/dom-helpers@2/dist/dom-helpers.bundle.js"></script>
+
+<!-- Combined bundle - minified (14.0KB) -->
 <script src="https://cdn.jsdelivr.net/npm/dom-helpers@2/dist/dom-helpers.min.js"></script>
 ```
 

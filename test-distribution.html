@@ -1,0 +1,361 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>DOM Helpers - Distribution Test</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+            background-color: #f5f5f5;
+        }
+        .test-section {
+            background: white;
+            margin: 20px 0;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        .test-section h2 {
+            color: #333;
+            border-bottom: 2px solid #007bff;
+            padding-bottom: 10px;
+        }
+        .test-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 20px;
+            margin-top: 20px;
+        }
+        .test-card {
+            background: #f8f9fa;
+            padding: 15px;
+            border-radius: 6px;
+            border-left: 4px solid #007bff;
+        }
+        .test-card h3 {
+            margin-top: 0;
+            color: #495057;
+        }
+        .status {
+            padding: 5px 10px;
+            border-radius: 4px;
+            font-weight: bold;
+            margin: 5px 0;
+        }
+        .status.success { background: #d4edda; color: #155724; }
+        .status.error { background: #f8d7da; color: #721c24; }
+        .code {
+            background: #f1f3f4;
+            padding: 10px;
+            border-radius: 4px;
+            font-family: 'Courier New', monospace;
+            font-size: 14px;
+            margin: 10px 0;
+            overflow-x: auto;
+        }
+        button {
+            background: #007bff;
+            color: white;
+            border: none;
+            padding: 8px 16px;
+            border-radius: 4px;
+            cursor: pointer;
+            margin: 5px;
+        }
+        button:hover {
+            background: #0056b3;
+        }
+        .demo-elements {
+            margin: 20px 0;
+        }
+        .demo-elements div {
+            padding: 10px;
+            margin: 5px;
+            background: #e9ecef;
+            border-radius: 4px;
+        }
+        .highlight {
+            background: #fff3cd !important;
+            border: 2px solid #ffc107 !important;
+        }
+    </style>
+</head>
+<body>
+    <h1>🚀 DOM Helpers - Distribution Test</h1>
+    <p>Testing all distribution files to ensure they work correctly.</p>
+
+    <!-- Test Elements for DOM Helpers -->
+    <div class="demo-elements">
+        <div id="test-element-1">Test Element 1</div>
+        <div id="test-element-2">Test Element 2</div>
+        <div class="test-class">Element with test-class</div>
+        <div class="test-class">Another element with test-class</div>
+        <span class="test-class">Span with test-class</span>
+        <input name="test-input" value="Test Input" />
+        <button name="test-button">Test Button</button>
+    </div>
+
+    <!-- Test Section 1: Individual Elements Helper -->
+    <div class="test-section">
+        <h2>📦 Individual Elements Helper (elements.min.js)</h2>
+        <div class="test-card">
+            <h3>Elements Helper Test</h3>
+            <div id="elements-status" class="status">Loading...</div>
+            <div class="code">
+                // Test Elements Helper<br>
+                console.log('Elements.test-element-1:', Elements['test-element-1']);<br>
+                console.log('Elements stats:', Elements.stats());
+            </div>
+            <button onclick="testElements()">Test Elements Helper</button>
+            <button onclick="highlightElement('test-element-1')">Highlight Element 1</button>
+            <button onclick="highlightElement('test-element-2')">Highlight Element 2</button>
+        </div>
+    </div>
+
+    <!-- Test Section 2: Individual Collections Helper -->
+    <div class="test-section">
+        <h2>📦 Individual Collections Helper (collections.min.js)</h2>
+        <div class="test-card">
+            <h3>Collections Helper Test</h3>
+            <div id="collections-status" class="status">Loading...</div>
+            <div class="code">
+                // Test Collections Helper<br>
+                console.log('Collections.ClassName.test-class:', Collections.ClassName['test-class']);<br>
+                console.log('Collections stats:', Collections.stats());
+            </div>
+            <button onclick="testCollections()">Test Collections Helper</button>
+            <button onclick="highlightCollection('test-class')">Highlight test-class</button>
+            <button onclick="highlightTagName('div')">Highlight DIVs</button>
+        </div>
+    </div>
+
+    <!-- Test Section 3: Combined Bundle -->
+    <div class="test-section">
+        <h2>📦 Combined Bundle (dom-helpers.bundle.js)</h2>
+        <div class="test-card">
+            <h3>Combined Bundle Test</h3>
+            <div id="combined-status" class="status">Not Loaded</div>
+            <div class="code">
+                // Test Combined Bundle<br>
+                console.log('DOMHelpers.isReady():', DOMHelpers.isReady());<br>
+                console.log('DOMHelpers.getStats():', DOMHelpers.getStats());
+            </div>
+            <button onclick="loadCombinedBundle()">Load Combined Bundle</button>
+            <button onclick="testCombined()">Test Combined API</button>
+        </div>
+    </div>
+
+    <!-- Test Section 4: Combined Minified -->
+    <div class="test-section">
+        <h2>📦 Combined Minified (dom-helpers.min.js)</h2>
+        <div class="test-card">
+            <h3>Minified Bundle Test</h3>
+            <div id="minified-status" class="status">Not Loaded</div>
+            <div class="code">
+                // Test Minified Bundle<br>
+                console.log('DOMHelpers version:', DOMHelpers.version);<br>
+                console.log('All helpers ready:', DOMHelpers.isReady());
+            </div>
+            <button onclick="loadMinifiedBundle()">Load Minified Bundle</button>
+            <button onclick="testMinified()">Test Minified API</button>
+        </div>
+    </div>
+
+    <!-- Load Individual Helpers First -->
+    <script src="dist/elements.min.js"></script>
+    <script src="dist/collections.min.js"></script>
+
+    <script>
+        // Test Functions
+        function testElements() {
+            try {
+                const element1 = Elements['test-element-1'];
+                const element2 = Elements['test-element-2'];
+                const stats = Elements.stats();
+                
+                console.log('Elements Test Results:');
+                console.log('- Element 1:', element1);
+                console.log('- Element 2:', element2);
+                console.log('- Stats:', stats);
+                
+                if (element1 && element2) {
+                    document.getElementById('elements-status').className = 'status success';
+                    document.getElementById('elements-status').textContent = 
+                        `✅ Success! Found ${stats.cacheSize} cached elements. Hit rate: ${(stats.hitRate * 100).toFixed(1)}%`;
+                } else {
+                    throw new Error('Elements not found');
+                }
+            } catch (error) {
+                console.error('Elements test failed:', error);
+                document.getElementById('elements-status').className = 'status error';
+                document.getElementById('elements-status').textContent = `❌ Error: ${error.message}`;
+            }
+        }
+
+        function testCollections() {
+            try {
+                const testClassCollection = Collections.ClassName['test-class'];
+                const divCollection = Collections.TagName.div;
+                const stats = Collections.stats();
+                
+                console.log('Collections Test Results:');
+                console.log('- test-class collection:', testClassCollection);
+                console.log('- div collection:', divCollection);
+                console.log('- Stats:', stats);
+                
+                if (testClassCollection && testClassCollection.length > 0) {
+                    document.getElementById('collections-status').className = 'status success';
+                    document.getElementById('collections-status').textContent = 
+                        `✅ Success! Found ${testClassCollection.length} elements with test-class. Cache size: ${stats.cacheSize}`;
+                } else {
+                    throw new Error('Collections not found');
+                }
+            } catch (error) {
+                console.error('Collections test failed:', error);
+                document.getElementById('collections-status').className = 'status error';
+                document.getElementById('collections-status').textContent = `❌ Error: ${error.message}`;
+            }
+        }
+
+        function loadCombinedBundle() {
+            const script = document.createElement('script');
+            script.src = 'dist/dom-helpers.bundle.js';
+            script.onload = () => {
+                document.getElementById('combined-status').className = 'status success';
+                document.getElementById('combined-status').textContent = '✅ Combined bundle loaded successfully!';
+            };
+            script.onerror = () => {
+                document.getElementById('combined-status').className = 'status error';
+                document.getElementById('combined-status').textContent = '❌ Failed to load combined bundle';
+            };
+            document.head.appendChild(script);
+        }
+
+        function loadMinifiedBundle() {
+            const script = document.createElement('script');
+            script.src = 'dist/dom-helpers.min.js';
+            script.onload = () => {
+                document.getElementById('minified-status').className = 'status success';
+                document.getElementById('minified-status').textContent = '✅ Minified bundle loaded successfully!';
+            };
+            script.onerror = () => {
+                document.getElementById('minified-status').className = 'status error';
+                document.getElementById('minified-status').textContent = '❌ Failed to load minified bundle';
+            };
+            document.head.appendChild(script);
+        }
+
+        function testCombined() {
+            try {
+                if (typeof DOMHelpers === 'undefined') {
+                    throw new Error('DOMHelpers not loaded. Load the combined bundle first.');
+                }
+                
+                const isReady = DOMHelpers.isReady();
+                const stats = DOMHelpers.getStats();
+                const version = DOMHelpers.version;
+                
+                console.log('Combined Bundle Test Results:');
+                console.log('- Is Ready:', isReady);
+                console.log('- Stats:', stats);
+                console.log('- Version:', version);
+                
+                document.getElementById('combined-status').className = 'status success';
+                document.getElementById('combined-status').textContent = 
+                    `✅ Combined API working! Version: ${version}, Ready: ${isReady}`;
+            } catch (error) {
+                console.error('Combined test failed:', error);
+                document.getElementById('combined-status').className = 'status error';
+                document.getElementById('combined-status').textContent = `❌ Error: ${error.message}`;
+            }
+        }
+
+        function testMinified() {
+            try {
+                if (typeof DOMHelpers === 'undefined') {
+                    throw new Error('DOMHelpers not loaded. Load the minified bundle first.');
+                }
+                
+                const version = DOMHelpers.version;
+                const isReady = DOMHelpers.isReady();
+                const stats = DOMHelpers.getStats();
+                
+                console.log('Minified Bundle Test Results:');
+                console.log('- Version:', version);
+                console.log('- Is Ready:', isReady);
+                console.log('- Stats:', stats);
+                
+                document.getElementById('minified-status').className = 'status success';
+                document.getElementById('minified-status').textContent = 
+                    `✅ Minified API working! Version: ${version}, Ready: ${isReady}`;
+            } catch (error) {
+                console.error('Minified test failed:', error);
+                document.getElementById('minified-status').className = 'status error';
+                document.getElementById('minified-status').textContent = `❌ Error: ${error.message}`;
+            }
+        }
+
+        function highlightElement(id) {
+            // Clear previous highlights
+            document.querySelectorAll('.highlight').forEach(el => el.classList.remove('highlight'));
+            
+            const element = Elements[id];
+            if (element) {
+                element.classList.add('highlight');
+                setTimeout(() => element.classList.remove('highlight'), 2000);
+            }
+        }
+
+        function highlightCollection(className) {
+            // Clear previous highlights
+            document.querySelectorAll('.highlight').forEach(el => el.classList.remove('highlight'));
+            
+            const collection = Collections.ClassName[className];
+            if (collection) {
+                collection.forEach(el => {
+                    el.classList.add('highlight');
+                    setTimeout(() => el.classList.remove('highlight'), 2000);
+                });
+            }
+        }
+
+        function highlightTagName(tagName) {
+            // Clear previous highlights
+            document.querySelectorAll('.highlight').forEach(el => el.classList.remove('highlight'));
+            
+            const collection = Collections.TagName[tagName];
+            if (collection) {
+                Array.from(collection).slice(0, 5).forEach(el => { // Limit to first 5 to avoid highlighting everything
+                    el.classList.add('highlight');
+                    setTimeout(() => el.classList.remove('highlight'), 2000);
+                });
+            }
+        }
+
+        // Auto-run initial tests
+        window.addEventListener('load', () => {
+            setTimeout(() => {
+                // Check if Elements is properly loaded
+                if (typeof Elements !== 'undefined' && Elements.stats) {
+                    testElements();
+                } else {
+                    document.getElementById('elements-status').className = 'status error';
+                    document.getElementById('elements-status').textContent = '❌ Elements helper not loaded properly';
+                }
+                
+                // Check if Collections is properly loaded
+                if (typeof Collections !== 'undefined' && Collections.stats) {
+                    testCollections();
+                } else {
+                    document.getElementById('collections-status').className = 'status error';
+                    document.getElementById('collections-status').textContent = '❌ Collections helper not loaded properly';
+                }
+            }, 200);
+        });
+    </script>
+</body>
+</html>
