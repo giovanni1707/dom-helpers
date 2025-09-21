@@ -75,7 +75,7 @@ cancelButton.addEventListener('click', function() {
 
 **✅ With DOM Helpers (Clean & Readable):**
 ```javascript
-// Clean and intuitive
+// Clean and intuitive - supports both dot notation and bracket notation
 Elements['submit-btn'].addEventListener('click', (e) => {
     e.preventDefault();
     
@@ -84,26 +84,44 @@ Elements['submit-btn'].addEventListener('click', (e) => {
     
     if (isValid) {
         Elements['submit-btn'].disabled = true;
-        Elements['status-message'].textContent = 'Submitting...';
-        Elements['status-message'].className = 'status loading';
+        Elements.statusMessage.textContent = 'Submitting...';  // dot notation for camelCase IDs
+        Elements.statusMessage.className = 'status loading';
         
         // Hide all error messages
         Collections.ClassName['error-message'].forEach(error => error.style.display = 'none');
         
-        // Submit form
+        // Submit form - mix of both syntaxes
         submitForm({
-            name: Elements['name-input'].value,
-            email: Elements['email-input'].value,
-            message: Elements['message-textarea'].value
+            name: Elements.nameInput.value,           // dot notation
+            email: Elements.emailInput.value,         // dot notation
+            message: Elements['message-textarea'].value  // bracket notation for kebab-case
         });
     }
 });
 
-Elements['cancel-btn'].addEventListener('click', () => {
-    Elements['name-input'].value = '';
-    Elements['email-input'].value = '';
-    Elements['message-textarea'].value = '';
-    Elements['status-message'].textContent = '';
+Elements.cancelBtn.addEventListener('click', () => {  // dot notation
+    Elements.nameInput.value = '';                    // dot notation
+    Elements.emailInput.value = '';                   // dot notation
+    Elements['message-textarea'].value = '';          // bracket notation
+    Elements.statusMessage.textContent = '';          // dot notation
+});
+```
+
+**🔧 ID Syntax Examples:**
+```javascript
+// Dot notation for camelCase IDs
+Elements.submitButton     // id="submitButton"
+Elements.userForm         // id="userForm"
+Elements.nameInput        // id="nameInput"
+
+// Bracket notation for kebab-case IDs
+Elements['submit-btn']    // id="submit-btn"
+Elements['user-form']     // id="user-form"
+Elements['name-input']    // id="name-input"
+
+// Both work seamlessly together
+Elements.myButton.addEventListener('click', () => {
+    Elements['status-message'].textContent = 'Button clicked!';
 });
 ```
 
