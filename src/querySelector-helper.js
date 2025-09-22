@@ -47,7 +47,7 @@
     }
 
     _initProxies() {
-      // query proxy for querySelector (single element)
+      // query proxy for querySelector (single element) with direct property access
       this.query = new Proxy(this._createQueryFunction('single'), {
         get: (target, prop) => {
           if (typeof prop === 'symbol' || 
@@ -58,7 +58,22 @@
           }
           
           const selector = this._normalizeSelector(prop);
-          return this._getQuery('single', selector);
+          const element = this._getQuery('single', selector);
+          
+          // If element found, return a proxy that allows direct property access
+          if (element) {
+            return new Proxy(element, {
+              get: (elementTarget, elementProp) => {
+                return elementTarget[elementProp];
+              },
+              set: (elementTarget, elementProp, value) => {
+                elementTarget[elementProp] = value;
+                return true;
+              }
+            });
+          }
+          
+          return element;
         },
         
         apply: (target, thisArg, args) => {
@@ -69,7 +84,7 @@
         }
       });
 
-      // queryAll proxy for querySelectorAll (multiple elements)
+      // queryAll proxy for querySelectorAll (multiple elements) with array-like access
       this.queryAll = new Proxy(this._createQueryFunction('multiple'), {
         get: (target, prop) => {
           if (typeof prop === 'symbol' || 
@@ -80,7 +95,39 @@
           }
           
           const selector = this._normalizeSelector(prop);
-          return this._getQuery('multiple', selector);
+          const collection = this._getQuery('multiple', selector);
+          
+          // Return a proxy that allows array-like access with direct property manipulation
+          return new Proxy(collection, {
+            get: (collectionTarget, collectionProp) => {
+              // Handle numeric indices
+              if (!isNaN(collectionProp) && parseInt(collectionProp) >= 0) {
+                const index = parseInt(collectionProp);
+                const element = collectionTarget[index];
+                
+                if (element) {
+                  // Return a proxy for the element that allows direct property access
+                  return new Proxy(element, {
+                    get: (elementTarget, elementProp) => {
+                      return elementTarget[elementProp];
+                    },
+                    set: (elementTarget, elementProp, value) => {
+                      elementTarget[elementProp] = value;
+                      return true;
+                    }
+                  });
+                }
+                return element;
+              }
+              
+              // Return collection methods and properties
+              return collectionTarget[collectionProp];
+            },
+            set: (collectionTarget, collectionProp, value) => {
+              collectionTarget[collectionProp] = value;
+              return true;
+            }
+          });
         },
         
         apply: (target, thisArg, args) => {

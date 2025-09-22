@@ -471,12 +471,17 @@ Elements['user-profile'].style.display = 'block';
 Elements.statusMessage.textContent = 'Loading...';
 ```
 
-### 📦 **Collections Helper** - Class/Tag/Name Access (6.9KB)
+### 📦 **Collections Helper** - Class/Tag/Name Access (7.8KB)
 
-Efficient access to element collections with enhanced array-like methods.
+Efficient access to element collections with enhanced array-like methods and function-style access.
 
 ```javascript
-// Class Collections:
+// Function-Style Access with Direct Property Manipulation:
+Collections.ClassName("item")[0].style.color = "red";        // Function call with index access
+Collections.TagName("button")[1].disabled = true;           // Direct property manipulation
+Collections.Name("username")[0].value = "john";             // Direct value assignment
+
+// Traditional Property Access:
 Collections.ClassName.button           // class="button"
 Collections.ClassName['btn-primary']   // class="btn-primary"
 Collections.ClassName.navItem          // class="navItem"
@@ -508,12 +513,18 @@ Collections.clear()     // Clear cache
 Collections.destroy()   // Cleanup resources
 ```
 
-### 🔍 **Selector Helper** - Advanced querySelector with Caching (9.9KB)
+### 🔍 **Selector Helper** - Advanced querySelector with Caching (10.1KB)
 
-Advanced querySelector implementation with intelligent caching and smart property access.
+Advanced querySelector implementation with intelligent caching, smart property access, and direct property manipulation.
 
 ```javascript
-// Smart Property Access:
+// Smart Property Access with Direct Property Manipulation:
+Selector.query.myButton.style.color = "blue";           // Direct property access
+Selector.query.idMainHeader.textContent = "New Title";  // Direct content manipulation
+Selector.queryAll.btnPrimary[0].style.color = "red";    // Array-like access with direct properties
+Selector.queryAll.item[1].classList.add('active');      // Index-based access with direct manipulation
+
+// Traditional Smart Property Access:
 Selector.query.myButton              // → querySelector('#my-button')
 Selector.query.idMainHeader          // → querySelector('#main-header')
 Selector.queryAll.btnPrimary         // → querySelectorAll('.btn-primary')
