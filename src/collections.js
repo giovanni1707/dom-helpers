@@ -11,6 +11,7 @@
         cleanupInterval: options.cleanupInterval ?? 30000,
         maxCacheSize: options.maxCacheSize ?? 1000,
         debounceDelay: options.debounceDelay ?? 16,
+        enableEnhancedSyntax: options.enableEnhancedSyntax ?? true,
         ...options
       };
 
@@ -32,90 +33,53 @@
 
     _initProxies() {
       // Create function-style proxy for ClassName
-      this.ClassName = new Proxy((className) => {
-        const collection = this._getCollection('className', className);
-        // Return a proxy that allows indexed access with direct property manipulation
-        return new Proxy(collection, {
-          get: (collectionTarget, collectionProp) => {
-            // Handle numeric indices
-            if (!isNaN(collectionProp) && parseInt(collectionProp) >= 0) {
-              const index = parseInt(collectionProp);
-              const element = collectionTarget[index];
-              
-              if (element) {
-                // Return a proxy for the element that allows direct property access
-                return new Proxy(element, {
-                  get: (elementTarget, elementProp) => {
-                    return elementTarget[elementProp];
-                  },
-                  set: (elementTarget, elementProp, value) => {
-                    elementTarget[elementProp] = value;
-                    return true;
-                  }
-                });
-              }
-              return element;
-            }
-            
-            // Return collection methods and properties
-            return collectionTarget[collectionProp];
-          },
-          set: (collectionTarget, collectionProp, value) => {
-            collectionTarget[collectionProp] = value;
-            return true;
-          }
-        });
-      }, {
-        get: (target, prop) => {
-          if (typeof prop === 'symbol' || typeof target[prop] === 'function') {
-            return target[prop];
-          }
-          return this._getCollection('className', prop);
-        },
-        apply: (target, thisArg, args) => {
-          if (args.length > 0) {
-            return target(args[0]);
-          }
-          return this._createEmptyCollection();
-        }
-      });
-
+      this.ClassName = this._createCollectionProxy('className');
+      
       // Create function-style proxy for TagName
-      this.TagName = new Proxy((tagName) => {
-        const collection = this._getCollection('tagName', tagName);
-        return new Proxy(collection, {
-          get: (collectionTarget, collectionProp) => {
-            if (!isNaN(collectionProp) && parseInt(collectionProp) >= 0) {
-              const index = parseInt(collectionProp);
-              const element = collectionTarget[index];
-              
-              if (element) {
-                return new Proxy(element, {
-                  get: (elementTarget, elementProp) => {
-                    return elementTarget[elementProp];
-                  },
-                  set: (elementTarget, elementProp, value) => {
-                    elementTarget[elementProp] = value;
-                    return true;
-                  }
-                });
-              }
-              return element;
-            }
-            return collectionTarget[collectionProp];
-          },
-          set: (collectionTarget, collectionProp, value) => {
-            collectionTarget[collectionProp] = value;
-            return true;
-          }
-        });
-      }, {
+      this.TagName = this._createCollectionProxy('tagName');
+      
+      // Create function-style proxy for Name
+      this.Name = this._createCollectionProxy('name');
+    }
+
+    _createCollectionProxy(type) {
+      // Base function for direct calls: Collections.ClassName('item')
+      const baseFunction = (value) => {
+        const collection = this._getCollection(type, value);
+        
+        // Return enhanced collection with proxy if enhanced syntax is enabled
+        if (this.options.enableEnhancedSyntax) {
+          return this._createEnhancedCollectionProxy(collection);
+        }
+        
+        return collection;
+      };
+
+      // Create proxy for property access: Collections.ClassName.item
+      return new Proxy(baseFunction, {
         get: (target, prop) => {
-          if (typeof prop === 'symbol' || typeof target[prop] === 'function') {
+          // Handle function properties and symbols
+          if (typeof prop === 'symbol' || 
+              prop === 'constructor' || 
+              prop === 'prototype' ||
+              prop === 'apply' ||
+              prop === 'call' ||
+              prop === 'bind' ||
+              typeof target[prop] === 'function') {
             return target[prop];
           }
-          return this._getCollection('tagName', prop);
+          
+          // Get collection for property name
+          const collection = this._getCollection(type, prop);
+          
+          // Return enhanced collection if enhanced syntax is enabled
+          if (this.options.enableEnhancedSyntax) {
+            return this._createEnhancedCollectionProxy(collection);
+          }
+          
+          return collection;
         },
+        
         apply: (target, thisArg, args) => {
           if (args.length > 0) {
             return target(args[0]);
@@ -123,48 +87,58 @@
           return this._createEmptyCollection();
         }
       });
+    }
 
-      // Create function-style proxy for Name
-      this.Name = new Proxy((name) => {
-        const collection = this._getCollection('name', name);
-        return new Proxy(collection, {
-          get: (collectionTarget, collectionProp) => {
-            if (!isNaN(collectionProp) && parseInt(collectionProp) >= 0) {
-              const index = parseInt(collectionProp);
-              const element = collectionTarget[index];
-              
-              if (element) {
-                return new Proxy(element, {
-                  get: (elementTarget, elementProp) => {
-                    return elementTarget[elementProp];
-                  },
-                  set: (elementTarget, elementProp, value) => {
-                    elementTarget[elementProp] = value;
-                    return true;
-                  }
-                });
-              }
-              return element;
-            }
-            return collectionTarget[collectionProp];
-          },
-          set: (collectionTarget, collectionProp, value) => {
-            collectionTarget[collectionProp] = value;
-            return true;
-          }
-        });
-      }, {
+    _createEnhancedCollectionProxy(collection) {
+      if (!collection || !this.options.enableEnhancedSyntax) return collection;
+      
+      return new Proxy(collection, {
         get: (target, prop) => {
-          if (typeof prop === 'symbol' || typeof target[prop] === 'function') {
-            return target[prop];
+          // Handle numeric indices
+          if (!isNaN(prop) && parseInt(prop) >= 0) {
+            const index = parseInt(prop);
+            const element = target[index];
+            
+            if (element) {
+              // Return enhanced element proxy
+              return this._createElementProxy(element);
+            }
+            return element;
           }
-          return this._getCollection('name', prop);
+          
+          // Return collection methods and properties
+          return target[prop];
         },
-        apply: (target, thisArg, args) => {
-          if (args.length > 0) {
-            return target(args[0]);
+        
+        set: (target, prop, value) => {
+          try {
+            target[prop] = value;
+            return true;
+          } catch (e) {
+            this._warn(`Failed to set collection property ${prop}: ${e.message}`);
+            return false;
           }
-          return this._createEmptyCollection();
+        }
+      });
+    }
+
+    _createElementProxy(element) {
+      if (!element || !this.options.enableEnhancedSyntax) return element;
+      
+      return new Proxy(element, {
+        get: (target, prop) => {
+          // Return the actual property value
+          return target[prop];
+        },
+        set: (target, prop, value) => {
+          // Set the property value
+          try {
+            target[prop] = value;
+            return true;
+          } catch (e) {
+            this._warn(`Failed to set element property ${prop}: ${e.message}`);
+            return false;
+          }
         }
       });
     }
@@ -194,19 +168,24 @@
 
       // Get fresh collection from DOM
       let htmlCollection;
-      switch (type) {
-        case 'className':
-          htmlCollection = document.getElementsByClassName(value);
-          break;
-        case 'tagName':
-          htmlCollection = document.getElementsByTagName(value);
-          break;
-        case 'name':
-          htmlCollection = document.getElementsByName(value);
-          break;
-        default:
-          this._warn(`Unknown collection type: ${type}`);
-          return this._createEmptyCollection();
+      try {
+        switch (type) {
+          case 'className':
+            htmlCollection = document.getElementsByClassName(value);
+            break;
+          case 'tagName':
+            htmlCollection = document.getElementsByTagName(value);
+            break;
+          case 'name':
+            htmlCollection = document.getElementsByName(value);
+            break;
+          default:
+            this._warn(`Unknown collection type: ${type}`);
+            return this._createEmptyCollection();
+        }
+      } catch (error) {
+        this._warn(`Error getting ${type} collection for "${value}": ${error.message}`);
+        return this._createEmptyCollection();
       }
 
       const collection = this._enhanceCollection(htmlCollection, type, value);
@@ -224,7 +203,9 @@
       
       // Check if first element is still in DOM and matches criteria
       const firstElement = live[0];
-      return firstElement && document.contains(firstElement);
+      return firstElement && 
+             firstElement.nodeType === Node.ELEMENT_NODE && 
+             document.contains(firstElement);
     }
 
     _enhanceCollection(htmlCollection, type, value) {
@@ -276,6 +257,10 @@
           return Array.from(htmlCollection).every(callback, thisArg);
         },
 
+        reduce(callback, initialValue) {
+          return Array.from(htmlCollection).reduce(callback, initialValue);
+        },
+
         // Utility methods
         first() {
           return htmlCollection.length > 0 ? htmlCollection[0] : null;
@@ -292,6 +277,72 @@
 
         isEmpty() {
           return htmlCollection.length === 0;
+        },
+
+        // DOM manipulation helpers
+        addClass(className) {
+          this.forEach(el => el.classList.add(className));
+          return this;
+        },
+
+        removeClass(className) {
+          this.forEach(el => el.classList.remove(className));
+          return this;
+        },
+
+        toggleClass(className) {
+          this.forEach(el => el.classList.toggle(className));
+          return this;
+        },
+
+        setProperty(prop, value) {
+          this.forEach(el => el[prop] = value);
+          return this;
+        },
+
+        setAttribute(attr, value) {
+          this.forEach(el => el.setAttribute(attr, value));
+          return this;
+        },
+
+        setStyle(styles) {
+          this.forEach(el => {
+            Object.assign(el.style, styles);
+          });
+          return this;
+        },
+
+        on(event, handler) {
+          this.forEach(el => el.addEventListener(event, handler));
+          return this;
+        },
+
+        off(event, handler) {
+          this.forEach(el => el.removeEventListener(event, handler));
+          return this;
+        },
+
+        // Filtering helpers
+        visible() {
+          return this.filter(el => {
+            const style = window.getComputedStyle(el);
+            return style.display !== 'none' && style.visibility !== 'hidden' && style.opacity !== '0';
+          });
+        },
+
+        hidden() {
+          return this.filter(el => {
+            const style = window.getComputedStyle(el);
+            return style.display === 'none' || style.visibility === 'hidden' || style.opacity === '0';
+          });
+        },
+
+        enabled() {
+          return this.filter(el => !el.disabled && !el.hasAttribute('disabled'));
+        },
+
+        disabled() {
+          return this.filter(el => el.disabled || el.hasAttribute('disabled'));
         }
       };
 
@@ -316,11 +367,12 @@
     }
 
     _createEmptyCollection() {
-      return this._enhanceCollection({ 
+      const emptyCollection = { 
         length: 0, 
         item: () => null,
         namedItem: () => null 
-      }, 'empty', '');
+      };
+      return this._enhanceCollection(emptyCollection, 'empty', '');
     }
 
     _addToCache(cacheKey, collection) {
@@ -346,12 +398,30 @@
       }, this.options.debounceDelay);
 
       this.observer = new MutationObserver(debouncedUpdate);
-      this.observer.observe(document.body, {
-        childList: true,
-        subtree: true,
-        attributes: true,
-        attributeFilter: ['class', 'name']
-      });
+      
+      // Only observe if document.body exists
+      if (document.body) {
+        this.observer.observe(document.body, {
+          childList: true,
+          subtree: true,
+          attributes: true,
+          attributeFilter: ['class', 'name'],
+          attributeOldValue: true
+        });
+      } else {
+        // Wait for DOM to be ready
+        document.addEventListener('DOMContentLoaded', () => {
+          if (document.body && !this.isDestroyed) {
+            this.observer.observe(document.body, {
+              childList: true,
+              subtree: true,
+              attributes: true,
+              attributeFilter: ['class', 'name'],
+              attributeOldValue: true
+            });
+          }
+        });
+      }
     }
 
     _processMutations(mutations) {
@@ -381,18 +451,22 @@
             affectedTags.add(node.tagName.toLowerCase());
             
             // Handle child elements
-            const children = node.querySelectorAll ? node.querySelectorAll('*') : [];
-            children.forEach(child => {
-              if (child.className) {
-                child.className.split(/\s+/).forEach(cls => {
-                  if (cls) affectedClasses.add(cls);
-                });
-              }
-              if (child.name) {
-                affectedNames.add(child.name);
-              }
-              affectedTags.add(child.tagName.toLowerCase());
-            });
+            try {
+              const children = node.querySelectorAll ? node.querySelectorAll('*') : [];
+              children.forEach(child => {
+                if (child.className) {
+                  child.className.split(/\s+/).forEach(cls => {
+                    if (cls) affectedClasses.add(cls);
+                  });
+                }
+                if (child.name) {
+                  affectedNames.add(child.name);
+                }
+                affectedTags.add(child.tagName.toLowerCase());
+              });
+            } catch (e) {
+              // Ignore errors from detached nodes
+            }
           }
         });
 
@@ -434,7 +508,7 @@
       keysToDelete.forEach(key => this.cache.delete(key));
       this.stats.cacheSize = this.cache.size;
 
-      if (keysToDelete.length > 0) {
+      if (keysToDelete.length > 0 && this.options.enableLogging) {
         this._log(`Invalidated ${keysToDelete.length} cache entries due to DOM changes`);
       }
     }
@@ -465,7 +539,9 @@
       this.stats.cacheSize = this.cache.size;
       this.stats.lastCleanup = Date.now();
 
-      this._log(`Cleanup completed. Removed ${beforeSize - this.cache.size} stale entries.`);
+      if (this.options.enableLogging && staleKeys.length > 0) {
+        this._log(`Cleanup completed. Removed ${staleKeys.length} stale entries.`);
+      }
     }
 
     _debounce(func, delay) {
@@ -578,6 +654,17 @@
       
       throw new Error(`Timeout waiting for ${type}="${value}" (min: ${minCount})`);
     }
+
+    // Configuration methods
+    enableEnhancedSyntax() {
+      this.options.enableEnhancedSyntax = true;
+      return this;
+    }
+
+    disableEnhancedSyntax() {
+      this.options.enableEnhancedSyntax = false;
+      return this;
+    }
   }
 
   // Auto-initialize with sensible defaults
@@ -585,7 +672,8 @@
     enableLogging: false,
     autoCleanup: true,
     cleanupInterval: 30000,
-    maxCacheSize: 1000
+    maxCacheSize: 1000,
+    enableEnhancedSyntax: true
   });
 
   // Global API - Clean and intuitive
@@ -602,6 +690,8 @@
     isCached: (type, value) => CollectionHelper.isCached(type, value),
     getMultiple: (requests) => CollectionHelper.getMultiple(requests),
     waitFor: (type, value, minCount, timeout) => CollectionHelper.waitForElements(type, value, minCount, timeout),
+    enableEnhancedSyntax: () => CollectionHelper.enableEnhancedSyntax(),
+    disableEnhancedSyntax: () => CollectionHelper.disableEnhancedSyntax(),
     configure: (options) => {
       Object.assign(CollectionHelper.options, options);
       return Collections;

@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<body>
+    <div id="app">
+    <button id="myButton" class="btn primary">Click me</button>
+    <div class="item">Item 1</div>
+    <div class="item">Item 2</div>
+    
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/@giovanni1707/dom-helpers@2/dist/dom-helpers.min.js"></script>
+
+<script>
+// Elements Helper - Direct ID access
+Elements.myButton.textContent = 'Updated!';
+Elements.myButton.style.color = 'blue';
+// Collections Helper - Class/Tag/Name access  
+Collections.ClassName.item.forEach(item => item.style.color = 'red');
+
+
+</script>
+</body>
+</html>

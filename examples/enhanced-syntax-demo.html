@@ -1,0 +1,337 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>DOM Helpers - Enhanced Syntax Demo</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+            background-color: #f5f5f5;
+        }
+        
+        #app {
+            background: white;
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        
+        h1 {
+            color: #333;
+            text-align: center;
+            margin-bottom: 30px;
+        }
+        
+        .btn {
+            padding: 12px 24px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 16px;
+            margin: 10px 5px;
+            transition: all 0.3s ease;
+        }
+        
+        .btn.primary {
+            background-color: #007bff;
+            color: white;
+        }
+        
+        .btn.primary:hover {
+            background-color: #0056b3;
+            transform: translateY(-2px);
+        }
+        
+        .item {
+            padding: 15px;
+            margin: 10px 0;
+            background-color: #e9ecef;
+            border-radius: 5px;
+            border-left: 4px solid #007bff;
+            transition: all 0.3s ease;
+        }
+        
+        .item:hover {
+            background-color: #dee2e6;
+            transform: translateX(5px);
+        }
+        
+        .form-input {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid #ddd;
+            border-radius: 5px;
+            font-size: 16px;
+            margin: 10px 0;
+            transition: border-color 0.3s ease;
+        }
+        
+        .form-input:focus {
+            outline: none;
+            border-color: #007bff;
+        }
+        
+        .demo-section {
+            margin: 30px 0;
+            padding: 20px;
+            background-color: #f8f9fa;
+            border-radius: 5px;
+            border-left: 4px solid #28a745;
+        }
+        
+        .demo-section h3 {
+            color: #28a745;
+            margin-top: 0;
+        }
+        
+        .code-example {
+            background-color: #2d3748;
+            color: #e2e8f0;
+            padding: 15px;
+            border-radius: 5px;
+            font-family: 'Courier New', monospace;
+            font-size: 14px;
+            margin: 10px 0;
+            overflow-x: auto;
+        }
+        
+        .result {
+            background-color: #d4edda;
+            color: #155724;
+            padding: 10px;
+            border-radius: 5px;
+            margin: 10px 0;
+            border: 1px solid #c3e6cb;
+        }
+        
+        .controls {
+            text-align: center;
+            margin: 30px 0;
+        }
+        
+        .status {
+            text-align: center;
+            padding: 15px;
+            margin: 20px 0;
+            border-radius: 5px;
+            font-weight: bold;
+        }
+        
+        .status.success {
+            background-color: #d4edda;
+            color: #155724;
+            border: 1px solid #c3e6cb;
+        }
+        
+        .status.info {
+            background-color: #d1ecf1;
+            color: #0c5460;
+            border: 1px solid #bee5eb;
+        }
+    </style>
+</head>
+<body>
+    <div id="app">
+        <h1>DOM Helpers - Enhanced Syntax Demo</h1>
+        
+        <button id="my-button" class="btn primary">Click me</button>
+        <div class="item">Item 1</div>
+        <div class="item">Item 2</div>
+        <input name="username" class="form-input" placeholder="Enter your username" />
+        
+        <div class="controls">
+            <button id="demo-elements" class="btn">Demo Elements Helper</button>
+            <button id="demo-collections" class="btn">Demo Collections Helper</button>
+            <button id="demo-selector" class="btn">Demo Selector Helper</button>
+            <button id="demo-enhanced" class="btn">Demo Enhanced Syntax</button>
+            <button id="reset-demo" class="btn">Reset Demo</button>
+        </div>
+        
+        <div id="status" class="status info">Ready to demonstrate DOM Helpers!</div>
+        
+        <div class="demo-section">
+            <h3>🆔 Elements Helper - Direct ID Access</h3>
+            <div class="code-example">
+// Direct property manipulation
+Elements.myButton.style.backgroundColor = "#28a745";
+Elements.myButton.textContent = "Elements Helper Works!";
+            </div>
+            <div class="result" id="elements-result">Click "Demo Elements Helper" to see this in action</div>
+        </div>
+        
+        <div class="demo-section">
+            <h3>📦 Collections Helper - Function-Style Access</h3>
+            <div class="code-example">
+// Function-style access with direct property manipulation
+Collections.ClassName("item")[0].style.color = "red";
+Collections.ClassName("item")[1].style.color = "blue";
+Collections.Name("username")[0].value = "john_doe";
+            </div>
+            <div class="result" id="collections-result">Click "Demo Collections Helper" to see this in action</div>
+        </div>
+        
+        <div class="demo-section">
+            <h3>🔍 Selector Helper - Direct Property Access</h3>
+            <div class="code-example">
+// Direct property access and array-like indexing
+Selector.query.myButton.style.transform = "scale(1.1)";
+Selector.queryAll.item[0].style.backgroundColor = "#fff3cd";
+Selector.queryAll.item[1].style.backgroundColor = "#d1ecf1";
+            </div>
+            <div class="result" id="selector-result">Click "Demo Selector Helper" to see this in action</div>
+        </div>
+        
+        <div class="demo-section">
+            <h3>🚀 Enhanced Syntax - All Options Combined</h3>
+            <div class="code-example">
+// Mix and match all syntax options
+Elements.myButton.style.borderRadius = "25px";
+Collections.ClassName("item")[0].textContent = "Enhanced Item 1";
+Selector.queryAll.formInput[0].style.borderColor = "#28a745";
+            </div>
+            <div class="result" id="enhanced-result">Click "Demo Enhanced Syntax" to see this in action</div>
+        </div>
+    </div>
+
+    <!-- Load DOM Helpers from GitHub CDN -->
+    <script src="https://cdn.jsdelivr.net/gh/giovanni1707/elements-helper@main/dist/dom-helpers.min.js"></script>
+    
+    <script>
+        // Wait for DOM to be ready
+        document.addEventListener('DOMContentLoaded', function() {
+            console.log('DOM Helpers ready:', DOMHelpers.isReady());
+            
+            // Demo Elements Helper
+            Elements['demo-elements'].addEventListener('click', function() {
+                // Direct property manipulation using Elements Helper
+                Elements.myButton.style.backgroundColor = "#28a745";
+                Elements.myButton.textContent = "Elements Helper Works!";
+                Elements.myButton.style.transform = "scale(1.05)";
+                
+                Elements.status.textContent = "✅ Elements Helper: Direct ID access demonstrated!";
+                Elements.status.className = "status success";
+                Elements['elements-result'].textContent = "✅ Button styled and text changed using Elements.myButton";
+                
+                console.log('Elements Helper Demo:', Elements.stats());
+            });
+            
+            // Demo Collections Helper with enhanced function-style syntax
+            Elements['demo-collections'].addEventListener('click', function() {
+                // Function-style access with direct property manipulation
+                Collections.ClassName("item")[0].style.color = "red";
+                Collections.ClassName("item")[0].style.fontWeight = "bold";
+                Collections.ClassName("item")[1].style.color = "blue";
+                Collections.ClassName("item")[1].style.fontStyle = "italic";
+                
+                // Function-style access for form input
+                Collections.Name("username")[0].value = "john_doe";
+                Collections.Name("username")[0].style.backgroundColor = "#e7f3ff";
+                
+                Elements.status.textContent = "✅ Collections Helper: Function-style access demonstrated!";
+                Elements.status.className = "status success";
+                Elements['collections-result'].textContent = "✅ Items styled and input filled using Collections.ClassName('item')[index]";
+                
+                console.log('Collections Helper Demo:', Collections.stats());
+            });
+            
+            // Demo Selector Helper with enhanced direct property access
+            Elements['demo-selector'].addEventListener('click', function() {
+                // Direct property access
+                Selector.query.myButton.style.transform = "scale(1.1)";
+                Selector.query.myButton.style.boxShadow = "0 4px 8px rgba(0,123,255,0.3)";
+                
+                // Array-like access with direct property manipulation
+                Selector.queryAll.item[0].style.backgroundColor = "#fff3cd";
+                Selector.queryAll.item[0].style.borderLeftColor = "#ffc107";
+                Selector.queryAll.item[1].style.backgroundColor = "#d1ecf1";
+                Selector.queryAll.item[1].style.borderLeftColor = "#17a2b8";
+                
+                // Direct property access for form input
+                Selector.queryAll.formInput[0].style.borderColor = "#28a745";
+                Selector.queryAll.formInput[0].style.borderWidth = "3px";
+                
+                Elements.status.textContent = "✅ Selector Helper: Direct property access demonstrated!";
+                Elements.status.className = "status success";
+                Elements['selector-result'].textContent = "✅ Elements styled using Selector.query.element and Selector.queryAll.element[index]";
+                
+                console.log('Selector Helper Demo:', Selector.stats());
+            });
+            
+            // Demo Enhanced Syntax - Mix all approaches
+            Elements['demo-enhanced'].addEventListener('click', function() {
+                // Mix and match all syntax options
+                Elements.myButton.style.borderRadius = "25px";
+                Elements.myButton.style.background = "linear-gradient(45deg, #007bff, #28a745)";
+                
+                Collections.ClassName("item")[0].textContent = "🚀 Enhanced Item 1";
+                Collections.ClassName("item")[0].style.background = "linear-gradient(90deg, #fff3cd, #d4edda)";
+                
+                Collections.ClassName("item")[1].textContent = "⭐ Enhanced Item 2";
+                Collections.ClassName("item")[1].style.background = "linear-gradient(90deg, #d1ecf1, #e2e3e5)";
+                
+                Selector.queryAll.formInput[0].style.borderColor = "#28a745";
+                Selector.queryAll.formInput[0].style.background = "linear-gradient(to right, #f8f9fa, #e9ecef)";
+                Selector.queryAll.formInput[0].placeholder = "Enhanced with DOM Helpers!";
+                
+                Elements.status.textContent = "🎉 Enhanced Syntax: All helpers working together!";
+                Elements.status.className = "status success";
+                Elements['enhanced-result'].textContent = "🎉 All syntax options demonstrated: Elements.id, Collections.ClassName('class')[index], Selector.queryAll.class[index]";
+                
+                // Show combined stats
+                const stats = DOMHelpers.getStats();
+                console.log('Combined Stats:', stats);
+            });
+            
+            // Reset Demo
+            Elements['reset-demo'].addEventListener('click', function() {
+                // Reset button
+                Elements.myButton.style.cssText = "";
+                Elements.myButton.textContent = "Click me";
+                Elements.myButton.className = "btn primary";
+                
+                // Reset items
+                Collections.ClassName.item.forEach((item, index) => {
+                    item.style.cssText = "";
+                    item.textContent = `Item ${index + 1}`;
+                    item.className = "item";
+                });
+                
+                // Reset input
+                Collections.Name.username.forEach(input => {
+                    input.value = "";
+                    input.style.cssText = "";
+                    input.placeholder = "Enter your username";
+                });
+                
+                // Reset status
+                Elements.status.textContent = "Ready to demonstrate DOM Helpers!";
+                Elements.status.className = "status info";
+                
+                // Reset result messages
+                Elements['elements-result'].textContent = "Click \"Demo Elements Helper\" to see this in action";
+                Elements['collections-result'].textContent = "Click \"Demo Collections Helper\" to see this in action";
+                Elements['selector-result'].textContent = "Click \"Demo Selector Helper\" to see this in action";
+                Elements['enhanced-result'].textContent = "Click \"Demo Enhanced Syntax\" to see this in action";
+                
+                console.log('Demo reset complete');
+            });
+            
+            // Add click handler to main button
+            Elements.myButton.addEventListener('click', function() {
+                Elements.status.textContent = "🎯 Main button clicked! Try the demo buttons below.";
+                Elements.status.className = "status info";
+            });
+            
+            // Show initial stats
+            console.log('Initial DOM Helpers Stats:', DOMHelpers.getStats());
+            console.log('Elements Helper available:', !!window.Elements);
+            console.log('Collections Helper available:', !!window.Collections);
+            console.log('Selector Helper available:', !!window.Selector);
+        });
+    </script>
+</body>
+</html>

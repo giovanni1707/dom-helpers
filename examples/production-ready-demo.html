@@ -1,0 +1,760 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>DOM Helpers - Production Ready Demo</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+        }
+        
+        .container {
+            background: white;
+            padding: 30px;
+            border-radius: 15px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+        }
+        
+        h1 {
+            color: #333;
+            text-align: center;
+            margin-bottom: 10px;
+            font-size: 2.5em;
+        }
+        
+        .subtitle {
+            text-align: center;
+            color: #666;
+            margin-bottom: 30px;
+            font-size: 1.2em;
+        }
+        
+        .test-section {
+            margin: 30px 0;
+            padding: 25px;
+            background: #f8f9fa;
+            border-radius: 10px;
+            border-left: 5px solid #007bff;
+        }
+        
+        .test-section h3 {
+            color: #007bff;
+            margin-top: 0;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .status-icon {
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            display: inline-block;
+        }
+        
+        .status-success { background-color: #28a745; }
+        .status-warning { background-color: #ffc107; }
+        .status-error { background-color: #dc3545; }
+        .status-info { background-color: #17a2b8; }
+        
+        .btn {
+            padding: 12px 24px;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 16px;
+            margin: 8px 5px;
+            transition: all 0.3s ease;
+            background: linear-gradient(45deg, #007bff, #0056b3);
+            color: white;
+            font-weight: 500;
+        }
+        
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(0,123,255,0.3);
+        }
+        
+        .btn-success {
+            background: linear-gradient(45deg, #28a745, #1e7e34);
+        }
+        
+        .btn-warning {
+            background: linear-gradient(45deg, #ffc107, #e0a800);
+        }
+        
+        .btn-danger {
+            background: linear-gradient(45deg, #dc3545, #c82333);
+        }
+        
+        .test-item {
+            padding: 15px;
+            margin: 10px 0;
+            background: white;
+            border-radius: 8px;
+            border: 2px solid #e9ecef;
+            transition: all 0.3s ease;
+        }
+        
+        .test-item:hover {
+            border-color: #007bff;
+            box-shadow: 0 3px 10px rgba(0,123,255,0.1);
+        }
+        
+        .form-input {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid #ddd;
+            border-radius: 8px;
+            font-size: 16px;
+            margin: 10px 0;
+            transition: all 0.3s ease;
+        }
+        
+        .form-input:focus {
+            border-color: #007bff;
+            box-shadow: 0 0 0 3px rgba(0,123,255,0.1);
+            outline: none;
+        }
+        
+        .results {
+            background: #e9ecef;
+            padding: 20px;
+            border-radius: 8px;
+            margin: 20px 0;
+            font-family: 'Courier New', monospace;
+            font-size: 14px;
+            max-height: 300px;
+            overflow-y: auto;
+        }
+        
+        .controls {
+            text-align: center;
+            margin: 30px 0;
+            padding: 20px;
+            background: linear-gradient(45deg, #f8f9fa, #e9ecef);
+            border-radius: 10px;
+        }
+        
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+            margin: 20px 0;
+        }
+        
+        .stat-card {
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            text-align: center;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        
+        .stat-value {
+            font-size: 2em;
+            font-weight: bold;
+            color: #007bff;
+        }
+        
+        .stat-label {
+            color: #666;
+            margin-top: 5px;
+        }
+        
+        .code-example {
+            background: #2d3748;
+            color: #e2e8f0;
+            padding: 15px;
+            border-radius: 8px;
+            font-family: 'Courier New', monospace;
+            font-size: 14px;
+            margin: 10px 0;
+            overflow-x: auto;
+        }
+        
+        .success-message {
+            background: #d4edda;
+            color: #155724;
+            padding: 15px;
+            border-radius: 8px;
+            border: 1px solid #c3e6cb;
+            margin: 10px 0;
+        }
+        
+        .error-message {
+            background: #f8d7da;
+            color: #721c24;
+            padding: 15px;
+            border-radius: 8px;
+            border: 1px solid #f5c6cb;
+            margin: 10px 0;
+        }
+        
+        .warning-message {
+            background: #fff3cd;
+            color: #856404;
+            padding: 15px;
+            border-radius: 8px;
+            border: 1px solid #ffeaa7;
+            margin: 10px 0;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🚀 DOM Helpers</h1>
+        <div class="subtitle">Production Ready Demo - Version 2.1.0</div>
+        
+        <!-- Test Elements -->
+        <button id="my-button" class="btn">Main Test Button</button>
+        <div class="test-item" id="test-item-1">Test Item 1</div>
+        <div class="test-item" id="test-item-2">Test Item 2</div>
+        <input name="username" class="form-input" placeholder="Enter username" />
+        <input name="email" class="form-input" placeholder="Enter email" />
+        
+        <!-- Controls -->
+        <div class="controls">
+            <button id="test-elements" class="btn btn-success">Test Elements Helper</button>
+            <button id="test-collections" class="btn btn-success">Test Collections Helper</button>
+            <button id="test-selector" class="btn btn-success">Test Selector Helper</button>
+            <button id="test-enhanced" class="btn btn-warning">Test Enhanced Syntax</button>
+            <button id="test-all" class="btn">Run All Tests</button>
+            <button id="reset-demo" class="btn btn-danger">Reset Demo</button>
+        </div>
+        
+        <!-- Results Display -->
+        <div id="results" class="results">Ready to run tests...</div>
+        
+        <!-- Statistics -->
+        <div class="stats-grid">
+            <div class="stat-card">
+                <div id="elements-stat" class="stat-value">0</div>
+                <div class="stat-label">Elements Cache</div>
+            </div>
+            <div class="stat-card">
+                <div id="collections-stat" class="stat-value">0</div>
+                <div class="stat-label">Collections Cache</div>
+            </div>
+            <div class="stat-card">
+                <div id="selector-stat" class="stat-value">0</div>
+                <div class="stat-label">Selector Cache</div>
+            </div>
+            <div class="stat-card">
+                <div id="total-tests" class="stat-value">0</div>
+                <div class="stat-label">Tests Run</div>
+            </div>
+        </div>
+        
+        <!-- Test Sections -->
+        <div class="test-section">
+            <h3>
+                <span id="elements-status" class="status-icon status-info"></span>
+                Elements Helper - Direct ID Access
+            </h3>
+            <div class="code-example">
+// Fixed robust implementation with better error handling
+Elements.myButton.style.backgroundColor = "#28a745";
+Elements.myButton.textContent = "Elements Helper Works!";
+Elements.exists("my-button"); // true/false
+Elements.get("my-button", null); // with fallback
+            </div>
+        </div>
+        
+        <div class="test-section">
+            <h3>
+                <span id="collections-status" class="status-icon status-info"></span>
+                Collections Helper - Enhanced Syntax
+            </h3>
+            <div class="code-example">
+// Stabilized enhanced syntax with better proxy handling
+Collections.ClassName.testItem.forEach(item => item.style.color = "red");
+Collections.ClassName("test-item")[0].style.color = "blue"; // Function style
+Collections.Name.username.first().value = "john_doe";
+            </div>
+        </div>
+        
+        <div class="test-section">
+            <h3>
+                <span id="selector-status" class="status-icon status-info"></span>
+                Selector Helper - Advanced querySelector
+            </h3>
+            <div class="code-example">
+// Robust enhanced syntax with fallback mechanisms
+Selector.query('.test-item').style.backgroundColor = "#fff3cd";
+Selector.queryAll.testItem[0].style.borderColor = "#ffc107"; // Enhanced syntax
+Selector.query('#my-button').style.transform = "scale(1.1)";
+            </div>
+        </div>
+        
+        <div class="test-section">
+            <h3>
+                <span id="enhanced-status" class="status-icon status-info"></span>
+                Enhanced Syntax Features
+            </h3>
+            <div class="code-example">
+// New stabilized enhanced syntax options
+Selector.query.myButton.style.color = "blue";           // Direct property access
+Selector.queryAll.testItem[0].style.color = "red";      // Array-like access  
+Collections.ClassName("test-item")[0].style.color = "green"; // Function style
+            </div>
+        </div>
+    </div>
+
+    <!-- Load DOM Helpers from local build -->
+    <script src="../dist/dom-helpers.min.js"></script>
+    
+    <script>
+        let testResults = [];
+        let totalTests = 0;
+        
+        function log(message, type = 'info') {
+            const timestamp = new Date().toLocaleTimeString();
+            const results = document.getElementById('results');
+            const typeColors = {
+                success: '#28a745',
+                error: '#dc3545', 
+                warning: '#ffc107',
+                info: '#17a2b8'
+            };
+            
+            results.innerHTML += `<div style="color: ${typeColors[type]}; margin: 5px 0;">
+                [${timestamp}] ${message}
+            </div>`;
+            results.scrollTop = results.scrollHeight;
+            
+            testResults.push({ message, type, timestamp });
+        }
+        
+        function updateStats() {
+            try {
+                document.getElementById('elements-stat').textContent = Elements.stats().cacheSize || 0;
+                document.getElementById('collections-stat').textContent = Collections.stats().cacheSize || 0;
+                document.getElementById('selector-stat').textContent = Selector.stats().cacheSize || 0;
+                document.getElementById('total-tests').textContent = totalTests;
+            } catch (e) {
+                log(`Stats update failed: ${e.message}`, 'warning');
+            }
+        }
+        
+        function updateStatus(helper, status) {
+            const statusElement = document.getElementById(`${helper}-status`);
+            if (statusElement) {
+                statusElement.className = `status-icon status-${status}`;
+            }
+        }
+        
+        function testElementsHelper() {
+            log('🧪 Testing Elements Helper...', 'info');
+            let passed = 0, failed = 0;
+            
+            try {
+                // Test 1: Basic element access
+                const button = Elements.myButton;
+                if (button && button.nodeType === Node.ELEMENT_NODE) {
+                    log('✅ Elements.myButton access: PASSED', 'success');
+                    passed++;
+                } else {
+                    log('❌ Elements.myButton access: FAILED', 'error');
+                    failed++;
+                }
+                
+                // Test 2: Property manipulation
+                Elements.myButton.style.backgroundColor = "#28a745";
+                Elements.myButton.textContent = "Elements Helper Works!";
+                Elements.myButton.style.transform = "scale(1.05)";
+                log('✅ Property manipulation: PASSED', 'success');
+                passed++;
+                
+                // Test 3: Utility methods
+                if (Elements.exists("my-button")) {
+                    log('✅ Elements.exists(): PASSED', 'success');
+                    passed++;
+                } else {
+                    log('❌ Elements.exists(): FAILED', 'error');
+                    failed++;
+                }
+                
+                // Test 4: Safe access with fallback
+                const safeElement = Elements.get("my-button", null);
+                if (safeElement) {
+                    log('✅ Elements.get() with fallback: PASSED', 'success');
+                    passed++;
+                } else {
+                    log('❌ Elements.get() with fallback: FAILED', 'error');
+                    failed++;
+                }
+                
+                // Test 5: Multiple elements
+                const multiple = Elements.getMultiple("my-button", "test-item-1");
+                if (multiple.myButton && multiple.testItem1) {
+                    log('✅ Elements.getMultiple(): PASSED', 'success');
+                    passed++;
+                } else {
+                    log('❌ Elements.getMultiple(): FAILED', 'error');
+                    failed++;
+                }
+                
+                updateStatus('elements', failed === 0 ? 'success' : 'warning');
+                log(`📊 Elements Helper: ${passed} passed, ${failed} failed`, failed === 0 ? 'success' : 'warning');
+                
+            } catch (error) {
+                log(`❌ Elements Helper test failed: ${error.message}`, 'error');
+                updateStatus('elements', 'error');
+                failed++;
+            }
+            
+            totalTests += passed + failed;
+            return { passed, failed };
+        }
+        
+        function testCollectionsHelper() {
+            log('🧪 Testing Collections Helper...', 'info');
+            let passed = 0, failed = 0;
+            
+            try {
+                // Test 1: Basic collection access
+                const items = Collections.ClassName.testItem;
+                if (items && items.length >= 2) {
+                    log('✅ Collections.ClassName.testItem: PASSED', 'success');
+                    passed++;
+                } else {
+                    log('❌ Collections.ClassName.testItem: FAILED', 'error');
+                    failed++;
+                }
+                
+                // Test 2: Collection manipulation
+                Collections.ClassName.testItem.forEach((item, index) => {
+                    item.style.color = index === 0 ? "red" : "blue";
+                    item.style.fontWeight = "bold";
+                });
+                log('✅ Collection forEach manipulation: PASSED', 'success');
+                passed++;
+                
+                // Test 3: Name-based access
+                const usernameInputs = Collections.Name.username;
+                if (usernameInputs && usernameInputs.length > 0) {
+                    usernameInputs.first().value = "john_doe";
+                    usernameInputs.first().style.backgroundColor = "#e7f3ff";
+                    log('✅ Collections.Name access: PASSED', 'success');
+                    passed++;
+                } else {
+                    log('❌ Collections.Name access: FAILED', 'error');
+                    failed++;
+                }
+                
+                // Test 4: Enhanced syntax - Function style
+                try {
+                    const functionStyleItems = Collections.ClassName("test-item");
+                    if (functionStyleItems && functionStyleItems.length > 0) {
+                        functionStyleItems[0].style.textDecoration = "underline";
+                        log('✅ Function style Collections.ClassName("test-item"): PASSED', 'success');
+                        passed++;
+                    } else {
+                        log('❌ Function style access: FAILED', 'error');
+                        failed++;
+                    }
+                } catch (e) {
+                    log(`⚠️ Function style access: ${e.message}`, 'warning');
+                    failed++;
+                }
+                
+                // Test 5: Utility methods
+                const firstItem = Collections.ClassName.testItem.first();
+                if (firstItem) {
+                    log('✅ Collections first() method: PASSED', 'success');
+                    passed++;
+                } else {
+                    log('❌ Collections first() method: FAILED', 'error');
+                    failed++;
+                }
+                
+                updateStatus('collections', failed === 0 ? 'success' : 'warning');
+                log(`📊 Collections Helper: ${passed} passed, ${failed} failed`, failed === 0 ? 'success' : 'warning');
+                
+            } catch (error) {
+                log(`❌ Collections Helper test failed: ${error.message}`, 'error');
+                updateStatus('collections', 'error');
+                failed++;
+            }
+            
+            totalTests += passed + failed;
+            return { passed, failed };
+        }
+        
+        function testSelectorHelper() {
+            log('🧪 Testing Selector Helper...', 'info');
+            let passed = 0, failed = 0;
+            
+            try {
+                // Test 1: Basic querySelector
+                const button = Selector.query('#my-button');
+                if (button && button.nodeType === Node.ELEMENT_NODE) {
+                    button.style.transform = "scale(1.1)";
+                    button.style.boxShadow = "0 4px 8px rgba(0,123,255,0.3)";
+                    log('✅ Selector.query(): PASSED', 'success');
+                    passed++;
+                } else {
+                    log('❌ Selector.query(): FAILED', 'error');
+                    failed++;
+                }
+                
+                // Test 2: querySelectorAll
+                const items = Selector.queryAll('.test-item');
+                if (items && items.length >= 2) {
+                    items.forEach((item, index) => {
+                        item.style.backgroundColor = index === 0 ? "#fff3cd" : "#d1ecf1";
+                        item.style.borderLeftColor = index === 0 ? "#ffc107" : "#17a2b8";
+                    });
+                    log('✅ Selector.queryAll(): PASSED', 'success');
+                    passed++;
+                } else {
+                    log('❌ Selector.queryAll(): FAILED', 'error');
+                    failed++;
+                }
+                
+                // Test 3: Enhanced collection methods
+                const enhancedItems = Selector.queryAll('.test-item');
+                if (enhancedItems && typeof enhancedItems.addClass === 'function') {
+                    enhancedItems.addClass('processed');
+                    log('✅ Enhanced collection methods: PASSED', 'success');
+                    passed++;
+                } else {
+                    log('❌ Enhanced collection methods: FAILED', 'error');
+                    failed++;
+                }
+                
+                // Test 4: Form input styling
+                const input = Selector.query('.form-input');
+                if (input) {
+                    input.style.borderColor = "#28a745";
+                    input.style.borderWidth = "3px";
+                    log('✅ Form input styling: PASSED', 'success');
+                    passed++;
+                } else {
+                    log('❌ Form input styling: FAILED', 'error');
+                    failed++;
+                }
+                
+                // Test 5: Scoped queries
+                try {
+                    const scopedItems = Selector.Scoped.withinAll('.container', '.test-item');
+                    if (scopedItems && scopedItems.length > 0) {
+                        log('✅ Scoped queries: PASSED', 'success');
+                        passed++;
+                    } else {
+                        log('❌ Scoped queries: FAILED', 'error');
+                        failed++;
+                    }
+                } catch (e) {
+                    log(`⚠️ Scoped queries: ${e.message}`, 'warning');
+                    failed++;
+                }
+                
+                updateStatus('selector', failed === 0 ? 'success' : 'warning');
+                log(`📊 Selector Helper: ${passed} passed, ${failed} failed`, failed === 0 ? 'success' : 'warning');
+                
+            } catch (error) {
+                log(`❌ Selector Helper test failed: ${error.message}`, 'error');
+                updateStatus('selector', 'error');
+                failed++;
+            }
+            
+            totalTests += passed + failed;
+            return { passed, failed };
+        }
+        
+        function testEnhancedSyntax() {
+            log('🧪 Testing Enhanced Syntax Features...', 'info');
+            let passed = 0, failed = 0;
+            
+            // Test 1: Selector.query.element direct access
+            try {
+                if (Selector.query.myButton && Selector.query.myButton.style) {
+                    Selector.query.myButton.style.borderRadius = "25px";
+                    log('✅ Selector.query.element direct access: PASSED', 'success');
+                    passed++;
+                } else {
+                    log('❌ Selector.query.element direct access: FAILED', 'error');
+                    failed++;
+                }
+            } catch (e) {
+                log(`⚠️ Selector.query.element: ${e.message}`, 'warning');
+                failed++;
+            }
+            
+            // Test 2: Selector.queryAll.element[0] array access
+            try {
+                if (Selector.queryAll.testItem && Selector.queryAll.testItem[0] && Selector.queryAll.testItem[0].style) {
+                    Selector.queryAll.testItem[0].style.backgroundColor = "#ffeb3b";
+                    log('✅ Selector.queryAll.element[0] array access: PASSED', 'success');
+                    passed++;
+                } else {
+                    log('❌ Selector.queryAll.element[0] array access: FAILED', 'error');
+                    failed++;
+                }
+            } catch (e) {
+                log(`⚠️ Selector.queryAll.element[0]: ${e.message}`, 'warning');
+                failed++;
+            }
+            
+            // Test 3: Collections function-style access
+            try {
+                if (Collections.ClassName("test-item") && Collections.ClassName("test-item")[0] && Collections.ClassName("test-item")[0].style) {
+                    Collections.ClassName("test-item")[0].style.textShadow = "1px 1px 2px rgba(0,0,0,0.3)";
+                    log('✅ Collections.ClassName("class")[0] function style: PASSED', 'success');
+                    passed++;
+                } else {
+                    log('❌ Collections.ClassName("class")[0] function style: FAILED', 'error');
+                    failed++;
+                }
+            } catch (e) {
+                log(`⚠️ Collections function style: ${e.message}`, 'warning');
+                failed++;
+            }
+            
+            // Test 4: Fallback to basic functionality
+            try {
+                Elements.myButton.style.background = "linear-gradient(45deg, #007bff, #28a745)";
+                log('✅ Fallback to basic functionality: PASSED', 'success');
+                passed++;
+            } catch (e) {
+                log(`❌ Fallback functionality: ${e.message}`, 'error');
+                failed++;
+            }
+            
+            updateStatus('enhanced', failed === 0 ? 'success' : (passed > failed ? 'warning' : 'error'));
+            log(`📊 Enhanced Syntax: ${passed} passed, ${failed} failed`, failed === 0 ? 'success' : 'warning');
+            
+            totalTests += passed + failed;
+            return { passed, failed };
+        }
+        
+        function resetDemo() {
+            log('🔄 Resetting demo...', 'info');
+            
+            try {
+                // Reset button
+                Elements.myButton.style.cssText = "";
+                Elements.myButton.textContent = "Main Test Button";
+                Elements.myButton.className = "btn";
+                
+                // Reset items
+                Collections.ClassName.testItem.forEach((item, index) => {
+                    item.style.cssText = "";
+                    item.textContent = `Test Item ${index + 1}`;
+                    item.className = "test-item";
+                });
+                
+                // Reset inputs
+                Collections.Name.username.forEach(input => {
+                    input.value = "";
+                    input.style.cssText = "";
+                    input.placeholder = "Enter username";
+                });
+                
+                Collections.Name.email.forEach(input => {
+                    input.value = "";
+                    input.style.cssText = "";
+                    input.placeholder = "Enter email";
+                });
+                
+                // Reset status indicators
+                ['elements', 'collections', 'selector', 'enhanced'].forEach(helper => {
+                    updateStatus(helper, 'info');
+                });
+                
+                // Clear results
+                document.getElementById('results').innerHTML = 'Demo reset complete. Ready for new tests...';
+                testResults = [];
+                totalTests = 0;
+                
+                updateStats();
+                log('✅ Demo reset complete', 'success');
+                
+            } catch (error) {
+                log(`❌ Reset failed: ${error.message}`, 'error');
+            }
+        }
+        
+        function runAllTests() {
+            log('🚀 Running comprehensive test suite...', 'info');
+            resetDemo();
+            
+            setTimeout(() => {
+                const elementsResult = testElementsHelper();
+                setTimeout(() => {
+                    const collectionsResult = testCollectionsHelper();
+                    setTimeout(() => {
+                        const selectorResult = testSelectorHelper();
+                        setTimeout(() => {
+                            const enhancedResult = testEnhancedSyntax();
+                            
+                            // Final summary
+                            const totalPassed = elementsResult.passed + collectionsResult.passed + selectorResult.passed + enhancedResult.passed;
+                            const totalFailed = elementsResult.failed + collectionsResult.failed + selectorResult.failed + enhancedResult.failed;
+                            const successRate = Math.round((totalPassed / (totalPassed + totalFailed)) * 100);
+                            
+                            log(`🎯 FINAL RESULTS: ${totalPassed} passed, ${totalFailed} failed (${successRate}% success rate)`, 
+                                successRate >= 90 ? 'success' : successRate >= 70 ? 'warning' : 'error');
+                            
+                            if (successRate >= 90) {
+                                log('🎉 DOM Helpers are PRODUCTION READY! 🎉', 'success');
+                            } else if (successRate >= 70) {
+                                log('⚠️ DOM Helpers are mostly stable with minor issues', 'warning');
+                            } else {
+                                log('❌ DOM Helpers need more work before production use', 'error');
+                            }
+                            
+                            updateStats();
+                        }, 500);
+                    }, 500);
+                }, 500);
+            }, 500);
+        }
+        
+        // Event Listeners
+        document.addEventListener('DOMContentLoaded', function() {
+            log('🌟 DOM Helpers Production Demo Loaded', 'success');
+            log(`📦 Elements Helper: ${!!window.Elements ? 'Available' : 'Missing'}`, window.Elements ? 'success' : 'error');
+            log(`📦 Collections Helper: ${!!window.Collections ? 'Available' : 'Missing'}`, window.Collections ? 'success' : 'error');
+            log(`📦 Selector Helper: ${!!window.Selector ? 'Available' : 'Missing'}`, window.Selector ? 'success' : 'error');
+            
+            updateStats();
+            
+            // Bind event listeners
+            document.getElementById('test-elements').addEventListener('click', () => {
+                testElementsHelper();
+                updateStats();
+            });
+            
+            document.getElementById('test-collections').addEventListener('click', () => {
+                testCollectionsHelper();
+                updateStats();
+            });
+            
+            document.getElementById('test-selector').addEventListener('click', () => {
+                testSelectorHelper();
+                updateStats();
+            });
+            
+            document.getElementById('test-enhanced').addEventListener('click', () => {
+                testEnhancedSyntax();
+                updateStats();
+            });
+            
+            document.getElementById('test-all').addEventListener('click', runAllTests);
+            document.getElementById('reset-demo').addEventListener('click', resetDemo);
+            
+            // Auto-update stats every 5 seconds
+            setInterval(updateStats, 5000);
+        });
+    </script>
+</body>
+</html>

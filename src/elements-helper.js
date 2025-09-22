@@ -32,21 +32,32 @@
 
     _initProxy() {
       this.Elements = new Proxy(this, {
-        get: (target, prop) => target._getElement(prop),
+        get: (target, prop) => {
+          // Handle internal methods and symbols
+          if (typeof prop === 'symbol' || 
+              prop.startsWith('_') || 
+              typeof target[prop] === 'function') {
+            return target[prop];
+          }
+          
+          return target._getElement(prop);
+        },
+        
         has: (target, prop) => target._hasElement(prop),
+        
         ownKeys: (target) => target._getKeys(),
+        
         getOwnPropertyDescriptor: (target, prop) => {
           if (target._hasElement(prop)) {
-            return { enumerable: true, configurable: true, value: target._getElement(prop) };
+            return { 
+              enumerable: true, 
+              configurable: true, 
+              value: target._getElement(prop) 
+            };
           }
           return undefined;
         }
       });
-    }
-
-    // Use exact ID matching - no conversion
-    _findElementId(prop) {
-      return prop; // Always use the exact property name as ID
     }
 
     _getElement(prop) {
@@ -58,7 +69,7 @@
       // Check cache first
       if (this.cache.has(prop)) {
         const element = this.cache.get(prop);
-        if (element && document.contains(element)) {
+        if (element && element.nodeType === Node.ELEMENT_NODE && document.contains(element)) {
           this.stats.hits++;
           return element;
         } else {
@@ -75,7 +86,9 @@
       }
 
       this.stats.misses++;
-      this._warn(`Element with id '${prop}' not found`);
+      if (this.options.enableLogging) {
+        this._warn(`Element with id '${prop}' not found`);
+      }
       return null;
     }
 
@@ -84,19 +97,19 @@
       
       if (this.cache.has(prop)) {
         const element = this.cache.get(prop);
-        if (element && document.contains(element)) {
+        if (element && element.nodeType === Node.ELEMENT_NODE && document.contains(element)) {
           return true;
         }
         this.cache.delete(prop);
       }
       
-      // Use exact ID matching - no conversion
       return !!document.getElementById(prop);
     }
 
     _getKeys() {
-      // Return exact IDs only - no conversion
-      return Array.from(document.querySelectorAll("[id]")).map(el => el.id);
+      // Return all element IDs in the document
+      const elements = document.querySelectorAll("[id]");
+      return Array.from(elements).map(el => el.id).filter(id => id);
     }
 
     _addToCache(id, element) {
@@ -121,12 +134,30 @@
       }, this.options.debounceDelay);
 
       this.observer = new MutationObserver(debouncedUpdate);
-      this.observer.observe(document.body, {
-        childList: true,
-        subtree: true,
-        attributes: true,
-        attributeFilter: ['id']
-      });
+      
+      // Only observe if document.body exists
+      if (document.body) {
+        this.observer.observe(document.body, {
+          childList: true,
+          subtree: true,
+          attributes: true,
+          attributeFilter: ['id'],
+          attributeOldValue: true
+        });
+      } else {
+        // Wait for DOM to be ready
+        document.addEventListener('DOMContentLoaded', () => {
+          if (document.body && !this.isDestroyed) {
+            this.observer.observe(document.body, {
+              childList: true,
+              subtree: true,
+              attributes: true,
+              attributeFilter: ['id'],
+              attributeOldValue: true
+            });
+          }
+        });
+      }
     }
 
     _processMutations(mutations) {
@@ -136,22 +167,41 @@
       const removedIds = new Set();
 
       mutations.forEach(mutation => {
+        // Handle added nodes
         mutation.addedNodes.forEach(node => {
           if (node.nodeType === Node.ELEMENT_NODE) {
             if (node.id) addedIds.add(node.id);
-            const childrenWithIds = node.querySelectorAll?.('[id]') || [];
-            childrenWithIds.forEach(child => addedIds.add(child.id));
+            
+            // Check child elements
+            try {
+              const childrenWithIds = node.querySelectorAll ? node.querySelectorAll('[id]') : [];
+              childrenWithIds.forEach(child => {
+                if (child.id) addedIds.add(child.id);
+              });
+            } catch (e) {
+              // Ignore errors from detached nodes
+            }
           }
         });
 
+        // Handle removed nodes
         mutation.removedNodes.forEach(node => {
           if (node.nodeType === Node.ELEMENT_NODE) {
             if (node.id) removedIds.add(node.id);
-            const childrenWithIds = node.querySelectorAll?.('[id]') || [];
-            childrenWithIds.forEach(child => removedIds.add(child.id));
+            
+            // Check child elements
+            try {
+              const childrenWithIds = node.querySelectorAll ? node.querySelectorAll('[id]') : [];
+              childrenWithIds.forEach(child => {
+                if (child.id) removedIds.add(child.id);
+              });
+            } catch (e) {
+              // Ignore errors from detached nodes
+            }
           }
         });
 
+        // Handle ID attribute changes
         if (mutation.type === 'attributes' && mutation.attributeName === 'id') {
           const oldId = mutation.oldValue;
           const newId = mutation.target.id;
@@ -165,6 +215,7 @@
         }
       });
 
+      // Update cache for added elements
       addedIds.forEach(id => {
         const element = document.getElementById(id);
         if (element) {
@@ -172,6 +223,7 @@
         }
       });
 
+      // Remove cached elements that are no longer valid
       removedIds.forEach(id => {
         this.cache.delete(id);
       });
@@ -195,7 +247,10 @@
       const staleIds = [];
 
       for (const [id, element] of this.cache) {
-        if (!element || !document.contains(element)) {
+        if (!element || 
+            element.nodeType !== Node.ELEMENT_NODE || 
+            !document.contains(element) ||
+            element.id !== id) {
           staleIds.push(id);
         }
       }
@@ -205,7 +260,9 @@
       this.stats.cacheSize = this.cache.size;
       this.stats.lastCleanup = Date.now();
 
-      this._log(`Cleanup completed. Removed ${beforeSize - this.cache.size} stale entries.`);
+      if (this.options.enableLogging && staleIds.length > 0) {
+        this._log(`Cleanup completed. Removed ${staleIds.length} stale entries.`);
+      }
     }
 
     _debounce(func, delay) {
@@ -319,6 +376,56 @@
       
       throw new Error(`Timeout waiting for elements: ${ids.join(', ')}`);
     }
+
+    // Safe element access with fallbacks
+    get(id, fallback = null) {
+      const element = this.Elements[id];
+      return element || fallback;
+    }
+
+    exists(id) {
+      return !!this.Elements[id];
+    }
+
+    // Batch operations
+    getMultiple(...ids) {
+      return this.destructure(...ids);
+    }
+
+    // Enhanced element manipulation
+    setProperty(id, property, value) {
+      const element = this.Elements[id];
+      if (element && property in element) {
+        element[property] = value;
+        return true;
+      }
+      return false;
+    }
+
+    getProperty(id, property, fallback = undefined) {
+      const element = this.Elements[id];
+      if (element && property in element) {
+        return element[property];
+      }
+      return fallback;
+    }
+
+    setAttribute(id, attribute, value) {
+      const element = this.Elements[id];
+      if (element) {
+        element.setAttribute(attribute, value);
+        return true;
+      }
+      return false;
+    }
+
+    getAttribute(id, attribute, fallback = null) {
+      const element = this.Elements[id];
+      if (element) {
+        return element.getAttribute(attribute) || fallback;
+      }
+      return fallback;
+    }
   }
 
   // Auto-initialize with sensible defaults
@@ -341,6 +448,13 @@
   Elements.getRequired = (...ids) => ElementsHelper.getRequired(...ids);
   Elements.waitFor = (...ids) => ElementsHelper.waitFor(...ids);
   Elements.isCached = (id) => ElementsHelper.isCached(id);
+  Elements.get = (id, fallback) => ElementsHelper.get(id, fallback);
+  Elements.exists = (id) => ElementsHelper.exists(id);
+  Elements.getMultiple = (...ids) => ElementsHelper.getMultiple(...ids);
+  Elements.setProperty = (id, property, value) => ElementsHelper.setProperty(id, property, value);
+  Elements.getProperty = (id, property, fallback) => ElementsHelper.getProperty(id, property, fallback);
+  Elements.setAttribute = (id, attribute, value) => ElementsHelper.setAttribute(id, attribute, value);
+  Elements.getAttribute = (id, attribute, fallback) => ElementsHelper.getAttribute(id, attribute, fallback);
   Elements.configure = (options) => {
     Object.assign(ElementsHelper.options, options);
     return Elements;

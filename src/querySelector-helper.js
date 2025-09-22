@@ -12,6 +12,7 @@
         maxCacheSize: options.maxCacheSize ?? 1000,
         debounceDelay: options.debounceDelay ?? 16,
         enableSmartCaching: options.enableSmartCaching ?? true,
+        enableEnhancedSyntax: options.enableEnhancedSyntax ?? true,
         ...options
       };
 
@@ -47,96 +48,16 @@
     }
 
     _initProxies() {
-      // query proxy for querySelector (single element) with direct property access
-      this.query = new Proxy(this._createQueryFunction('single'), {
-        get: (target, prop) => {
-          if (typeof prop === 'symbol' || 
-              prop === 'constructor' || 
-              prop === 'prototype' ||
-              typeof target[prop] === 'function') {
-            return target[prop];
-          }
-          
-          const selector = this._normalizeSelector(prop);
-          const element = this._getQuery('single', selector);
-          
-          // If element found, return a proxy that allows direct property access
-          if (element) {
-            return new Proxy(element, {
-              get: (elementTarget, elementProp) => {
-                return elementTarget[elementProp];
-              },
-              set: (elementTarget, elementProp, value) => {
-                elementTarget[elementProp] = value;
-                return true;
-              }
-            });
-          }
-          
-          return element;
-        },
-        
-        apply: (target, thisArg, args) => {
-          if (args.length > 0) {
-            return this._getQuery('single', args[0]);
-          }
-          return null;
-        }
-      });
+      // Basic query function for querySelector (single element)
+      this.query = this._createQueryFunction('single');
+      
+      // Basic queryAll function for querySelectorAll (multiple elements)
+      this.queryAll = this._createQueryFunction('multiple');
 
-      // queryAll proxy for querySelectorAll (multiple elements) with array-like access
-      this.queryAll = new Proxy(this._createQueryFunction('multiple'), {
-        get: (target, prop) => {
-          if (typeof prop === 'symbol' || 
-              prop === 'constructor' || 
-              prop === 'prototype' ||
-              typeof target[prop] === 'function') {
-            return target[prop];
-          }
-          
-          const selector = this._normalizeSelector(prop);
-          const collection = this._getQuery('multiple', selector);
-          
-          // Return a proxy that allows array-like access with direct property manipulation
-          return new Proxy(collection, {
-            get: (collectionTarget, collectionProp) => {
-              // Handle numeric indices
-              if (!isNaN(collectionProp) && parseInt(collectionProp) >= 0) {
-                const index = parseInt(collectionProp);
-                const element = collectionTarget[index];
-                
-                if (element) {
-                  // Return a proxy for the element that allows direct property access
-                  return new Proxy(element, {
-                    get: (elementTarget, elementProp) => {
-                      return elementTarget[elementProp];
-                    },
-                    set: (elementTarget, elementProp, value) => {
-                      elementTarget[elementProp] = value;
-                      return true;
-                    }
-                  });
-                }
-                return element;
-              }
-              
-              // Return collection methods and properties
-              return collectionTarget[collectionProp];
-            },
-            set: (collectionTarget, collectionProp, value) => {
-              collectionTarget[collectionProp] = value;
-              return true;
-            }
-          });
-        },
-        
-        apply: (target, thisArg, args) => {
-          if (args.length > 0) {
-            return this._getQuery('multiple', args[0]);
-          }
-          return this._createEmptyCollection();
-        }
-      });
+      // Enhanced syntax proxies (if enabled)
+      if (this.options.enableEnhancedSyntax) {
+        this._initEnhancedSyntax();
+      }
 
       // Scoped query methods
       this.Scoped = {
@@ -162,6 +83,127 @@
           return this._getScopedQuery(containerEl, selector, 'multiple', cacheKey);
         }
       };
+    }
+
+    _initEnhancedSyntax() {
+      // Enhanced query proxy for direct property access
+      const originalQuery = this.query;
+      this.query = new Proxy(originalQuery, {
+        get: (target, prop) => {
+          // Handle function properties and symbols
+          if (typeof prop === 'symbol' || 
+              prop === 'constructor' || 
+              prop === 'prototype' ||
+              prop === 'apply' ||
+              prop === 'call' ||
+              prop === 'bind' ||
+              typeof target[prop] === 'function') {
+            return target[prop];
+          }
+          
+          // Convert property to selector
+          const selector = this._normalizeSelector(prop);
+          const element = this._getQuery('single', selector);
+          
+          // Return element with enhanced proxy if found
+          if (element) {
+            return this._createElementProxy(element);
+          }
+          
+          return element;
+        },
+        
+        apply: (target, thisArg, args) => {
+          if (args.length > 0) {
+            return this._getQuery('single', args[0]);
+          }
+          return null;
+        }
+      });
+
+      // Enhanced queryAll proxy for array-like access
+      const originalQueryAll = this.queryAll;
+      this.queryAll = new Proxy(originalQueryAll, {
+        get: (target, prop) => {
+          // Handle function properties and symbols
+          if (typeof prop === 'symbol' || 
+              prop === 'constructor' || 
+              prop === 'prototype' ||
+              prop === 'apply' ||
+              prop === 'call' ||
+              prop === 'bind' ||
+              typeof target[prop] === 'function') {
+            return target[prop];
+          }
+          
+          // Convert property to selector
+          const selector = this._normalizeSelector(prop);
+          const collection = this._getQuery('multiple', selector);
+          
+          // Return enhanced collection proxy
+          return this._createCollectionProxy(collection);
+        },
+        
+        apply: (target, thisArg, args) => {
+          if (args.length > 0) {
+            return this._getQuery('multiple', args[0]);
+          }
+          return this._createEmptyCollection();
+        }
+      });
+    }
+
+    _createElementProxy(element) {
+      if (!element || !this.options.enableEnhancedSyntax) return element;
+      
+      return new Proxy(element, {
+        get: (target, prop) => {
+          // Return the actual property value
+          return target[prop];
+        },
+        set: (target, prop, value) => {
+          // Set the property value
+          try {
+            target[prop] = value;
+            return true;
+          } catch (e) {
+            this._warn(`Failed to set property ${prop}: ${e.message}`);
+            return false;
+          }
+        }
+      });
+    }
+
+    _createCollectionProxy(collection) {
+      if (!collection || !this.options.enableEnhancedSyntax) return collection;
+      
+      return new Proxy(collection, {
+        get: (target, prop) => {
+          // Handle numeric indices
+          if (!isNaN(prop) && parseInt(prop) >= 0) {
+            const index = parseInt(prop);
+            const element = target[index];
+            
+            if (element) {
+              // Return enhanced element proxy
+              return this._createElementProxy(element);
+            }
+            return element;
+          }
+          
+          // Return collection methods and properties
+          return target[prop];
+        },
+        set: (target, prop, value) => {
+          try {
+            target[prop] = value;
+            return true;
+          } catch (e) {
+            this._warn(`Failed to set collection property ${prop}: ${e.message}`);
+            return false;
+          }
+        }
+      });
     }
 
     _createQueryFunction(type) {
@@ -209,7 +251,12 @@
         return propStr;
       }
       
-      // Default: treat as direct selector
+      // Default: treat as direct selector or ID
+      if (propStr.match(/^[a-zA-Z][\w-]*$/)) {
+        // Looks like an ID: myButton → #myButton
+        return `#${propStr}`;
+      }
+      
       return propStr;
     }
 
@@ -532,12 +579,28 @@
       }, this.options.debounceDelay);
 
       this.observer = new MutationObserver(debouncedUpdate);
-      this.observer.observe(document.body, {
-        childList: true,
-        subtree: true,
-        attributes: true,
-        attributeFilter: ['id', 'class', 'style', 'hidden', 'disabled']
-      });
+      
+      // Only observe if document.body exists
+      if (document.body) {
+        this.observer.observe(document.body, {
+          childList: true,
+          subtree: true,
+          attributes: true,
+          attributeFilter: ['id', 'class', 'style', 'hidden', 'disabled']
+        });
+      } else {
+        // Wait for DOM to be ready
+        document.addEventListener('DOMContentLoaded', () => {
+          if (document.body && !this.isDestroyed) {
+            this.observer.observe(document.body, {
+              childList: true,
+              subtree: true,
+              attributes: true,
+              attributeFilter: ['id', 'class', 'style', 'hidden', 'disabled']
+            });
+          }
+        });
+      }
     }
 
     _processMutations(mutations) {
@@ -559,7 +622,8 @@
           
           // Track specific attribute changes
           if (attrName === 'id') {
-            affectedSelectors.add(`#${mutation.oldValue}`);
+            const oldValue = mutation.oldValue;
+            if (oldValue) affectedSelectors.add(`#${oldValue}`);
             if (target.id) affectedSelectors.add(`#${target.id}`);
           }
           
@@ -625,7 +689,9 @@
       this.stats.cacheSize = this.cache.size;
       this.stats.lastCleanup = Date.now();
 
-      this._log(`Cleanup completed. Removed ${beforeSize - this.cache.size} stale entries.`);
+      if (this.options.enableLogging && staleKeys.length > 0) {
+        this._log(`Cleanup completed. Removed ${staleKeys.length} stale entries.`);
+      }
     }
 
     _debounce(func, delay) {
@@ -710,6 +776,21 @@
       
       throw new Error(`Timeout waiting for selector: ${selector} (min: ${minCount})`);
     }
+
+    // Configuration methods
+    enableEnhancedSyntax() {
+      this.options.enableEnhancedSyntax = true;
+      this._initEnhancedSyntax();
+      return this;
+    }
+
+    disableEnhancedSyntax() {
+      this.options.enableEnhancedSyntax = false;
+      // Reset to basic functions
+      this.query = this._createQueryFunction('single');
+      this.queryAll = this._createQueryFunction('multiple');
+      return this;
+    }
   }
 
   // Auto-initialize with sensible defaults
@@ -718,7 +799,8 @@
     autoCleanup: true,
     cleanupInterval: 30000,
     maxCacheSize: 1000,
-    enableSmartCaching: true
+    enableSmartCaching: true,
+    enableEnhancedSyntax: true
   });
 
   // Global API - Clean and intuitive
@@ -734,6 +816,8 @@
     destroy: () => SelectorHelper.destroy(),
     waitFor: (selector, timeout) => SelectorHelper.waitForSelector(selector, timeout),
     waitForAll: (selector, minCount, timeout) => SelectorHelper.waitForSelectorAll(selector, minCount, timeout),
+    enableEnhancedSyntax: () => SelectorHelper.enableEnhancedSyntax(),
+    disableEnhancedSyntax: () => SelectorHelper.disableEnhancedSyntax(),
     configure: (options) => {
       Object.assign(SelectorHelper.options, options);
       return Selector;
