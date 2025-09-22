@@ -1,5 +1,5 @@
 {
-  "name": "dom-helpers",
+  "name": "@giovanni1707/dom-helpers",
   "version": "2.0.0",
   "description": "High-performance vanilla JavaScript DOM utilities with intelligent caching - Elements Helper (ID access) + Collections Helper (class/tag/name access) + Selector Helper (querySelector with caching)",
   "main": "dist/dom-helpers.bundle.js",
@@ -72,7 +72,7 @@
     "proxy",
     "cdn"
   ],
-  "author": "Your Name <your.email@example.com>",
+  "author": "giovanni1707",
   "license": "MIT",
   "repository": {
     "type": "git",
@@ -95,16 +95,16 @@
   ],
   "cdn": {
     "jsdelivr": {
-      "combined": "https://cdn.jsdelivr.net/npm/dom-helpers@2/dist/dom-helpers.min.js",
-      "elements": "https://cdn.jsdelivr.net/npm/dom-helpers@2/dist/elements.min.js",
-      "collections": "https://cdn.jsdelivr.net/npm/dom-helpers@2/dist/collections.min.js",
-      "selector": "https://cdn.jsdelivr.net/npm/dom-helpers@2/dist/selector.min.js"
+      "combined": "https://cdn.jsdelivr.net/npm/@giovanni1707/dom-helpers@2/dist/dom-helpers.min.js",
+      "elements": "https://cdn.jsdelivr.net/npm/@giovanni1707/dom-helpers@2/dist/elements.min.js",
+      "collections": "https://cdn.jsdelivr.net/npm/@giovanni1707/dom-helpers@2/dist/collections.min.js",
+      "selector": "https://cdn.jsdelivr.net/npm/@giovanni1707/dom-helpers@2/dist/selector.min.js"
     },
     "unpkg": {
-      "combined": "https://unpkg.com/dom-helpers@2/dist/dom-helpers.min.js",
-      "elements": "https://unpkg.com/dom-helpers@2/dist/elements.min.js",
-      "collections": "https://unpkg.com/dom-helpers@2/dist/collections.min.js",
-      "selector": "https://unpkg.com/dom-helpers@2/dist/selector.min.js"
+      "combined": "https://unpkg.com/@giovanni1707/dom-helpers@2/dist/dom-helpers.min.js",
+      "elements": "https://unpkg.com/@giovanni1707/dom-helpers@2/dist/elements.min.js",
+      "collections": "https://unpkg.com/@giovanni1707/dom-helpers@2/dist/collections.min.js",
+      "selector": "https://unpkg.com/@giovanni1707/dom-helpers@2/dist/selector.min.js"
     }
   }
 }
