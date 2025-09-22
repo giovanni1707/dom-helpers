@@ -174,6 +174,7 @@ async function buildCombined() {
   
   const elementsContent = readSourceFile('elements-helper.js');
   const collectionsContent = readSourceFile('collections.js');
+  const selectorContent = readSourceFile('querySelector-helper.js');
   
   // Create combined unminified bundle: dom-helpers.bundle.js
   const combinedBundle = `/**
@@ -183,6 +184,7 @@ async function buildCombined() {
  * Includes:
  * - Elements Helper (ID-based DOM access)
  * - Collections Helper (Class/Tag/Name-based DOM access)
+ * - Selector Helper (querySelector/querySelectorAll with caching)
  * 
  * @version 2.0.0
  * @license MIT
@@ -197,22 +199,27 @@ async function buildCombined() {
   // ===== COLLECTIONS HELPER =====
   ${extractHelperCode(collectionsContent)}
 
+  // ===== SELECTOR HELPER =====
+  ${extractHelperCode(selectorContent)}
+
   // ===== COMBINED API =====
   const DOMHelpers = {
     // Individual helpers
     Elements: global.Elements,
     Collections: global.Collections,
+    Selector: global.Selector,
     
     // Helper classes
     ProductionElementsHelper: global.ProductionElementsHelper,
     ProductionCollectionHelper: global.ProductionCollectionHelper,
+    ProductionSelectorHelper: global.ProductionSelectorHelper,
     
     // Utility methods
     version: '2.0.0',
     
-    // Check if both helpers are available
+    // Check if all helpers are available
     isReady() {
-      return !!(this.Elements && this.Collections);
+      return !!(this.Elements && this.Collections && this.Selector);
     },
     
     // Get combined statistics
@@ -227,6 +234,10 @@ async function buildCombined() {
         stats.collections = this.Collections.stats();
       }
       
+      if (this.Selector && typeof this.Selector.stats === 'function') {
+        stats.selector = this.Selector.stats();
+      }
+      
       return stats;
     },
     
@@ -239,6 +250,10 @@ async function buildCombined() {
       if (this.Collections && typeof this.Collections.clear === 'function') {
         this.Collections.clear();
       }
+      
+      if (this.Selector && typeof this.Selector.clear === 'function') {
+        this.Selector.clear();
+      }
     },
     
     // Destroy all helpers
@@ -250,9 +265,13 @@ async function buildCombined() {
       if (this.Collections && typeof this.Collections.destroy === 'function') {
         this.Collections.destroy();
       }
+      
+      if (this.Selector && typeof this.Selector.destroy === 'function') {
+        this.Selector.destroy();
+      }
     },
     
-    // Configure both helpers
+    // Configure all helpers
     configure(options = {}) {
       if (this.Elements && typeof this.Elements.configure === 'function') {
         this.Elements.configure(options.elements || options);
@@ -260,6 +279,10 @@ async function buildCombined() {
       
       if (this.Collections && typeof this.Collections.configure === 'function') {
         this.Collections.configure(options.collections || options);
+      }
+      
+      if (this.Selector && typeof this.Selector.configure === 'function') {
+        this.Selector.configure(options.selector || options);
       }
       
       return this;
@@ -273,8 +296,10 @@ async function buildCombined() {
       DOMHelpers,
       Elements: global.Elements,
       Collections: global.Collections,
+      Selector: global.Selector,
       ProductionElementsHelper: global.ProductionElementsHelper,
-      ProductionCollectionHelper: global.ProductionCollectionHelper
+      ProductionCollectionHelper: global.ProductionCollectionHelper,
+      ProductionSelectorHelper: global.ProductionSelectorHelper
     };
   } else if (typeof define === 'function' && define.amd) {
     // AMD/RequireJS
@@ -283,8 +308,10 @@ async function buildCombined() {
         DOMHelpers,
         Elements: global.Elements,
         Collections: global.Collections,
+        Selector: global.Selector,
         ProductionElementsHelper: global.ProductionElementsHelper,
-        ProductionCollectionHelper: global.ProductionCollectionHelper
+        ProductionCollectionHelper: global.ProductionCollectionHelper,
+        ProductionSelectorHelper: global.ProductionSelectorHelper
       };
     });
   } else {
@@ -446,22 +473,27 @@ export declare const Collections: CollectionsAPI;
 
 import { ElementsProxy, ElementsStats, ElementsOptions, ProductionElementsHelper } from './elements';
 import { CollectionsAPI, CollectionsStats, CollectionsOptions, ProductionCollectionHelper } from './collections';
+import { SelectorAPI, SelectorStats, SelectorOptions, ProductionSelectorHelper } from './selector';
 
 export interface DOMHelpersStats {
   elements?: ElementsStats;
   collections?: CollectionsStats;
+  selector?: SelectorStats;
 }
 
 export interface DOMHelpersOptions {
   elements?: ElementsOptions;
   collections?: CollectionsOptions;
+  selector?: SelectorOptions;
 }
 
 export interface DOMHelpersAPI {
   Elements: ElementsProxy;
   Collections: CollectionsAPI;
+  Selector: SelectorAPI;
   ProductionElementsHelper: typeof ProductionElementsHelper;
   ProductionCollectionHelper: typeof ProductionCollectionHelper;
+  ProductionSelectorHelper: typeof ProductionSelectorHelper;
   version: string;
   isReady(): boolean;
   getStats(): DOMHelpersStats;
@@ -473,11 +505,13 @@ export interface DOMHelpersAPI {
 export declare const DOMHelpers: DOMHelpersAPI;
 export declare const Elements: ElementsProxy;
 export declare const Collections: CollectionsAPI;
-export { ProductionElementsHelper, ProductionCollectionHelper };
+export declare const Selector: SelectorAPI;
+export { ProductionElementsHelper, ProductionCollectionHelper, ProductionSelectorHelper };
 
 // Re-export types
 export * from './elements';
 export * from './collections';
+export * from './selector';
 `;
 
   // Write declaration files
