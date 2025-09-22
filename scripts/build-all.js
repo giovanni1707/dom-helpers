@@ -50,10 +50,12 @@ async function minifyCode(code, filename) {
         reserved: [
           // Preserve public API names
           'Elements',
-          'Collections', 
+          'Collections',
+          'Selector',
           'DOMHelpers',
           'ProductionElementsHelper',
           'ProductionCollectionHelper',
+          'ProductionSelectorHelper',
           // Preserve common method names
           'configure',
           'stats',
@@ -65,7 +67,12 @@ async function minifyCode(code, filename) {
           'isReady',
           'ClassName',
           'TagName',
-          'Name'
+          'Name',
+          'query',
+          'queryAll',
+          'Scoped',
+          'waitFor',
+          'waitForAll'
         ]
       },
       format: {
@@ -142,6 +149,21 @@ async function buildCollections() {
   writeOutputFile('collections.min.js', collectionsMinified);
   
   console.log('✅ Collections Helper built successfully');
+}
+
+/**
+ * Build individual Selector Helper files
+ */
+async function buildSelector() {
+  console.log('📦 Building Selector Helper...');
+  
+  const selectorContent = readSourceFile('querySelector-helper.js');
+  
+  // Individual minified file: selector.min.js
+  const selectorMinified = await minifyCode(selectorContent, 'selector.min.js');
+  writeOutputFile('selector.min.js', selectorMinified);
+  
+  console.log('✅ Selector Helper built successfully');
 }
 
 /**
@@ -476,6 +498,7 @@ async function buildAll() {
     // Build individual helpers
     await buildElements();
     await buildCollections();
+    await buildSelector();
     
     // Build combined bundle
     await buildCombined();
@@ -488,6 +511,7 @@ async function buildAll() {
     console.log('📁 Individual minified files:');
     console.log('  - elements.min.js');
     console.log('  - collections.min.js');
+    console.log('  - selector.min.js');
     console.log('📁 Combined bundle files:');
     console.log('  - dom-helpers.bundle.js (unminified)');
     console.log('  - dom-helpers.min.js (minified)');

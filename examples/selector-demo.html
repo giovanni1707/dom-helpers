@@ -1,0 +1,451 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Selector Helper Demo</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+            line-height: 1.6;
+        }
+        
+        .container {
+            background: #f5f5f5;
+            padding: 20px;
+            border-radius: 8px;
+            margin: 20px 0;
+        }
+        
+        .demo-section {
+            background: white;
+            padding: 15px;
+            margin: 15px 0;
+            border-radius: 5px;
+            border-left: 4px solid #007bff;
+        }
+        
+        .btn {
+            background: #007bff;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 4px;
+            cursor: pointer;
+            margin: 5px;
+        }
+        
+        .btn:hover {
+            background: #0056b3;
+        }
+        
+        .btn-secondary {
+            background: #6c757d;
+        }
+        
+        .btn-success {
+            background: #28a745;
+        }
+        
+        .btn-danger {
+            background: #dc3545;
+        }
+        
+        .list-item {
+            padding: 10px;
+            margin: 5px 0;
+            background: #e9ecef;
+            border-radius: 3px;
+        }
+        
+        .list-item.active {
+            background: #d4edda;
+            border-left: 3px solid #28a745;
+        }
+        
+        .stats {
+            background: #f8f9fa;
+            padding: 15px;
+            border-radius: 5px;
+            font-family: monospace;
+            white-space: pre-line;
+        }
+        
+        .form-group {
+            margin: 15px 0;
+        }
+        
+        .form-group label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: bold;
+        }
+        
+        .form-group input,
+        .form-group textarea {
+            width: 100%;
+            padding: 8px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            box-sizing: border-box;
+        }
+        
+        .error {
+            border-color: #dc3545 !important;
+            background-color: #f8d7da;
+        }
+        
+        .hidden {
+            display: none;
+        }
+        
+        .dynamic-content {
+            background: #fff3cd;
+            padding: 15px;
+            border-radius: 5px;
+            margin: 10px 0;
+        }
+        
+        .loading {
+            opacity: 0.5;
+            pointer-events: none;
+        }
+    </style>
+</head>
+<body>
+    <h1>Selector Helper Demo</h1>
+    <p>This demo showcases the powerful features of the Selector Helper library.</p>
+
+    <!-- Basic Usage Section -->
+    <div class="container">
+        <h2>Basic Usage</h2>
+        
+        <div class="demo-section">
+            <h3>Smart Property Access</h3>
+            <button id="my-button" class="btn">My Button</button>
+            <button id="submit-btn" class="btn btn-success">Submit Button</button>
+            <button id="cancel-btn" class="btn btn-secondary">Cancel Button</button>
+            
+            <div class="list-item">Item 1</div>
+            <div class="list-item">Item 2</div>
+            <div class="list-item">Item 3</div>
+            
+            <button class="btn" onclick="demonstrateBasicUsage()">Test Basic Usage</button>
+        </div>
+    </div>
+
+    <!-- Enhanced Collections Section -->
+    <div class="container">
+        <h2>Enhanced Collections</h2>
+        
+        <div class="demo-section">
+            <h3>Collection Methods</h3>
+            <div class="btn-group">
+                <button class="btn btn-primary">Primary 1</button>
+                <button class="btn btn-primary">Primary 2</button>
+                <button class="btn btn-secondary">Secondary 1</button>
+                <button class="btn btn-secondary">Secondary 2</button>
+                <button class="btn btn-success">Success</button>
+                <button class="btn btn-danger">Danger</button>
+            </div>
+            
+            <button class="btn" onclick="demonstrateCollections()">Test Collections</button>
+        </div>
+    </div>
+
+    <!-- Scoped Queries Section -->
+    <div class="container">
+        <h2>Scoped Queries</h2>
+        
+        <div class="demo-section">
+            <div id="main-content">
+                <h3>Main Content</h3>
+                <a href="#" class="link">Main Link 1</a>
+                <a href="#" class="link">Main Link 2</a>
+                <button class="btn">Main Button</button>
+            </div>
+            
+            <div id="sidebar">
+                <h3>Sidebar</h3>
+                <a href="#" class="link">Sidebar Link 1</a>
+                <a href="#" class="link">Sidebar Link 2</a>
+                <button class="btn">Sidebar Button</button>
+            </div>
+            
+            <button class="btn" onclick="demonstrateScopedQueries()">Test Scoped Queries</button>
+        </div>
+    </div>
+
+    <!-- Form Handling Section -->
+    <div class="container">
+        <h2>Form Handling</h2>
+        
+        <div class="demo-section">
+            <form id="contact-form">
+                <div class="form-group">
+                    <label for="name">Name:</label>
+                    <input type="text" id="name" name="name" required>
+                </div>
+                
+                <div class="form-group">
+                    <label for="email">Email:</label>
+                    <input type="email" id="email" name="email" required>
+                </div>
+                
+                <div class="form-group">
+                    <label for="message">Message:</label>
+                    <textarea id="message" name="message" rows="4" required></textarea>
+                </div>
+                
+                <button type="button" class="btn" onclick="validateForm()">Validate Form</button>
+                <button type="button" class="btn btn-secondary" onclick="clearForm()">Clear Form</button>
+            </form>
+        </div>
+    </div>
+
+    <!-- Dynamic Content Section -->
+    <div class="container">
+        <h2>Dynamic Content & Async Waiting</h2>
+        
+        <div class="demo-section">
+            <div id="dynamic-container"></div>
+            <button class="btn" onclick="loadDynamicContent()">Load Dynamic Content</button>
+            <button class="btn btn-secondary" onclick="clearDynamicContent()">Clear Content</button>
+        </div>
+    </div>
+
+    <!-- Performance Monitoring Section -->
+    <div class="container">
+        <h2>Performance Monitoring</h2>
+        
+        <div class="demo-section">
+            <button class="btn" onclick="showStats()">Show Statistics</button>
+            <button class="btn btn-secondary" onclick="clearCache()">Clear Cache</button>
+            <div id="stats-display" class="stats"></div>
+        </div>
+    </div>
+
+    <!-- Load Selector Helper -->
+    <script src="../dist/selector.min.js"></script>
+    
+    <script>
+        // Configure Selector Helper
+        Selector.configure({
+            enableLogging: true,
+            maxCacheSize: 1000,
+            enableSmartCaching: true
+        });
+
+        // Basic Usage Demo
+        function demonstrateBasicUsage() {
+            console.log('=== Basic Usage Demo ===');
+            
+            // Smart property access
+            const myButton = Selector.query.myButton;
+            const submitBtn = Selector.query.idSubmitBtn;
+            const listItems = Selector.queryAll.listItem;
+            
+            console.log('My Button:', myButton);
+            console.log('Submit Button:', submitBtn);
+            console.log('List Items:', listItems.length, 'items');
+            
+            // Highlight elements
+            if (myButton) myButton.style.background = '#28a745';
+            if (submitBtn) submitBtn.style.background = '#ffc107';
+            
+            listItems.addClass('active');
+            
+            alert(`Found elements:\n- My Button: ${!!myButton}\n- Submit Button: ${!!submitBtn}\n- List Items: ${listItems.length}`);
+        }
+
+        // Enhanced Collections Demo
+        function demonstrateCollections() {
+            console.log('=== Collections Demo ===');
+            
+            const buttons = Selector.queryAll('.btn');
+            console.log('Total buttons:', buttons.length);
+            
+            // Array-like methods
+            const buttonTexts = buttons.map(btn => btn.textContent);
+            console.log('Button texts:', buttonTexts);
+            
+            const primaryButtons = buttons.filter(btn => btn.classList.contains('btn-primary'));
+            console.log('Primary buttons:', primaryButtons.length);
+            
+            // DOM manipulation
+            buttons.setStyle({ 
+                transform: 'scale(1.1)',
+                transition: 'transform 0.3s'
+            });
+            
+            setTimeout(() => {
+                buttons.setStyle({ transform: 'scale(1)' });
+            }, 1000);
+            
+            // Utility methods
+            const firstBtn = buttons.first();
+            const lastBtn = buttons.last();
+            
+            if (firstBtn) firstBtn.style.border = '3px solid red';
+            if (lastBtn) lastBtn.style.border = '3px solid blue';
+            
+            alert(`Collection methods:\n- Total: ${buttons.length}\n- Primary: ${primaryButtons.length}\n- First: ${firstBtn?.textContent}\n- Last: ${lastBtn?.textContent}`);
+        }
+
+        // Scoped Queries Demo
+        function demonstrateScopedQueries() {
+            console.log('=== Scoped Queries Demo ===');
+            
+            // Query within main content
+            const mainLinks = Selector.Scoped.withinAll('#main-content', '.link');
+            const mainButton = Selector.Scoped.within('#main-content', '.btn');
+            
+            // Query within sidebar
+            const sidebarLinks = Selector.Scoped.withinAll('#sidebar', '.link');
+            const sidebarButton = Selector.Scoped.within('#sidebar', '.btn');
+            
+            console.log('Main content links:', mainLinks.length);
+            console.log('Sidebar links:', sidebarLinks.length);
+            
+            // Style scoped elements differently
+            mainLinks.setStyle({ color: 'blue', fontWeight: 'bold' });
+            sidebarLinks.setStyle({ color: 'green', fontWeight: 'bold' });
+            
+            if (mainButton) mainButton.style.background = '#007bff';
+            if (sidebarButton) sidebarButton.style.background = '#28a745';
+            
+            alert(`Scoped queries:\n- Main links: ${mainLinks.length}\n- Sidebar links: ${sidebarLinks.length}\n- Main button: ${!!mainButton}\n- Sidebar button: ${!!sidebarButton}`);
+        }
+
+        // Form Handling Demo
+        function validateForm() {
+            console.log('=== Form Validation Demo ===');
+            
+            const form = Selector.query.idContactForm;
+            const inputs = Selector.Scoped.withinAll(form, 'input, textarea');
+            
+            // Clear previous errors
+            inputs.removeClass('error');
+            
+            // Validate each input
+            const invalidInputs = inputs.filter(input => !input.validity.valid || !input.value.trim());
+            
+            if (invalidInputs.length > 0) {
+                invalidInputs.addClass('error');
+                alert(`Found ${invalidInputs.length} invalid field(s). Please check the highlighted fields.`);
+            } else {
+                alert('All fields are valid!');
+                
+                // Get form data
+                const formData = inputs.toArray().reduce((data, input) => {
+                    data[input.name] = input.value;
+                    return data;
+                }, {});
+                
+                console.log('Form data:', formData);
+            }
+        }
+
+        function clearForm() {
+            const inputs = Selector.queryAll('#contact-form input, #contact-form textarea');
+            inputs.forEach(input => input.value = '');
+            inputs.removeClass('error');
+        }
+
+        // Dynamic Content Demo
+        async function loadDynamicContent() {
+            console.log('=== Dynamic Content Demo ===');
+            
+            const container = Selector.query.idDynamicContainer;
+            container.innerHTML = '<div class="loading">Loading...</div>';
+            
+            // Simulate dynamic content loading
+            setTimeout(() => {
+                container.innerHTML = `
+                    <div class="dynamic-content">Dynamic Item 1</div>
+                    <div class="dynamic-content">Dynamic Item 2</div>
+                    <div class="dynamic-content">Dynamic Item 3</div>
+                    <div class="dynamic-content">Dynamic Item 4</div>
+                    <div class="dynamic-content">Dynamic Item 5</div>
+                `;
+            }, 1000);
+            
+            try {
+                // Wait for dynamic content to appear
+                const dynamicItems = await Selector.waitForAll('.dynamic-content', 3, 5000);
+                console.log('Dynamic content loaded:', dynamicItems.length, 'items');
+                
+                // Style the loaded content
+                dynamicItems.setStyle({ 
+                    opacity: '0',
+                    transform: 'translateY(20px)'
+                });
+                
+                // Animate in
+                dynamicItems.forEach((item, index) => {
+                    setTimeout(() => {
+                        item.style.transition = 'all 0.3s ease';
+                        item.style.opacity = '1';
+                        item.style.transform = 'translateY(0)';
+                    }, index * 100);
+                });
+                
+                alert(`Successfully loaded ${dynamicItems.length} dynamic items!`);
+                
+            } catch (error) {
+                console.error('Failed to load dynamic content:', error);
+                alert('Failed to load dynamic content within timeout');
+            }
+        }
+
+        function clearDynamicContent() {
+            const container = Selector.query.idDynamicContainer;
+            container.innerHTML = '';
+        }
+
+        // Performance Monitoring
+        function showStats() {
+            const stats = Selector.stats();
+            const statsDisplay = Selector.query.idStatsDisplay;
+            
+            const statsText = `Performance Statistics:
+Cache Hits: ${stats.hits}
+Cache Misses: ${stats.misses}
+Hit Rate: ${(stats.hitRate * 100).toFixed(1)}%
+Cache Size: ${stats.cacheSize}
+Uptime: ${(stats.uptime / 1000).toFixed(1)}s
+
+Selector Breakdown:
+${Object.entries(stats.selectorBreakdown)
+  .map(([type, count]) => `${type}: ${count}`)
+  .join('\n')}`;
+            
+            statsDisplay.textContent = statsText;
+            console.log('Stats:', stats);
+        }
+
+        function clearCache() {
+            Selector.clear();
+            alert('Cache cleared! Try running some demos again to see the cache rebuild.');
+            showStats();
+        }
+
+        // Initialize demo
+        document.addEventListener('DOMContentLoaded', () => {
+            console.log('Selector Helper Demo loaded');
+            console.log('Available demos:');
+            console.log('- Basic Usage: Smart property access');
+            console.log('- Collections: Enhanced array-like methods');
+            console.log('- Scoped Queries: Query within containers');
+            console.log('- Form Handling: Validation and data collection');
+            console.log('- Dynamic Content: Async element waiting');
+            console.log('- Performance: Statistics and cache management');
+            
+            showStats();
+        });
+    </script>
+</body>
+</html>

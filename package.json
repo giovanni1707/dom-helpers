@@ -1,7 +1,7 @@
 {
   "name": "dom-helpers",
   "version": "2.0.0",
-  "description": "High-performance vanilla JavaScript DOM utilities with intelligent caching - Elements Helper (ID access) + Collections Helper (class/tag/name access)",
+  "description": "High-performance vanilla JavaScript DOM utilities with intelligent caching - Elements Helper (ID access) + Collections Helper (class/tag/name access) + Selector Helper (querySelector with caching)",
   "main": "dist/dom-helpers.bundle.js",
   "module": "dist/dom-helpers.esm.js",
   "unpkg": "dist/dom-helpers.min.js",
@@ -22,6 +22,11 @@
       "import": "./dist/collections.esm.js",
       "require": "./dist/collections.js",
       "browser": "./dist/collections.min.js"
+    },
+    "./selector": {
+      "import": "./dist/selector.esm.js",
+      "require": "./dist/selector.js",
+      "browser": "./dist/selector.min.js"
     },
     "./package.json": "./package.json"
   },
@@ -49,6 +54,7 @@
     "dom",
     "elements",
     "collections",
+    "selector",
     "javascript",
     "vanilla-js",
     "performance",
@@ -61,6 +67,8 @@
     "getElementsByClassName",
     "getElementsByTagName",
     "getElementsByName",
+    "querySelector",
+    "querySelectorAll",
     "proxy",
     "cdn"
   ],
@@ -89,12 +97,14 @@
     "jsdelivr": {
       "combined": "https://cdn.jsdelivr.net/npm/dom-helpers@2/dist/dom-helpers.min.js",
       "elements": "https://cdn.jsdelivr.net/npm/dom-helpers@2/dist/elements.min.js",
-      "collections": "https://cdn.jsdelivr.net/npm/dom-helpers@2/dist/collections.min.js"
+      "collections": "https://cdn.jsdelivr.net/npm/dom-helpers@2/dist/collections.min.js",
+      "selector": "https://cdn.jsdelivr.net/npm/dom-helpers@2/dist/selector.min.js"
     },
     "unpkg": {
       "combined": "https://unpkg.com/dom-helpers@2/dist/dom-helpers.min.js",
       "elements": "https://unpkg.com/dom-helpers@2/dist/elements.min.js",
-      "collections": "https://unpkg.com/dom-helpers@2/dist/collections.min.js"
+      "collections": "https://unpkg.com/dom-helpers@2/dist/collections.min.js",
+      "selector": "https://unpkg.com/dom-helpers@2/dist/selector.min.js"
     }
   }
 }
