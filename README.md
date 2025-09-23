@@ -21,9 +21,11 @@ DOM Helpers is a comprehensive collection of lightweight, zero-dependency utilit
 
 **The game-changing feature that makes DOM manipulation effortless!**
 
+**The Dom helper provide a Traditional and an Enhance model of writing code efficiently and cleaner**
+
 ### **Traditional vs .update() Method**
 
-**❌ Traditional Approach (Verbose & Repetitive):**
+** Traditional Approach of using the Dom Helper :**
 ```javascript
 Elements.title.textContent = "New Title";
 Elements.title.style.color = "blue";
