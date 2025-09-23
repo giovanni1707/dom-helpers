@@ -93,6 +93,60 @@ const visibleItems = items.visible();
 const enabledItems = items.enabled();
 ```
 
+### Universal .update() Method
+
+The Selector Helper includes the powerful universal `.update()` method for batch DOM operations:
+
+```javascript
+// Single element updates
+Selector.query('#my-button').update({
+  textContent: "Click Me!",
+  style: {
+    backgroundColor: "green",
+    color: "white",
+    padding: "10px"
+  },
+  disabled: false,
+  setAttribute: ["data-updated", "true"],
+  addEventListener: ["click", handleClick]
+});
+
+// Multiple element updates
+Selector.queryAll('.item').update({
+  style: { borderColor: "blue" },
+  className: "item processed",
+  setAttribute: ["data-processed", "true"]
+});
+
+// Chainable operations
+Selector.queryAll('.btn')
+  .update({
+    style: { backgroundColor: "red" }
+  })
+  .update({
+    textContent: "Updated Button"
+  })
+  .update({
+    addEventListener: ["mouseover", handleHover]
+  });
+
+// Function-based values for collections
+Selector.queryAll('.list-item').update({
+  textContent: (element, index) => `Item ${index + 1}`,
+  style: (element, index) => ({
+    backgroundColor: index % 2 === 0 ? "#f0f0f0" : "#ffffff"
+  })
+});
+```
+
+#### .update() Features:
+- **Property Updates**: Set any DOM property (`textContent`, `innerHTML`, `value`, etc.)
+- **Style Batching**: Apply multiple CSS properties efficiently
+- **Method Calls**: Execute DOM methods (`setAttribute`, `addEventListener`, `focus`, etc.)
+- **Chainable**: Chain multiple `.update()` calls
+- **Function Values**: Use functions for dynamic values in collections
+- **Safe**: Handles null elements and empty collections gracefully
+
 ## Advanced Features
 
 ### Scoped Queries

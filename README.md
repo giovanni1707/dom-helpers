@@ -10,11 +10,130 @@
 
 ## 🎯 What is DOM Helpers?
 
-DOM Helpers is a comprehensive collection of lightweight, zero-dependency utilities that revolutionize DOM access in vanilla JavaScript. It includes three powerful helpers:
+DOM Helpers is a comprehensive collection of lightweight, zero-dependency utilities that revolutionize DOM access in vanilla JavaScript. It includes three powerful helpers with a **universal .update() method**:
 
 - **🆔 Elements Helper**: Lightning-fast ID-based element access (`Elements.myId`)
 - **📦 Collections Helper**: Efficient class/tag/name-based collections (`Collections.ClassName.button`)
 - **🔍 Selector Helper**: Advanced querySelector with caching and smart property access (`Selector.query.myButton`)
+- **✨ Universal .update() Method**: Powerful batch operations for all helpers (`Elements.title.update({...})`)
+
+## 🚀 NEW: Universal .update() Method
+
+**The game-changing feature that makes DOM manipulation effortless!**
+
+### **Traditional vs .update() Method**
+
+**❌ Traditional Approach (Verbose & Repetitive):**
+```javascript
+Elements.title.textContent = "New Title";
+Elements.title.style.color = "blue";
+Elements.title.style.fontSize = "24px";
+Elements.title.style.fontWeight = "bold";
+Elements.title.setAttribute("data-updated", "true");
+Elements.title.addEventListener("click", handleClick);
+Elements.title.classList.add("highlight");
+```
+
+**✅ With .update() Method (Clean & Efficient):**
+```javascript
+Elements.title.update({
+  textContent: "New Title",
+  style: {
+    color: "blue",
+    fontSize: "24px", 
+    fontWeight: "bold"
+  },
+  setAttribute: ["data-updated", "true"],
+  addEventListener: ["click", handleClick],
+  className: "highlight"
+});
+```
+
+### **🌟 Universal .update() Features**
+
+- **🎯 Property Updates**: Set any DOM property (`textContent`, `innerHTML`, `value`, etc.)
+- **🎨 Style Batching**: Apply multiple CSS properties in one call
+- **🔧 Method Calls**: Execute DOM methods (`setAttribute`, `addEventListener`, `focus`, etc.)
+- **⛓️ Chainable**: Chain multiple `.update()` calls for complex operations
+- **🛡️ Safe**: Handles null elements and empty collections gracefully
+- **🌐 Universal**: Works identically with single elements and collections
+- **⚡ Performance**: Optimized batch operations reduce DOM reflows
+
+### **🎯 Works with ALL Helpers**
+
+```javascript
+// Elements Helper - Single element updates
+Elements.button.update({
+  textContent: "Click Me!",
+  style: { backgroundColor: "green" },
+  disabled: false
+});
+
+// Collections Helper - Multiple element updates  
+Collections.ClassName("item").update({
+  style: { color: "red" },
+  setAttribute: ["data-processed", "true"]
+});
+
+// Selector Helper - Query-based updates
+Selector.queryAll(".btn").update({
+  style: { padding: "10px" },
+  addEventListener: ["click", handleClick]
+});
+```
+
+### **🔗 Chainable Operations**
+
+```javascript
+Elements.modal
+  .update({
+    style: { display: "block" }
+  })
+  .update({
+    className: "modal active"
+  })
+  .update({
+    setAttribute: ["aria-hidden", "false"]
+  });
+```
+
+### **📊 Function-Based Values**
+
+```javascript
+Collections.ClassName("item").update({
+  textContent: (element, index) => `Item ${index + 1}`,
+  style: (element, index) => ({
+    backgroundColor: index % 2 === 0 ? "#f0f0f0" : "#ffffff"
+  })
+});
+```
+
+### **🎨 Advanced Style Batching**
+
+```javascript
+Elements.header.update({
+  style: {
+    background: "linear-gradient(45deg, #ff6b6b, #4ecdc4)",
+    color: "white",
+    padding: "20px",
+    borderRadius: "10px",
+    boxShadow: "0 4px 8px rgba(0,0,0,0.1)",
+    transform: "translateY(-2px)",
+    transition: "all 0.3s ease"
+  }
+});
+```
+
+### **🔧 Method Calls with Arguments**
+
+```javascript
+Elements.input.update({
+  focus: [],                                    // No arguments
+  setAttribute: ["placeholder", "Enter text"], // With arguments
+  addEventListener: ["input", handleInput],     // Event listener
+  scrollIntoView: [{ behavior: "smooth" }]     // With options object
+});
+```
 
 ## 🌐 CDN Options
 
@@ -29,16 +148,16 @@ DOM Helpers is a comprehensive collection of lightweight, zero-dependency utilit
 <script src="https://cdn.jsdelivr.net/gh/giovanni1707/elements-helper@main/dist/selector.min.js"></script>    <!-- 9.9KB -->
 ```
 
-### **NPM CDN (After Publishing)**
+### **NPM CDN (Published v2.2.0 with .update() Method)**
 ```html
-<!-- Combined Bundle (All 3 Helpers) - 24.4KB -->
-<script src="https://cdn.jsdelivr.net/npm/@giovanni1707/dom-helpers@2/dist/dom-helpers.min.js"></script>
-<script src="https://unpkg.com/@giovanni1707/dom-helpers@2/dist/dom-helpers.min.js"></script>
+<!-- Combined Bundle (All 3 Helpers + Universal .update()) - 38.9KB -->
+<script src="https://cdn.jsdelivr.net/npm/@giovanni1707/dom-helpers@2.2.0/dist/dom-helpers.min.js"></script>
+<script src="https://unpkg.com/@giovanni1707/dom-helpers@2.2.0/dist/dom-helpers.min.js"></script>
 
-<!-- Individual Helpers -->
-<script src="https://cdn.jsdelivr.net/npm/@giovanni1707/dom-helpers@2/dist/elements.min.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/@giovanni1707/dom-helpers@2/dist/collections.min.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/@giovanni1707/dom-helpers@2/dist/selector.min.js"></script>
+<!-- Individual Helpers (with .update() method) -->
+<script src="https://cdn.jsdelivr.net/npm/@giovanni1707/dom-helpers@2.2.0/dist/elements.min.js"></script>    <!-- 8.1KB -->
+<script src="https://cdn.jsdelivr.net/npm/@giovanni1707/dom-helpers@2.2.0/dist/collections.min.js"></script> <!-- 11.4KB -->
+<script src="https://cdn.jsdelivr.net/npm/@giovanni1707/dom-helpers@2.2.0/dist/selector.min.js"></script>    <!-- 14.8KB -->
 ```
 
 ## 🔄 Before vs After Comparison

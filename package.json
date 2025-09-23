@@ -1,6 +1,6 @@
 {
   "name": "@giovanni1707/dom-helpers",
-  "version": "2.1.0",
+  "version": "2.2.0",
   "description": "High-performance vanilla JavaScript DOM utilities with intelligent caching - Elements Helper (ID access) + Collections Helper (class/tag/name access) + Selector Helper (querySelector with caching)",
   "main": "dist/dom-helpers.bundle.js",
   "module": "dist/dom-helpers.esm.js",
