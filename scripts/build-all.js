@@ -172,9 +172,15 @@ async function buildSelector() {
 async function buildCombined() {
   console.log('📦 Building Combined Bundle...');
   
+  const updateUtilityContent = readSourceFile('update-utility.js');
   const elementsContent = readSourceFile('elements-helper.js');
   const collectionsContent = readSourceFile('collections.js');
   const selectorContent = readSourceFile('querySelector-helper.js');
+  
+  // Remove UpdateUtility imports from individual helpers for combined bundle
+  const cleanElementsContent = elementsContent.replace(/\/\/ Import UpdateUtility[\s\S]*?UpdateUtility = global\.UpdateUtility;\s*}/g, '');
+  const cleanCollectionsContent = collectionsContent.replace(/\/\/ Import UpdateUtility[\s\S]*?UpdateUtility = global\.UpdateUtility;\s*}/g, '');
+  const cleanSelectorContent = selectorContent.replace(/\/\/ Import UpdateUtility[\s\S]*?UpdateUtility = global\.UpdateUtility;\s*}/g, '');
   
   // Create combined unminified bundle: dom-helpers.bundle.js
   const combinedBundle = `/**
@@ -182,25 +188,29 @@ async function buildCombined() {
  * High-performance vanilla JavaScript DOM utilities with intelligent caching
  * 
  * Includes:
+ * - Update Utility (Universal .update() method)
  * - Elements Helper (ID-based DOM access)
  * - Collections Helper (Class/Tag/Name-based DOM access)
  * - Selector Helper (querySelector/querySelectorAll with caching)
  * 
- * @version 2.0.0
+ * @version 2.1.0
  * @license MIT
  */
 
 (function(global) {
   'use strict';
 
+  // ===== UPDATE UTILITY =====
+  ${extractHelperCode(updateUtilityContent)}
+
   // ===== ELEMENTS HELPER =====
-  ${extractHelperCode(elementsContent)}
+  ${extractHelperCode(cleanElementsContent)}
 
   // ===== COLLECTIONS HELPER =====
-  ${extractHelperCode(collectionsContent)}
+  ${extractHelperCode(cleanCollectionsContent)}
 
   // ===== SELECTOR HELPER =====
-  ${extractHelperCode(selectorContent)}
+  ${extractHelperCode(cleanSelectorContent)}
 
   // ===== COMBINED API =====
   const DOMHelpers = {

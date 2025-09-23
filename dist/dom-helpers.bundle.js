@@ -3,16 +3,277 @@
  * High-performance vanilla JavaScript DOM utilities with intelligent caching
  * 
  * Includes:
+ * - Update Utility (Universal .update() method)
  * - Elements Helper (ID-based DOM access)
  * - Collections Helper (Class/Tag/Name-based DOM access)
  * - Selector Helper (querySelector/querySelectorAll with caching)
  * 
- * @version 2.0.0
+ * @version 2.1.0
  * @license MIT
  */
 
 (function(global) {
   'use strict';
+
+  // ===== UPDATE UTILITY =====
+  /**
+   * Universal Update Implementation
+   * This function can be applied to any element or collection
+   */
+  function createUpdateMethod(context, isCollection = false) {
+    return function update(updates = {}) {
+      // Safety check - if no updates provided, return context for chaining
+      if (!updates || typeof updates !== 'object') {
+        console.warn('[DOM Helpers] .update() called with invalid updates object');
+        return context;
+      }
+
+      // Handle single element updates
+      if (!isCollection) {
+        return updateSingleElement(context, updates);
+      }
+
+      // Handle collection updates
+      return updateCollection(context, updates);
+    };
+  }
+
+  /**
+   * Update a single DOM element
+   */
+  function updateSingleElement(element, updates) {
+    // Safety check - if element doesn't exist, log warning and return null for chaining
+    if (!element || !element.nodeType) {
+      console.warn('[DOM Helpers] .update() called on null or invalid element');
+      return element;
+    }
+
+    try {
+      // Process each update
+      Object.entries(updates).forEach(([key, value]) => {
+        applyUpdate(element, key, value);
+      });
+    } catch (error) {
+      console.warn(`[DOM Helpers] Error in .update(): ${error.message}`);
+    }
+
+    return element; // Return for chaining
+  }
+
+  /**
+   * Update a collection of DOM elements
+   */
+  function updateCollection(collection, updates) {
+    // Safety check - if collection doesn't exist or is empty
+    if (!collection) {
+      console.warn('[DOM Helpers] .update() called on null collection');
+      return collection;
+    }
+
+    // Handle different collection types
+    let elements = [];
+    
+    if (collection.length !== undefined) {
+      // Array-like collection (NodeList, HTMLCollection, or enhanced collection)
+      elements = Array.from(collection);
+    } else if (collection._originalCollection) {
+      // Enhanced collection from Selector helper
+      elements = Array.from(collection._originalCollection);
+    } else if (collection._originalNodeList) {
+      // Enhanced collection from Selector helper (alternative structure)
+      elements = Array.from(collection._originalNodeList);
+    } else {
+      console.warn('[DOM Helpers] .update() called on unrecognized collection type');
+      return collection;
+    }
+
+    // If no elements in collection, log info and return for chaining
+    if (elements.length === 0) {
+      console.info('[DOM Helpers] .update() called on empty collection');
+      return collection;
+    }
+
+    try {
+      // Apply updates to each element in the collection
+      elements.forEach(element => {
+        if (element && element.nodeType === Node.ELEMENT_NODE) {
+          Object.entries(updates).forEach(([key, value]) => {
+            applyUpdate(element, key, value);
+          });
+        }
+      });
+    } catch (error) {
+      console.warn(`[DOM Helpers] Error in collection .update(): ${error.message}`);
+    }
+
+    return collection; // Return for chaining
+  }
+
+  /**
+   * Apply a single update to an element
+   */
+  function applyUpdate(element, key, value) {
+    try {
+      // Handle special cases first
+      if (key === 'style' && typeof value === 'object' && value !== null) {
+        // Batch apply CSS styles
+        Object.entries(value).forEach(([styleProperty, styleValue]) => {
+          if (styleValue !== null && styleValue !== undefined) {
+            element.style[styleProperty] = styleValue;
+          }
+        });
+        return;
+      }
+
+      // Handle DOM methods (value should be an array of arguments)
+      if (typeof element[key] === 'function') {
+        if (Array.isArray(value)) {
+          // Call method with provided arguments
+          element[key](...value);
+        } else {
+          // Call method with single argument or no arguments
+          element[key](value);
+        }
+        return;
+      }
+
+      // Handle regular DOM properties
+      if (key in element) {
+        element[key] = value;
+        return;
+      }
+
+      // If property doesn't exist on element, try setAttribute as fallback
+      if (typeof value === 'string' || typeof value === 'number') {
+        element.setAttribute(key, value);
+        return;
+      }
+
+      console.warn(`[DOM Helpers] Unknown property or method: ${key}`);
+    } catch (error) {
+      console.warn(`[DOM Helpers] Failed to apply update ${key}: ${error.message}`);
+    }
+  }
+
+  /**
+   * Enhanced element wrapper that adds .update() method to any element
+   */
+  function enhanceElementWithUpdate(element) {
+    if (!element || element._hasUpdateMethod) {
+      return element;
+    }
+
+    // Add update method to the element
+    try {
+      Object.defineProperty(element, 'update', {
+        value: createUpdateMethod(element, false),
+        writable: false,
+        enumerable: false,
+        configurable: true
+      });
+
+      // Mark as enhanced to avoid double-enhancement
+      Object.defineProperty(element, '_hasUpdateMethod', {
+        value: true,
+        writable: false,
+        enumerable: false,
+        configurable: false
+      });
+    } catch (error) {
+      // Fallback: attach as regular property if defineProperty fails
+      element.update = createUpdateMethod(element, false);
+      element._hasUpdateMethod = true;
+    }
+
+    return element;
+  }
+
+  /**
+   * Enhanced collection wrapper that adds .update() method to any collection
+   */
+  function enhanceCollectionWithUpdate(collection) {
+    if (!collection || collection._hasUpdateMethod) {
+      return collection;
+    }
+
+    // Add update method to the collection
+    try {
+      Object.defineProperty(collection, 'update', {
+        value: createUpdateMethod(collection, true),
+        writable: false,
+        enumerable: false,
+        configurable: true
+      });
+
+      // Mark as enhanced to avoid double-enhancement
+      Object.defineProperty(collection, '_hasUpdateMethod', {
+        value: true,
+        writable: false,
+        enumerable: false,
+        configurable: false
+      });
+    } catch (error) {
+      // Fallback: attach as regular property if defineProperty fails
+      collection.update = createUpdateMethod(collection, true);
+      collection._hasUpdateMethod = true;
+    }
+
+    return collection;
+  }
+
+  /**
+   * Utility function to determine if something is a collection
+   */
+  function isCollection(obj) {
+    return obj && (
+      obj.length !== undefined || 
+      obj._originalCollection || 
+      obj._originalNodeList ||
+      obj instanceof NodeList ||
+      obj instanceof HTMLCollection
+    );
+  }
+
+  /**
+   * Auto-enhance function that adds .update() to elements or collections
+   */
+  function autoEnhanceWithUpdate(obj) {
+    if (!obj) return obj;
+
+    if (isCollection(obj)) {
+      return enhanceCollectionWithUpdate(obj);
+    } else if (obj.nodeType === Node.ELEMENT_NODE) {
+      return enhanceElementWithUpdate(obj);
+    }
+
+    return obj;
+  }
+
+  // Export the utility functions
+  const UpdateUtility = {
+    createUpdateMethod,
+    enhanceElementWithUpdate,
+    enhanceCollectionWithUpdate,
+    autoEnhanceWithUpdate,
+    isCollection,
+    updateSingleElement,
+    updateCollection,
+    applyUpdate
+  };
+
+  // Export for different environments
+  if (typeof module !== 'undefined' && module.exports) {
+    // Node.js/CommonJS
+    module.exports = UpdateUtility;
+  } else if (typeof define === 'function' && define.amd) {
+    // AMD/RequireJS
+    define([], function() {
+      return UpdateUtility;
+    });
+  } else {
+    // Browser globals
+    global.UpdateUtility = UpdateUtility;
+  }
 
   // ===== ELEMENTS HELPER =====
   class ProductionElementsHelper {
@@ -85,7 +346,7 @@
         const element = this.cache.get(prop);
         if (element && element.nodeType === Node.ELEMENT_NODE && document.contains(element)) {
           this.stats.hits++;
-          return element;
+          return this._enhanceElementWithUpdate(element);
         } else {
           this.cache.delete(prop);
         }
@@ -96,7 +357,7 @@
       if (element) {
         this._addToCache(prop, element);
         this.stats.misses++;
-        return element;
+        return this._enhanceElementWithUpdate(element);
       }
 
       this.stats.misses++;
@@ -297,6 +558,126 @@
       if (this.options.enableLogging) {
         console.warn(`[Elements] ${message}`);
       }
+    }
+
+    // Enhanced element with update method
+    _enhanceElementWithUpdate(element) {
+      if (!element || element._hasUpdateMethod) {
+        return element;
+      }
+
+      // Use UpdateUtility if available, otherwise create inline update method
+      if (UpdateUtility && UpdateUtility.enhanceElementWithUpdate) {
+        return UpdateUtility.enhanceElementWithUpdate(element);
+      }
+
+      // Fallback: create update method inline
+      try {
+        Object.defineProperty(element, 'update', {
+          value: (updates = {}) => {
+            if (!updates || typeof updates !== 'object') {
+              console.warn('[DOM Helpers] .update() called with invalid updates object');
+              return element;
+            }
+
+            try {
+              Object.entries(updates).forEach(([key, value]) => {
+                // Handle style object
+                if (key === 'style' && typeof value === 'object' && value !== null) {
+                  Object.entries(value).forEach(([styleProperty, styleValue]) => {
+                    if (styleValue !== null && styleValue !== undefined) {
+                      element.style[styleProperty] = styleValue;
+                    }
+                  });
+                  return;
+                }
+
+                // Handle DOM methods
+                if (typeof element[key] === 'function') {
+                  if (Array.isArray(value)) {
+                    element[key](...value);
+                  } else {
+                    element[key](value);
+                  }
+                  return;
+                }
+
+                // Handle regular properties
+                if (key in element) {
+                  element[key] = value;
+                  return;
+                }
+
+                // Fallback to setAttribute
+                if (typeof value === 'string' || typeof value === 'number') {
+                  element.setAttribute(key, value);
+                }
+              });
+            } catch (error) {
+              console.warn(`[DOM Helpers] Error in .update(): ${error.message}`);
+            }
+
+            return element; // Return for chaining
+          },
+          writable: false,
+          enumerable: false,
+          configurable: true
+        });
+
+        // Mark as enhanced
+        Object.defineProperty(element, '_hasUpdateMethod', {
+          value: true,
+          writable: false,
+          enumerable: false,
+          configurable: false
+        });
+      } catch (error) {
+        // Fallback: attach as regular property
+        element.update = (updates = {}) => {
+          if (!updates || typeof updates !== 'object') {
+            console.warn('[DOM Helpers] .update() called with invalid updates object');
+            return element;
+          }
+
+          try {
+            Object.entries(updates).forEach(([key, value]) => {
+              if (key === 'style' && typeof value === 'object' && value !== null) {
+                Object.entries(value).forEach(([styleProperty, styleValue]) => {
+                  if (styleValue !== null && styleValue !== undefined) {
+                    element.style[styleProperty] = styleValue;
+                  }
+                });
+                return;
+              }
+
+              if (typeof element[key] === 'function') {
+                if (Array.isArray(value)) {
+                  element[key](...value);
+                } else {
+                  element[key](value);
+                }
+                return;
+              }
+
+              if (key in element) {
+                element[key] = value;
+                return;
+              }
+
+              if (typeof value === 'string' || typeof value === 'number') {
+                element.setAttribute(key, value);
+              }
+            });
+          } catch (error) {
+            console.warn(`[DOM Helpers] Error in .update(): ${error.message}`);
+          }
+
+          return element;
+        };
+        element._hasUpdateMethod = true;
+      }
+
+      return element;
     }
 
     // Public API
@@ -859,7 +1240,8 @@
         }
       };
 
-      return collection;
+      // Add update method to collection
+      return this._enhanceCollectionWithUpdate(collection);
     }
 
     _createEmptyCollection() {
@@ -1058,6 +1440,160 @@
       if (this.options.enableLogging) {
         console.warn(`[Collections] ${message}`);
       }
+    }
+
+    // Enhanced collection with update method
+    _enhanceCollectionWithUpdate(collection) {
+      if (!collection || collection._hasUpdateMethod) {
+        return collection;
+      }
+
+      // Use UpdateUtility if available, otherwise create inline update method
+      if (UpdateUtility && UpdateUtility.enhanceCollectionWithUpdate) {
+        return UpdateUtility.enhanceCollectionWithUpdate(collection);
+      }
+
+      // Fallback: create update method inline
+      try {
+        Object.defineProperty(collection, 'update', {
+          value: (updates = {}) => {
+            if (!updates || typeof updates !== 'object') {
+              console.warn('[DOM Helpers] .update() called with invalid updates object');
+              return collection;
+            }
+
+            // Get elements from collection
+            let elements = [];
+            if (collection._originalCollection) {
+              elements = Array.from(collection._originalCollection);
+            } else if (collection.length !== undefined) {
+              elements = Array.from(collection);
+            }
+
+            if (elements.length === 0) {
+              console.info('[DOM Helpers] .update() called on empty collection');
+              return collection;
+            }
+
+            try {
+              // Apply updates to each element in the collection
+              elements.forEach(element => {
+                if (element && element.nodeType === Node.ELEMENT_NODE) {
+                  Object.entries(updates).forEach(([key, value]) => {
+                    // Handle style object
+                    if (key === 'style' && typeof value === 'object' && value !== null) {
+                      Object.entries(value).forEach(([styleProperty, styleValue]) => {
+                        if (styleValue !== null && styleValue !== undefined) {
+                          element.style[styleProperty] = styleValue;
+                        }
+                      });
+                      return;
+                    }
+
+                    // Handle DOM methods
+                    if (typeof element[key] === 'function') {
+                      if (Array.isArray(value)) {
+                        element[key](...value);
+                      } else {
+                        element[key](value);
+                      }
+                      return;
+                    }
+
+                    // Handle regular properties
+                    if (key in element) {
+                      element[key] = value;
+                      return;
+                    }
+
+                    // Fallback to setAttribute
+                    if (typeof value === 'string' || typeof value === 'number') {
+                      element.setAttribute(key, value);
+                    }
+                  });
+                }
+              });
+            } catch (error) {
+              console.warn(`[DOM Helpers] Error in collection .update(): ${error.message}`);
+            }
+
+            return collection; // Return for chaining
+          },
+          writable: false,
+          enumerable: false,
+          configurable: true
+        });
+
+        // Mark as enhanced
+        Object.defineProperty(collection, '_hasUpdateMethod', {
+          value: true,
+          writable: false,
+          enumerable: false,
+          configurable: false
+        });
+      } catch (error) {
+        // Fallback: attach as regular property
+        collection.update = (updates = {}) => {
+          if (!updates || typeof updates !== 'object') {
+            console.warn('[DOM Helpers] .update() called with invalid updates object');
+            return collection;
+          }
+
+          let elements = [];
+          if (collection._originalCollection) {
+            elements = Array.from(collection._originalCollection);
+          } else if (collection.length !== undefined) {
+            elements = Array.from(collection);
+          }
+
+          if (elements.length === 0) {
+            console.info('[DOM Helpers] .update() called on empty collection');
+            return collection;
+          }
+
+          try {
+            elements.forEach(element => {
+              if (element && element.nodeType === Node.ELEMENT_NODE) {
+                Object.entries(updates).forEach(([key, value]) => {
+                  if (key === 'style' && typeof value === 'object' && value !== null) {
+                    Object.entries(value).forEach(([styleProperty, styleValue]) => {
+                      if (styleValue !== null && styleValue !== undefined) {
+                        element.style[styleProperty] = styleValue;
+                      }
+                    });
+                    return;
+                  }
+
+                  if (typeof element[key] === 'function') {
+                    if (Array.isArray(value)) {
+                      element[key](...value);
+                    } else {
+                      element[key](value);
+                    }
+                    return;
+                  }
+
+                  if (key in element) {
+                    element[key] = value;
+                    return;
+                  }
+
+                  if (typeof value === 'string' || typeof value === 'number') {
+                    element.setAttribute(key, value);
+                  }
+                });
+              }
+            });
+          } catch (error) {
+            console.warn(`[DOM Helpers] Error in collection .update(): ${error.message}`);
+          }
+
+          return collection;
+        };
+        collection._hasUpdateMethod = true;
+      }
+
+      return collection;
     }
 
     // Public API
@@ -1509,7 +2045,7 @@
       try {
         if (type === 'single') {
           const element = document.querySelector(selector);
-          result = element;
+          result = this._enhanceElementWithUpdate(element);
         } else {
           const nodeList = document.querySelectorAll(selector);
           result = this._enhanceNodeList(nodeList, selector);
@@ -1743,7 +2279,8 @@
         }
       };
 
-      return collection;
+      // Add update method to collection
+      return this._enhanceCollectionWithUpdate(collection);
     }
 
     _createEmptyCollection() {
@@ -1928,6 +2465,280 @@
       if (this.options.enableLogging) {
         console.warn(`[Selector] ${message}`);
       }
+    }
+
+    // Enhanced element with update method
+    _enhanceElementWithUpdate(element) {
+      if (!element || element._hasUpdateMethod) {
+        return element;
+      }
+
+      // Use UpdateUtility if available, otherwise create inline update method
+      if (UpdateUtility && UpdateUtility.enhanceElementWithUpdate) {
+        return UpdateUtility.enhanceElementWithUpdate(element);
+      }
+
+      // Fallback: create update method inline
+      try {
+        Object.defineProperty(element, 'update', {
+          value: (updates = {}) => {
+            if (!updates || typeof updates !== 'object') {
+              console.warn('[DOM Helpers] .update() called with invalid updates object');
+              return element;
+            }
+
+            try {
+              Object.entries(updates).forEach(([key, value]) => {
+                // Handle style object
+                if (key === 'style' && typeof value === 'object' && value !== null) {
+                  Object.entries(value).forEach(([styleProperty, styleValue]) => {
+                    if (styleValue !== null && styleValue !== undefined) {
+                      element.style[styleProperty] = styleValue;
+                    }
+                  });
+                  return;
+                }
+
+                // Handle DOM methods
+                if (typeof element[key] === 'function') {
+                  if (Array.isArray(value)) {
+                    element[key](...value);
+                  } else {
+                    element[key](value);
+                  }
+                  return;
+                }
+
+                // Handle regular properties
+                if (key in element) {
+                  element[key] = value;
+                  return;
+                }
+
+                // Fallback to setAttribute
+                if (typeof value === 'string' || typeof value === 'number') {
+                  element.setAttribute(key, value);
+                }
+              });
+            } catch (error) {
+              console.warn(`[DOM Helpers] Error in .update(): ${error.message}`);
+            }
+
+            return element; // Return for chaining
+          },
+          writable: false,
+          enumerable: false,
+          configurable: true
+        });
+
+        // Mark as enhanced
+        Object.defineProperty(element, '_hasUpdateMethod', {
+          value: true,
+          writable: false,
+          enumerable: false,
+          configurable: false
+        });
+      } catch (error) {
+        // Fallback: attach as regular property
+        element.update = (updates = {}) => {
+          if (!updates || typeof updates !== 'object') {
+            console.warn('[DOM Helpers] .update() called with invalid updates object');
+            return element;
+          }
+
+          try {
+            Object.entries(updates).forEach(([key, value]) => {
+              if (key === 'style' && typeof value === 'object' && value !== null) {
+                Object.entries(value).forEach(([styleProperty, styleValue]) => {
+                  if (styleValue !== null && styleValue !== undefined) {
+                    element.style[styleProperty] = styleValue;
+                  }
+                });
+                return;
+              }
+
+              if (typeof element[key] === 'function') {
+                if (Array.isArray(value)) {
+                  element[key](...value);
+                } else {
+                  element[key](value);
+                }
+                return;
+              }
+
+              if (key in element) {
+                element[key] = value;
+                return;
+              }
+
+              if (typeof value === 'string' || typeof value === 'number') {
+                element.setAttribute(key, value);
+              }
+            });
+          } catch (error) {
+            console.warn(`[DOM Helpers] Error in .update(): ${error.message}`);
+          }
+
+          return element;
+        };
+        element._hasUpdateMethod = true;
+      }
+
+      return element;
+    }
+
+    // Enhanced collection with update method
+    _enhanceCollectionWithUpdate(collection) {
+      if (!collection || collection._hasUpdateMethod) {
+        return collection;
+      }
+
+      // Use UpdateUtility if available, otherwise create inline update method
+      if (UpdateUtility && UpdateUtility.enhanceCollectionWithUpdate) {
+        return UpdateUtility.enhanceCollectionWithUpdate(collection);
+      }
+
+      // Fallback: create update method inline
+      try {
+        Object.defineProperty(collection, 'update', {
+          value: (updates = {}) => {
+            if (!updates || typeof updates !== 'object') {
+              console.warn('[DOM Helpers] .update() called with invalid updates object');
+              return collection;
+            }
+
+            // Get elements from collection
+            let elements = [];
+            if (collection._originalNodeList) {
+              elements = Array.from(collection._originalNodeList);
+            } else if (collection.length !== undefined) {
+              elements = Array.from(collection);
+            }
+
+            if (elements.length === 0) {
+              console.info('[DOM Helpers] .update() called on empty collection');
+              return collection;
+            }
+
+            try {
+              // Apply updates to each element in the collection
+              elements.forEach(element => {
+                if (element && element.nodeType === Node.ELEMENT_NODE) {
+                  Object.entries(updates).forEach(([key, value]) => {
+                    // Handle style object
+                    if (key === 'style' && typeof value === 'object' && value !== null) {
+                      Object.entries(value).forEach(([styleProperty, styleValue]) => {
+                        if (styleValue !== null && styleValue !== undefined) {
+                          element.style[styleProperty] = styleValue;
+                        }
+                      });
+                      return;
+                    }
+
+                    // Handle DOM methods
+                    if (typeof element[key] === 'function') {
+                      if (Array.isArray(value)) {
+                        element[key](...value);
+                      } else {
+                        element[key](value);
+                      }
+                      return;
+                    }
+
+                    // Handle regular properties
+                    if (key in element) {
+                      element[key] = value;
+                      return;
+                    }
+
+                    // Fallback to setAttribute
+                    if (typeof value === 'string' || typeof value === 'number') {
+                      element.setAttribute(key, value);
+                    }
+                  });
+                }
+              });
+            } catch (error) {
+              console.warn(`[DOM Helpers] Error in collection .update(): ${error.message}`);
+            }
+
+            return collection; // Return for chaining
+          },
+          writable: false,
+          enumerable: false,
+          configurable: true
+        });
+
+        // Mark as enhanced
+        Object.defineProperty(collection, '_hasUpdateMethod', {
+          value: true,
+          writable: false,
+          enumerable: false,
+          configurable: false
+        });
+      } catch (error) {
+        // Fallback: attach as regular property
+        collection.update = (updates = {}) => {
+          if (!updates || typeof updates !== 'object') {
+            console.warn('[DOM Helpers] .update() called with invalid updates object');
+            return collection;
+          }
+
+          let elements = [];
+          if (collection._originalNodeList) {
+            elements = Array.from(collection._originalNodeList);
+          } else if (collection.length !== undefined) {
+            elements = Array.from(collection);
+          }
+
+          if (elements.length === 0) {
+            console.info('[DOM Helpers] .update() called on empty collection');
+            return collection;
+          }
+
+          try {
+            elements.forEach(element => {
+              if (element && element.nodeType === Node.ELEMENT_NODE) {
+                Object.entries(updates).forEach(([key, value]) => {
+                  if (key === 'style' && typeof value === 'object' && value !== null) {
+                    Object.entries(value).forEach(([styleProperty, styleValue]) => {
+                      if (styleValue !== null && styleValue !== undefined) {
+                        element.style[styleProperty] = styleValue;
+                      }
+                    });
+                    return;
+                  }
+
+                  if (typeof element[key] === 'function') {
+                    if (Array.isArray(value)) {
+                      element[key](...value);
+                    } else {
+                      element[key](value);
+                    }
+                    return;
+                  }
+
+                  if (key in element) {
+                    element[key] = value;
+                    return;
+                  }
+
+                  if (typeof value === 'string' || typeof value === 'number') {
+                    element.setAttribute(key, value);
+                  }
+                });
+              }
+            });
+          } catch (error) {
+            console.warn(`[DOM Helpers] Error in collection .update(): ${error.message}`);
+          }
+
+          return collection;
+        };
+        collection._hasUpdateMethod = true;
+      }
+
+      return collection;
     }
 
     // Public API

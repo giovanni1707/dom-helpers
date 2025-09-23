@@ -1,0 +1,1086 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Universal .update() Method Demo - DOM Helpers</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: #333;
+            line-height: 1.6;
+        }
+
+        .container {
+            background: white;
+            border-radius: 15px;
+            padding: 30px;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.1);
+            margin-bottom: 20px;
+        }
+
+        h1 {
+            text-align: center;
+            color: #4a5568;
+            margin-bottom: 10px;
+            font-size: 2.5em;
+        }
+
+        .subtitle {
+            text-align: center;
+            color: #718096;
+            margin-bottom: 30px;
+            font-size: 1.2em;
+        }
+
+        .demo-section {
+            margin: 30px 0;
+            padding: 25px;
+            border: 2px solid #e2e8f0;
+            border-radius: 10px;
+            background: #f8fafc;
+        }
+
+        .demo-section h2 {
+            color: #2d3748;
+            margin-bottom: 15px;
+            font-size: 1.8em;
+            border-bottom: 3px solid #4299e1;
+            padding-bottom: 10px;
+        }
+
+        .test-elements {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 20px;
+            margin: 20px 0;
+        }
+
+        .test-item {
+            padding: 15px;
+            border: 2px solid #cbd5e0;
+            border-radius: 8px;
+            background: white;
+            text-align: center;
+            transition: all 0.3s ease;
+        }
+
+        .test-item:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+        }
+
+        .button-group {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            margin: 20px 0;
+            justify-content: center;
+        }
+
+        .demo-button {
+            padding: 12px 24px;
+            border: none;
+            border-radius: 6px;
+            background: #4299e1;
+            color: white;
+            cursor: pointer;
+            font-size: 14px;
+            font-weight: 600;
+            transition: all 0.2s ease;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+
+        .demo-button:hover {
+            background: #3182ce;
+            transform: translateY(-1px);
+            box-shadow: 0 4px 8px rgba(0,0,0,0.15);
+        }
+
+        .demo-button.secondary {
+            background: #38a169;
+        }
+
+        .demo-button.secondary:hover {
+            background: #2f855a;
+        }
+
+        .demo-button.danger {
+            background: #e53e3e;
+        }
+
+        .demo-button.danger:hover {
+            background: #c53030;
+        }
+
+        .code-block {
+            background: #2d3748;
+            color: #e2e8f0;
+            padding: 20px;
+            border-radius: 8px;
+            font-family: 'Courier New', monospace;
+            font-size: 14px;
+            overflow-x: auto;
+            margin: 15px 0;
+            border-left: 4px solid #4299e1;
+        }
+
+        .result-log {
+            background: #f0fff4;
+            border: 1px solid #9ae6b4;
+            border-radius: 6px;
+            padding: 15px;
+            margin: 15px 0;
+            font-family: monospace;
+            font-size: 13px;
+            max-height: 200px;
+            overflow-y: auto;
+        }
+
+        .status {
+            display: inline-block;
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: bold;
+            margin-left: 10px;
+        }
+
+        .status.success {
+            background: #c6f6d5;
+            color: #22543d;
+        }
+
+        .status.error {
+            background: #fed7d7;
+            color: #742a2a;
+        }
+
+        .status.info {
+            background: #bee3f8;
+            color: #2a4365;
+        }
+
+        .feature-list {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 15px;
+            margin: 20px 0;
+        }
+
+        .feature-item {
+            background: white;
+            padding: 15px;
+            border-radius: 8px;
+            border-left: 4px solid #4299e1;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+        }
+
+        .feature-item h4 {
+            margin: 0 0 8px 0;
+            color: #2d3748;
+        }
+
+        .feature-item p {
+            margin: 0;
+            color: #4a5568;
+            font-size: 14px;
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 15px;
+            margin: 20px 0;
+        }
+
+        .stat-card {
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            text-align: center;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+        }
+
+        .stat-number {
+            font-size: 2em;
+            font-weight: bold;
+            color: #4299e1;
+            display: block;
+        }
+
+        .stat-label {
+            color: #718096;
+            font-size: 14px;
+            margin-top: 5px;
+        }
+
+        /* Dynamic styles for testing */
+        .highlight {
+            background: linear-gradient(45deg, #ffd700, #ffed4e) !important;
+            color: #744210 !important;
+            font-weight: bold !important;
+            transform: scale(1.05) !important;
+        }
+
+        .pulse {
+            animation: pulse 2s infinite;
+        }
+
+        @keyframes pulse {
+            0% { opacity: 1; }
+            50% { opacity: 0.5; }
+            100% { opacity: 1; }
+        }
+
+        .rotate {
+            animation: rotate 2s linear infinite;
+        }
+
+        @keyframes rotate {
+            from { transform: rotate(0deg); }
+            to { transform: rotate(360deg); }
+        }
+
+        .shake {
+            animation: shake 0.5s ease-in-out;
+        }
+
+        @keyframes shake {
+            0%, 100% { transform: translateX(0); }
+            25% { transform: translateX(-5px); }
+            75% { transform: translateX(5px); }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🚀 Universal .update() Method Demo</h1>
+        <p class="subtitle">Test the powerful .update({}) method across Elements, Collections, and Selector helpers</p>
+
+        <div class="feature-list">
+            <div class="feature-item">
+                <h4>🎯 Property Updates</h4>
+                <p>Set any DOM property like textContent, innerHTML, value, etc.</p>
+            </div>
+            <div class="feature-item">
+                <h4>🎨 Style Batching</h4>
+                <p>Apply multiple CSS properties in one call with style objects</p>
+            </div>
+            <div class="feature-item">
+                <h4>🔧 Method Calls</h4>
+                <p>Execute DOM methods like setAttribute, addEventListener, focus, etc.</p>
+            </div>
+            <div class="feature-item">
+                <h4>⛓️ Chainable</h4>
+                <p>Chain multiple .update() calls for complex operations</p>
+            </div>
+            <div class="feature-item">
+                <h4>🛡️ Safe</h4>
+                <p>Handles null elements and empty collections gracefully</p>
+            </div>
+            <div class="feature-item">
+                <h4>🌐 Universal</h4>
+                <p>Works identically with single elements and collections</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Elements Helper Demo -->
+    <div class="container">
+        <div class="demo-section">
+            <h2>🎯 Elements Helper - Single Element Updates</h2>
+            <p>Test .update() method on individual elements accessed by ID</p>
+
+            <div class="test-elements">
+                <div id="title" class="test-item">Original Title</div>
+                <div id="subtitle" class="test-item">Original Subtitle</div>
+                <input id="textInput" class="test-item" type="text" value="Original Value" placeholder="Type here...">
+                <button id="actionButton" class="test-item demo-button">Click Me!</button>
+            </div>
+
+            <div class="button-group">
+                <button class="demo-button" onclick="testElementsBasic()">Basic Properties</button>
+                <button class="demo-button" onclick="testElementsStyle()">Style Updates</button>
+                <button class="demo-button" onclick="testElementsMethods()">Method Calls</button>
+                <button class="demo-button" onclick="testElementsChaining()">Chaining</button>
+                <button class="demo-button secondary" onclick="resetElements()">Reset</button>
+            </div>
+
+            <div class="code-block" id="elementsCode">
+// Click a button above to see the code example
+            </div>
+
+            <div class="result-log" id="elementsLog">
+Ready to test Elements Helper .update() method...
+            </div>
+        </div>
+    </div>
+
+    <!-- Collections Helper Demo -->
+    <div class="container">
+        <div class="demo-section">
+            <h2>📦 Collections Helper - Multiple Element Updates</h2>
+            <p>Test .update() method on collections of elements</p>
+
+            <div class="test-elements">
+                <div class="collection-item test-item">Item 1</div>
+                <div class="collection-item test-item">Item 2</div>
+                <div class="collection-item test-item">Item 3</div>
+                <div class="collection-item test-item">Item 4</div>
+            </div>
+
+            <div class="test-elements">
+                <button class="action-btn test-item demo-button">Button A</button>
+                <button class="action-btn test-item demo-button">Button B</button>
+                <button class="action-btn test-item demo-button">Button C</button>
+            </div>
+
+            <div class="button-group">
+                <button class="demo-button" onclick="testCollectionsBasic()">Basic Updates</button>
+                <button class="demo-button" onclick="testCollectionsStyle()">Style All</button>
+                <button class="demo-button" onclick="testCollectionsMethods()">Method Calls</button>
+                <button class="demo-button" onclick="testCollectionsChaining()">Chaining</button>
+                <button class="demo-button secondary" onclick="resetCollections()">Reset</button>
+            </div>
+
+            <div class="code-block" id="collectionsCode">
+// Click a button above to see the code example
+            </div>
+
+            <div class="result-log" id="collectionsLog">
+Ready to test Collections Helper .update() method...
+            </div>
+        </div>
+    </div>
+
+    <!-- Selector Helper Demo -->
+    <div class="container">
+        <div class="demo-section">
+            <h2>🔍 Selector Helper - Query-Based Updates</h2>
+            <p>Test .update() method with querySelector and querySelectorAll</p>
+
+            <div class="test-elements">
+                <div class="selector-test test-item" data-type="primary">Primary Item</div>
+                <div class="selector-test test-item" data-type="secondary">Secondary Item</div>
+                <div class="selector-test test-item" data-type="primary">Another Primary</div>
+            </div>
+
+            <div class="test-elements">
+                <input class="form-input test-item" type="text" placeholder="Input 1">
+                <input class="form-input test-item" type="text" placeholder="Input 2">
+                <select class="form-input test-item">
+                    <option>Option 1</option>
+                    <option>Option 2</option>
+                </select>
+            </div>
+
+            <div class="button-group">
+                <button class="demo-button" onclick="testSelectorSingle()">Single Element</button>
+                <button class="demo-button" onclick="testSelectorMultiple()">Multiple Elements</button>
+                <button class="demo-button" onclick="testSelectorAdvanced()">Advanced Queries</button>
+                <button class="demo-button" onclick="testSelectorChaining()">Chaining</button>
+                <button class="demo-button secondary" onclick="resetSelector()">Reset</button>
+            </div>
+
+            <div class="code-block" id="selectorCode">
+// Click a button above to see the code example
+            </div>
+
+            <div class="result-log" id="selectorLog">
+Ready to test Selector Helper .update() method...
+            </div>
+        </div>
+    </div>
+
+    <!-- Performance & Stats -->
+    <div class="container">
+        <div class="demo-section">
+            <h2>📊 Performance & Statistics</h2>
+            <p>Monitor the performance and usage statistics of the .update() method</p>
+
+            <div class="stats-grid">
+                <div class="stat-card">
+                    <span class="stat-number" id="totalUpdates">0</span>
+                    <div class="stat-label">Total Updates</div>
+                </div>
+                <div class="stat-card">
+                    <span class="stat-number" id="elementsUpdated">0</span>
+                    <div class="stat-label">Elements Updated</div>
+                </div>
+                <div class="stat-card">
+                    <span class="stat-number" id="collectionsUpdated">0</span>
+                    <div class="stat-label">Collections Updated</div>
+                </div>
+                <div class="stat-card">
+                    <span class="stat-number" id="avgUpdateTime">0ms</span>
+                    <div class="stat-label">Avg Update Time</div>
+                </div>
+            </div>
+
+            <div class="button-group">
+                <button class="demo-button" onclick="runPerformanceTest()">Performance Test</button>
+                <button class="demo-button" onclick="runStressTest()">Stress Test</button>
+                <button class="demo-button danger" onclick="clearStats()">Clear Stats</button>
+            </div>
+
+            <div class="result-log" id="performanceLog">
+Performance statistics will appear here...
+            </div>
+        </div>
+    </div>
+
+    <!-- Load the DOM Helpers -->
+    <script src="../src/update-utility.js"></script>
+    <script src="../src/elements-helper.js"></script>
+    <script src="../src/collections.js"></script>
+    <script src="../src/querySelector-helper.js"></script>
+
+    <script>
+        // Statistics tracking
+        let stats = {
+            totalUpdates: 0,
+            elementsUpdated: 0,
+            collectionsUpdated: 0,
+            updateTimes: []
+        };
+
+        function updateStats(type, time, count = 1) {
+            stats.totalUpdates++;
+            stats[type] += count;
+            stats.updateTimes.push(time);
+            
+            document.getElementById('totalUpdates').textContent = stats.totalUpdates;
+            document.getElementById('elementsUpdated').textContent = stats.elementsUpdated;
+            document.getElementById('collectionsUpdated').textContent = stats.collectionsUpdated;
+            
+            const avgTime = stats.updateTimes.reduce((a, b) => a + b, 0) / stats.updateTimes.length;
+            document.getElementById('avgUpdateTime').textContent = avgTime.toFixed(2) + 'ms';
+        }
+
+        function logResult(logId, message, type = 'info') {
+            const log = document.getElementById(logId);
+            const timestamp = new Date().toLocaleTimeString();
+            const statusClass = type === 'error' ? 'error' : type === 'success' ? 'success' : 'info';
+            log.innerHTML += `<div>[${timestamp}] ${message} <span class="status ${statusClass}">${type.toUpperCase()}</span></div>`;
+            log.scrollTop = log.scrollHeight;
+        }
+
+        function showCode(codeId, code) {
+            document.getElementById(codeId).textContent = code;
+        }
+
+        // Elements Helper Tests
+        function testElementsBasic() {
+            const startTime = performance.now();
+            
+            const code = `// Basic property updates
+Elements.title.update({
+    textContent: "Updated Title! 🎯",
+    className: "test-item highlight"
+});
+
+Elements.textInput.update({
+    value: "New input value",
+    placeholder: "Updated placeholder"
+});`;
+
+            showCode('elementsCode', code);
+
+            try {
+                Elements.title.update({
+                    textContent: "Updated Title! 🎯",
+                    className: "test-item highlight"
+                });
+
+                Elements.textInput.update({
+                    value: "New input value",
+                    placeholder: "Updated placeholder"
+                });
+
+                const endTime = performance.now();
+                updateStats('elementsUpdated', endTime - startTime, 2);
+                logResult('elementsLog', 'Basic property updates completed successfully', 'success');
+            } catch (error) {
+                logResult('elementsLog', `Error: ${error.message}`, 'error');
+            }
+        }
+
+        function testElementsStyle() {
+            const startTime = performance.now();
+            
+            const code = `// Style object updates
+Elements.subtitle.update({
+    textContent: "Styled Subtitle ✨",
+    style: {
+        background: "linear-gradient(45deg, #ff6b6b, #4ecdc4)",
+        color: "white",
+        padding: "15px",
+        borderRadius: "10px",
+        transform: "rotate(2deg)"
+    }
+});`;
+
+            showCode('elementsCode', code);
+
+            try {
+                Elements.subtitle.update({
+                    textContent: "Styled Subtitle ✨",
+                    style: {
+                        background: "linear-gradient(45deg, #ff6b6b, #4ecdc4)",
+                        color: "white",
+                        padding: "15px",
+                        borderRadius: "10px",
+                        transform: "rotate(2deg)"
+                    }
+                });
+
+                const endTime = performance.now();
+                updateStats('elementsUpdated', endTime - startTime, 1);
+                logResult('elementsLog', 'Style updates applied successfully', 'success');
+            } catch (error) {
+                logResult('elementsLog', `Error: ${error.message}`, 'error');
+            }
+        }
+
+        function testElementsMethods() {
+            const startTime = performance.now();
+            
+            const code = `// DOM method calls
+Elements.actionButton.update({
+    textContent: "Click for Alert! 🔔",
+    setAttribute: ["data-clicked", "false"],
+    addEventListener: ["click", () => {
+        alert("Button clicked via .update()!");
+        Elements.actionButton.setAttribute("data-clicked", "true");
+    }],
+    focus: []
+});`;
+
+            showCode('elementsCode', code);
+
+            try {
+                Elements.actionButton.update({
+                    textContent: "Click for Alert! 🔔",
+                    setAttribute: ["data-clicked", "false"],
+                    addEventListener: ["click", () => {
+                        alert("Button clicked via .update()!");
+                        Elements.actionButton.setAttribute("data-clicked", "true");
+                    }],
+                    focus: []
+                });
+
+                const endTime = performance.now();
+                updateStats('elementsUpdated', endTime - startTime, 1);
+                logResult('elementsLog', 'Method calls executed successfully', 'success');
+            } catch (error) {
+                logResult('elementsLog', `Error: ${error.message}`, 'error');
+            }
+        }
+
+        function testElementsChaining() {
+            const startTime = performance.now();
+            
+            const code = `// Chaining multiple .update() calls
+Elements.title
+    .update({
+        textContent: "Chained Update 1",
+        style: { color: "red" }
+    })
+    .update({
+        style: { 
+            fontSize: "24px",
+            fontWeight: "bold" 
+        }
+    })
+    .update({
+        className: "test-item pulse"
+    });`;
+
+            showCode('elementsCode', code);
+
+            try {
+                Elements.title
+                    .update({
+                        textContent: "Chained Update 1",
+                        style: { color: "red" }
+                    })
+                    .update({
+                        style: { 
+                            fontSize: "24px",
+                            fontWeight: "bold" 
+                        }
+                    })
+                    .update({
+                        className: "test-item pulse"
+                    });
+
+                const endTime = performance.now();
+                updateStats('elementsUpdated', endTime - startTime, 3);
+                logResult('elementsLog', 'Chained updates completed successfully', 'success');
+            } catch (error) {
+                logResult('elementsLog', `Error: ${error.message}`, 'error');
+            }
+        }
+
+        function resetElements() {
+            Elements.title.update({
+                textContent: "Original Title",
+                className: "test-item",
+                style: { 
+                    color: "", 
+                    fontSize: "", 
+                    fontWeight: "",
+                    background: "",
+                    padding: "",
+                    borderRadius: "",
+                    transform: ""
+                }
+            });
+
+            Elements.subtitle.update({
+                textContent: "Original Subtitle",
+                className: "test-item",
+                style: { 
+                    background: "",
+                    color: "",
+                    padding: "",
+                    borderRadius: "",
+                    transform: ""
+                }
+            });
+
+            Elements.textInput.update({
+                value: "Original Value",
+                placeholder: "Type here..."
+            });
+
+            Elements.actionButton.update({
+                textContent: "Click Me!",
+                className: "test-item demo-button"
+            });
+
+            logResult('elementsLog', 'Elements reset to original state', 'info');
+        }
+
+        // Collections Helper Tests
+        function testCollectionsBasic() {
+            const startTime = performance.now();
+            
+            const code = `// Update all items in collection
+Collections.ClassName("collection-item").update({
+    textContent: "Updated Item ✨",
+    setAttribute: ["data-updated", "true"]
+});`;
+
+            showCode('collectionsCode', code);
+
+            try {
+                Collections.ClassName("collection-item").update({
+                    textContent: "Updated Item ✨",
+                    setAttribute: ["data-updated", "true"]
+                });
+
+                const endTime = performance.now();
+                updateStats('collectionsUpdated', endTime - startTime, 4);
+                logResult('collectionsLog', 'Collection basic updates completed', 'success');
+            } catch (error) {
+                logResult('collectionsLog', `Error: ${error.message}`, 'error');
+            }
+        }
+
+        function testCollectionsStyle() {
+            const startTime = performance.now();
+            
+            const code = `// Apply styles to all collection items
+Collections.ClassName("action-btn").update({
+    style: {
+        background: "linear-gradient(45deg, #667eea, #764ba2)",
+        color: "white",
+        transform: "scale(1.1)",
+        boxShadow: "0 5px 15px rgba(0,0,0,0.3)"
+    }
+});`;
+
+            showCode('collectionsCode', code);
+
+            try {
+                Collections.ClassName("action-btn").update({
+                    style: {
+                        background: "linear-gradient(45deg, #667eea, #764ba2)",
+                        color: "white",
+                        transform: "scale(1.1)",
+                        boxShadow: "0 5px 15px rgba(0,0,0,0.3)"
+                    }
+                });
+
+                const endTime = performance.now();
+                updateStats('collectionsUpdated', endTime - startTime, 3);
+                logResult('collectionsLog', 'Collection style updates applied', 'success');
+            } catch (error) {
+                logResult('collectionsLog', `Error: ${error.message}`, 'error');
+            }
+        }
+
+        function testCollectionsMethods() {
+            const startTime = performance.now();
+            
+            const code = `// Add event listeners to all buttons
+Collections.ClassName("action-btn").update({
+    addEventListener: ["click", (e) => {
+        e.target.classList.add("shake");
+        setTimeout(() => e.target.classList.remove("shake"), 500);
+    }]
+});`;
+
+            showCode('collectionsCode', code);
+
+            try {
+                Collections.ClassName("action-btn").update({
+                    addEventListener: ["click", (e) => {
+                        e.target.classList.add("shake");
+                        setTimeout(() => e.target.classList.remove("shake"), 500);
+                    }]
+                });
+
+                const endTime = performance.now();
+                updateStats('collectionsUpdated', endTime - startTime, 3);
+                logResult('collectionsLog', 'Event listeners added to collection', 'success');
+            } catch (error) {
+                logResult('collectionsLog', `Error: ${error.message}`, 'error');
+            }
+        }
+
+        function testCollectionsChaining() {
+            const startTime = performance.now();
+            
+            const code = `// Chain multiple updates on collection
+Collections.ClassName("collection-item")
+    .update({
+        style: { borderColor: "red" }
+    })
+    .update({
+        textContent: "Chained Item"
+    })
+    .update({
+        className: "collection-item test-item rotate"
+    });`;
+
+            showCode('collectionsCode', code);
+
+            try {
+                Collections.ClassName("collection-item")
+                    .update({
+                        style: { borderColor: "red" }
+                    })
+                    .update({
+                        textContent: "Chained Item"
+                    })
+                    .update({
+                        className: "collection-item test-item rotate"
+                    });
+
+                const endTime = performance.now();
+                updateStats('collectionsUpdated', endTime - startTime, 12); // 4 items × 3 updates
+                logResult('collectionsLog', 'Chained collection updates completed', 'success');
+            } catch (error) {
+                logResult('collectionsLog', `Error: ${error.message}`, 'error');
+            }
+        }
+
+        function resetCollections() {
+            Collections.ClassName("collection-item").update({
+                textContent: (el, index) => `Item ${index + 1}`,
+                className: "collection-item test-item",
+                style: { 
+                    borderColor: "",
+                    background: "",
+                    transform: ""
+                }
+            });
+
+            Collections.ClassName("action-btn").update({
+                textContent: (el, index) => `Button ${String.fromCharCode(65 + index)}`,
+                className: "action-btn test-item demo-button",
+                style: { 
+                    background: "",
+                    transform: "",
+                    boxShadow: ""
+                }
+            });
+
+            logResult('collectionsLog', 'Collections reset to original state', 'info');
+        }
+
+        // Selector Helper Tests
+        function testSelectorSingle() {
+            const startTime = performance.now();
+            
+            const code = `// Update single element via selector
+Selector.query(".selector-test").update({
+    textContent: "Updated via Selector! 🔍",
+    style: {
+        background: "#ffd700",
+        color: "#333",
+        fontWeight: "bold"
+    }
+});`;
+
+            showCode('selectorCode', code);
+
+            try {
+                Selector.query(".selector-test").update({
+                    textContent: "Updated via Selector! 🔍",
+                    style: {
+                        background: "#ffd700",
+                        color: "#333",
+                        fontWeight: "bold"
+                    }
+                });
+
+                const endTime = performance.now();
+                updateStats('elementsUpdated', endTime - startTime, 1);
+                logResult('selectorLog', 'Single selector update completed', 'success');
+            } catch (error) {
+                logResult('selectorLog', `Error: ${error.message}`, 'error');
+            }
+        }
+
+        function testSelectorMultiple() {
+            const startTime = performance.now();
+            
+            const code = `// Update multiple elements via selector
+Selector.queryAll('[data-type="primary"]').update({
+    textContent: "Primary Updated! ⭐",
+    style: {
+        background: "linear-gradient(45deg, #ff9a9e, #fecfef)",
+        border: "2px solid #ff6b9d"
+    }
+});`;
+
+            showCode('selectorCode', code);
+
+            try {
+                Selector.queryAll('[data-type="primary"]').update({
+                    textContent: "Primary Updated! ⭐",
+                    style: {
+                        background: "linear-gradient(45deg, #ff9a9e, #fecfef)",
+                        border: "2px solid #ff6b9d"
+                    }
+                });
+
+                const endTime = performance.now();
+                updateStats('collectionsUpdated', endTime - startTime, 2);
+                logResult('selectorLog', 'Multiple selector updates completed', 'success');
+            } catch (error) {
+                logResult('selectorLog', `Error: ${error.message}`, 'error');
+            }
+        }
+
+        function testSelectorAdvanced() {
+            const startTime = performance.now();
+            
+            const code = `// Advanced selector queries
+Selector.queryAll(".form-input").update({
+    style: {
+        border: "3px solid #4ecdc4",
+        borderRadius: "8px",
+        padding: "10px"
+    },
+    addEventListener: ["focus", (e) => {
+        e.target.style.boxShadow = "0 0 10px #4ecdc4";
+    }],
+    addEventListener: ["blur", (e) => {
+        e.target.style.boxShadow = "";
+    }]
+});`;
+
+            showCode('selectorCode', code);
+
+            try {
+                Selector.queryAll(".form-input").update({
+                    style: {
+                        border: "3px solid #4ecdc4",
+                        borderRadius: "8px",
+                        padding: "10px"
+                    },
+                    addEventListener: ["focus", (e) => {
+                        e.target.style.boxShadow = "0 0 10px #4ecdc4";
+                    }],
+                    addEventListener: ["blur", (e) => {
+                        e.target.style.boxShadow = "";
+                    }]
+                });
+
+                const endTime = performance.now();
+                updateStats('collectionsUpdated', endTime - startTime, 3);
+                logResult('selectorLog', 'Advanced selector updates completed', 'success');
+            } catch (error) {
+                logResult('selectorLog', `Error: ${error.message}`, 'error');
+            }
+        }
+
+        function testSelectorChaining() {
+            const startTime = performance.now();
+            
+            const code = `// Chain selector updates
+Selector.queryAll(".selector-test")
+    .update({
+        style: { borderColor: "purple" }
+    })
+    .update({
+        textContent: "Chained Selector"
+    })
+    .update({
+        className: "selector-test test-item pulse"
+    });`;
+
+            showCode('selectorCode', code);
+
+            try {
+                Selector.queryAll(".selector-test")
+                    .update({
+                        style: { borderColor: "purple" }
+                    })
+                    .update({
+                        textContent: "Chained Selector"
+                    })
+                    .update({
+                        className: "selector-test test-item pulse"
+                    });
+
+                const endTime = performance.now();
+                updateStats('collectionsUpdated', endTime - startTime, 9); // 3 items × 3 updates
+                logResult('selectorLog', 'Chained selector updates completed', 'success');
+            } catch (error) {
+                logResult('selectorLog', `Error: ${error.message}`, 'error');
+            }
+        }
+
+        function resetSelector() {
+            Selector.queryAll(".selector-test").update({
+                textContent: (el, index) => {
+                    const type = el.getAttribute('data-type');
+                    return type === 'primary' ? 'Primary Item' : 'Secondary Item';
+                },
+                className: "selector-test test-item",
+                style: { 
+                    borderColor: "",
+                    background: "",
+                    color: "",
+                    fontWeight: ""
+                }
+            });
+
+            Selector.queryAll(".form-input").update({
+                style: { 
+                    border: "",
+                    borderRadius: "",
+                    padding: "",
+                    boxShadow: ""
+                }
+            });
+
+            logResult('selectorLog', 'Selector elements reset to original state', 'info');
+        }
+
+        // Performance Tests
+        function runPerformanceTest() {
+            const startTime = performance.now();
+            
+            logResult('performanceLog', 'Starting performance test...', 'info');
+            
+            // Test Elements Helper performance
+            for (let i = 0; i < 100; i++) {
+                Elements.title.update({
+                    textContent: `Performance Test ${i}`,
+                    style: { color: `hsl(${i * 3.6}, 70%, 50%)` }
+                });
+            }
+            
+            // Test Collections Helper performance
+            for (let i = 0; i < 50; i++) {
+                Collections.ClassName("collection-item").update({
+                    style: { backgroundColor: `hsl(${i * 7.2}, 50%, 90%)` }
+                });
+            }
+            
+            // Test Selector Helper performance
+            for (let i = 0; i < 50; i++) {
+                Selector.queryAll(".selector-test").update({
+                    style: { borderColor: `hsl(${i * 7.2}, 60%, 60%)` }
+                });
+            }
+            
+            const endTime = performance.now();
+            const totalTime = endTime - startTime;
+            
+            logResult('performanceLog', `Performance test completed in ${totalTime.toFixed(2)}ms`, 'success');
+            logResult('performanceLog', `Average time per update: ${(totalTime / 200).toFixed(3)}ms`, 'info');
+        }
+
+        function runStressTest() {
+            const startTime = performance.now();
+            
+            logResult('performanceLog', 'Starting stress test (1000 updates)...', 'info');
+            
+            // Stress test with 1000 rapid updates
+            for (let i = 0; i < 1000; i++) {
+                const helper = i % 3;
+                
+                if (helper === 0) {
+                    Elements.title.update({
+                        textContent: `Stress ${i}`,
+                        style: { opacity: Math.random() }
+                    });
+                } else if (helper === 1) {
+                    Collections.ClassName("collection-item").update({
+                        style: { transform: `rotate(${i}deg)` }
+                    });
+                } else {
+                    Selector.queryAll(".selector-test").update({
+                        style: { filter: `hue-rotate(${i}deg)` }
+                    });
+                }
+            }
+            
+            const endTime = performance.now();
+            const totalTime = endTime - startTime;
+            
+            logResult('performanceLog', `Stress test completed in ${totalTime.toFixed(2)}ms`, 'success');
+            logResult('performanceLog', `Average time per update: ${(totalTime / 1000).toFixed(3)}ms`, 'info');
+            logResult('performanceLog', `Updates per second: ${(1000 / (totalTime / 1000)).toFixed(0)}`, 'info');
+        }
+
+        function clearStats() {
+            stats = {
+                totalUpdates: 0,
+                elementsUpdated: 0,
+                collectionsUpdated: 0,
+                updateTimes: []
+            };
+            
+            document.getElementById('totalUpdates').textContent = '0';
+            document.getElementById('elementsUpdated').textContent = '0';
+            document.getElementById('collectionsUpdated').textContent = '0';
+            document.getElementById('avgUpdateTime').textContent = '0ms';
+            
+            document.getElementById('performanceLog').innerHTML = 'Performance statistics cleared...';
+            
+            logResult('performanceLog', 'Statistics cleared', 'info');
+        }
+
+        // Initialize demo
+        document.addEventListener('DOMContentLoaded', () => {
+            logResult('elementsLog', 'Elements Helper .update() method ready for testing', 'info');
+            logResult('collectionsLog', 'Collections Helper .update() method ready for testing', 'info');
+            logResult('selectorLog', 'Selector Helper .update() method ready for testing', 'info');
+            logResult('performanceLog', 'Performance testing tools ready', 'info');
+        });
+    </script>
+</body>
+</html>

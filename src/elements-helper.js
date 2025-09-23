@@ -1,6 +1,18 @@
 (function(global) {
   'use strict';
 
+  // Import UpdateUtility if available
+  let UpdateUtility;
+  if (typeof require !== 'undefined') {
+    try {
+      UpdateUtility = require('./update-utility.js');
+    } catch (e) {
+      // UpdateUtility not available in this environment
+    }
+  } else if (typeof global !== 'undefined' && global.UpdateUtility) {
+    UpdateUtility = global.UpdateUtility;
+  }
+
   class ProductionElementsHelper {
     constructor(options = {}) {
       this.cache = new Map();
@@ -71,7 +83,7 @@
         const element = this.cache.get(prop);
         if (element && element.nodeType === Node.ELEMENT_NODE && document.contains(element)) {
           this.stats.hits++;
-          return element;
+          return this._enhanceElementWithUpdate(element);
         } else {
           this.cache.delete(prop);
         }
@@ -82,7 +94,7 @@
       if (element) {
         this._addToCache(prop, element);
         this.stats.misses++;
-        return element;
+        return this._enhanceElementWithUpdate(element);
       }
 
       this.stats.misses++;
@@ -283,6 +295,126 @@
       if (this.options.enableLogging) {
         console.warn(`[Elements] ${message}`);
       }
+    }
+
+    // Enhanced element with update method
+    _enhanceElementWithUpdate(element) {
+      if (!element || element._hasUpdateMethod) {
+        return element;
+      }
+
+      // Use UpdateUtility if available, otherwise create inline update method
+      if (UpdateUtility && UpdateUtility.enhanceElementWithUpdate) {
+        return UpdateUtility.enhanceElementWithUpdate(element);
+      }
+
+      // Fallback: create update method inline
+      try {
+        Object.defineProperty(element, 'update', {
+          value: (updates = {}) => {
+            if (!updates || typeof updates !== 'object') {
+              console.warn('[DOM Helpers] .update() called with invalid updates object');
+              return element;
+            }
+
+            try {
+              Object.entries(updates).forEach(([key, value]) => {
+                // Handle style object
+                if (key === 'style' && typeof value === 'object' && value !== null) {
+                  Object.entries(value).forEach(([styleProperty, styleValue]) => {
+                    if (styleValue !== null && styleValue !== undefined) {
+                      element.style[styleProperty] = styleValue;
+                    }
+                  });
+                  return;
+                }
+
+                // Handle DOM methods
+                if (typeof element[key] === 'function') {
+                  if (Array.isArray(value)) {
+                    element[key](...value);
+                  } else {
+                    element[key](value);
+                  }
+                  return;
+                }
+
+                // Handle regular properties
+                if (key in element) {
+                  element[key] = value;
+                  return;
+                }
+
+                // Fallback to setAttribute
+                if (typeof value === 'string' || typeof value === 'number') {
+                  element.setAttribute(key, value);
+                }
+              });
+            } catch (error) {
+              console.warn(`[DOM Helpers] Error in .update(): ${error.message}`);
+            }
+
+            return element; // Return for chaining
+          },
+          writable: false,
+          enumerable: false,
+          configurable: true
+        });
+
+        // Mark as enhanced
+        Object.defineProperty(element, '_hasUpdateMethod', {
+          value: true,
+          writable: false,
+          enumerable: false,
+          configurable: false
+        });
+      } catch (error) {
+        // Fallback: attach as regular property
+        element.update = (updates = {}) => {
+          if (!updates || typeof updates !== 'object') {
+            console.warn('[DOM Helpers] .update() called with invalid updates object');
+            return element;
+          }
+
+          try {
+            Object.entries(updates).forEach(([key, value]) => {
+              if (key === 'style' && typeof value === 'object' && value !== null) {
+                Object.entries(value).forEach(([styleProperty, styleValue]) => {
+                  if (styleValue !== null && styleValue !== undefined) {
+                    element.style[styleProperty] = styleValue;
+                  }
+                });
+                return;
+              }
+
+              if (typeof element[key] === 'function') {
+                if (Array.isArray(value)) {
+                  element[key](...value);
+                } else {
+                  element[key](value);
+                }
+                return;
+              }
+
+              if (key in element) {
+                element[key] = value;
+                return;
+              }
+
+              if (typeof value === 'string' || typeof value === 'number') {
+                element.setAttribute(key, value);
+              }
+            });
+          } catch (error) {
+            console.warn(`[DOM Helpers] Error in .update(): ${error.message}`);
+          }
+
+          return element;
+        };
+        element._hasUpdateMethod = true;
+      }
+
+      return element;
     }
 
     // Public API
