@@ -1,0 +1,611 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Comprehensive .update() Method Test - All Helpers</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: #333;
+            line-height: 1.6;
+        }
+
+        .container {
+            background: white;
+            border-radius: 15px;
+            padding: 30px;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.1);
+            margin-bottom: 20px;
+        }
+
+        h1 {
+            text-align: center;
+            color: #4a5568;
+            margin-bottom: 10px;
+            font-size: 2.5em;
+        }
+
+        .subtitle {
+            text-align: center;
+            color: #718096;
+            margin-bottom: 30px;
+            font-size: 1.2em;
+        }
+
+        .test-section {
+            margin: 30px 0;
+            padding: 25px;
+            border: 2px solid #e2e8f0;
+            border-radius: 10px;
+            background: #f8fafc;
+        }
+
+        .test-section h2 {
+            color: #2d3748;
+            margin-bottom: 15px;
+            font-size: 1.8em;
+            border-bottom: 3px solid #4299e1;
+            padding-bottom: 10px;
+        }
+
+        .test-elements {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 20px;
+            margin: 20px 0;
+        }
+
+        .test-item {
+            padding: 15px;
+            border: 2px solid #cbd5e0;
+            border-radius: 8px;
+            background: white;
+            text-align: center;
+            transition: all 0.3s ease;
+        }
+
+        .demo-button {
+            padding: 12px 24px;
+            border: none;
+            border-radius: 6px;
+            background: #4299e1;
+            color: white;
+            cursor: pointer;
+            font-size: 14px;
+            font-weight: 600;
+            transition: all 0.2s ease;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+
+        .demo-button:hover {
+            background: #3182ce;
+            transform: translateY(-1px);
+            box-shadow: 0 4px 8px rgba(0,0,0,0.15);
+        }
+
+        .demo-button.secondary {
+            background: #38a169;
+        }
+
+        .demo-button.secondary:hover {
+            background: #2f855a;
+        }
+
+        .result-log {
+            background: #f0fff4;
+            border: 1px solid #9ae6b4;
+            border-radius: 6px;
+            padding: 15px;
+            margin: 15px 0;
+            font-family: monospace;
+            font-size: 13px;
+            max-height: 200px;
+            overflow-y: auto;
+        }
+
+        /* Dynamic styles for testing */
+        .fancy {
+            background: linear-gradient(45deg, #ffd700, #ffed4e) !important;
+            color: #744210 !important;
+            font-weight: bold !important;
+            transform: scale(1.05) !important;
+        }
+
+        .highlight {
+            background: linear-gradient(45deg, #ff6b6b, #4ecdc4) !important;
+            color: white !important;
+            font-weight: bold !important;
+        }
+
+        .active {
+            border: 3px solid #4299e1 !important;
+            box-shadow: 0 0 15px rgba(66, 153, 225, 0.5) !important;
+        }
+
+        .test-class {
+            background: #e6fffa;
+            border-color: #4fd1c7;
+        }
+
+        .collection-item {
+            background: #fef5e7;
+            border-color: #f6ad55;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🚀 Comprehensive .update() Test</h1>
+        <p class="subtitle">Testing enhanced .update() method across Elements, Collections, and Selector helpers</p>
+
+        <div class="test-section">
+            <h2>🎯 Elements Helper Test</h2>
+            <p>Testing Elements.id.update() with full DOM API support</p>
+
+            <div class="test-elements">
+                <button id="elementsBtn" class="test-item demo-button">Elements Button</button>
+                <div id="elementsDiv" class="test-item">Elements Div</div>
+                <input id="elementsInput" class="test-item" type="text" value="Elements Input">
+            </div>
+
+            <button class="demo-button" onclick="testElements()">Test Elements Helper</button>
+            <button class="demo-button secondary" onclick="resetElements()">Reset</button>
+
+            <div class="result-log" id="elementsLog">Ready to test Elements helper...</div>
+        </div>
+
+        <div class="test-section">
+            <h2>📦 Collections Helper Test</h2>
+            <p>Testing Collections.ClassName().update() with full DOM API support</p>
+
+            <div class="test-elements">
+                <div class="collection-item test-item">Collection Item 1</div>
+                <div class="collection-item test-item">Collection Item 2</div>
+                <div class="collection-item test-item">Collection Item 3</div>
+                <button class="test-class demo-button">Test Button 1</button>
+                <button class="test-class demo-button">Test Button 2</button>
+            </div>
+
+            <button class="demo-button" onclick="testCollections()">Test Collections Helper</button>
+            <button class="demo-button secondary" onclick="resetCollections()">Reset</button>
+
+            <div class="result-log" id="collectionsLog">Ready to test Collections helper...</div>
+        </div>
+
+        <div class="test-section">
+            <h2>🔍 Selector Helper Test</h2>
+            <p>Testing Selector.query() and Selector.queryAll() with full DOM API support</p>
+
+            <div class="test-elements">
+                <div class="selector-test test-item" data-type="primary">Selector Test 1</div>
+                <div class="selector-test test-item" data-type="secondary">Selector Test 2</div>
+                <div class="selector-test test-item" data-type="primary">Selector Test 3</div>
+                <input class="form-input test-item" type="text" placeholder="Form Input 1">
+                <input class="form-input test-item" type="text" placeholder="Form Input 2">
+            </div>
+
+            <button class="demo-button" onclick="testSelector()">Test Selector Helper</button>
+            <button class="demo-button secondary" onclick="resetSelector()">Reset</button>
+
+            <div class="result-log" id="selectorLog">Ready to test Selector helper...</div>
+        </div>
+
+        <div class="test-section">
+            <h2>🎨 Advanced Features Test</h2>
+            <p>Testing advanced classList, attributes, events, and dataset features</p>
+
+            <div class="test-elements">
+                <button id="advancedBtn" class="test-item demo-button">Advanced Button</button>
+                <div id="advancedDiv" class="test-item">Advanced Div</div>
+                <input id="advancedInput" class="test-item" type="text" placeholder="Advanced Input">
+            </div>
+
+            <button class="demo-button" onclick="testAdvancedFeatures()">Test Advanced Features</button>
+            <button class="demo-button secondary" onclick="resetAdvanced()">Reset</button>
+
+            <div class="result-log" id="advancedLog">Ready to test advanced features...</div>
+        </div>
+    </div>
+
+    <!-- Load all DOM Helpers -->
+    <script src="../src/enhanced-update-utility.js"></script>
+    <script src="../Elements.js"></script>
+    <script src="../src/collections.js"></script>
+    <script src="../src/querySelector-helper.js"></script>
+
+    <script>
+        // Utility functions
+        function logResult(logId, message, type = 'info') {
+            const log = document.getElementById(logId);
+            const timestamp = new Date().toLocaleTimeString();
+            const statusClass = type === 'error' ? '❌' : type === 'success' ? '✅' : 'ℹ️';
+            log.innerHTML += `<div>[${timestamp}] ${statusClass} ${message}</div>`;
+            log.scrollTop = log.scrollHeight;
+        }
+
+        // Elements Helper Tests
+        function testElements() {
+            logResult('elementsLog', 'Testing Elements helper with enhanced .update()...', 'info');
+
+            try {
+                // Test your exact example code
+                Elements.elementsBtn.update({
+                    textContent: "Enhanced Elements Button",
+                    style: { color: "white", backgroundColor: "#e53e3e" },
+                    classList: {
+                        add: ["fancy", "highlight"],
+                        toggle: "active"
+                    },
+                    setAttribute: ["data-role", "elements-button"],
+                    addEventListener: ["click", () => {
+                        Elements.elementsBtn.update({
+                            classList: { toggle: "active" }
+                        });
+                        logResult('elementsLog', 'Elements button clicked and toggled!', 'success');
+                    }]
+                });
+
+                // Test DOM properties
+                Elements.elementsDiv.update({
+                    innerHTML: "<strong>Enhanced</strong> Elements Div",
+                    dataset: {
+                        testId: "elements-div",
+                        timestamp: Date.now()
+                    },
+                    style: {
+                        background: "linear-gradient(45deg, #667eea, #764ba2)",
+                        color: "white",
+                        padding: "20px",
+                        borderRadius: "10px"
+                    }
+                });
+
+                // Test input properties
+                Elements.elementsInput.update({
+                    value: "Enhanced Elements Input",
+                    placeholder: "Enhanced placeholder",
+                    setAttribute: ["data-enhanced", "true"],
+                    style: { borderColor: "#4299e1", borderWidth: "3px" }
+                });
+
+                logResult('elementsLog', 'Elements helper test completed successfully!', 'success');
+                logResult('elementsLog', `Button classes: ${Elements.elementsBtn.className}`, 'info');
+                logResult('elementsLog', `Div dataset: ${JSON.stringify(Elements.elementsDiv.dataset)}`, 'info');
+            } catch (error) {
+                logResult('elementsLog', `Error: ${error.message}`, 'error');
+            }
+        }
+
+        function resetElements() {
+            Elements.elementsBtn.update({
+                textContent: "Elements Button",
+                className: "test-item demo-button",
+                style: { color: "", backgroundColor: "" },
+                removeAttribute: "data-role"
+            });
+
+            Elements.elementsDiv.update({
+                innerHTML: "Elements Div",
+                className: "test-item",
+                style: { background: "", color: "", padding: "", borderRadius: "" },
+                removeAttribute: ["data-test-id", "data-timestamp"]
+            });
+
+            Elements.elementsInput.update({
+                value: "Elements Input",
+                placeholder: "",
+                style: { borderColor: "", borderWidth: "" },
+                removeAttribute: "data-enhanced"
+            });
+
+            logResult('elementsLog', 'Elements helper reset completed', 'info');
+        }
+
+        // Collections Helper Tests
+        function testCollections() {
+            logResult('collectionsLog', 'Testing Collections helper with enhanced .update()...', 'info');
+
+            try {
+                // Test Collections.ClassName with your example syntax
+                Collections.ClassName("collection-item").update({
+                    textContent: "Enhanced Collection Item",
+                    style: { 
+                        backgroundColor: "#4ecdc4",
+                        color: "white",
+                        fontWeight: "bold"
+                    },
+                    classList: {
+                        add: ["fancy", "highlight"],
+                        toggle: "active"
+                    },
+                    setAttribute: ["data-collection", "enhanced"],
+                    dataset: {
+                        enhanced: "true",
+                        timestamp: Date.now()
+                    }
+                });
+
+                // Test Collections.ClassName with buttons
+                Collections.ClassName("test-class").update({
+                    style: {
+                        background: "linear-gradient(45deg, #ff6b6b, #4ecdc4)",
+                        transform: "scale(1.1)",
+                        boxShadow: "0 5px 15px rgba(0,0,0,0.3)"
+                    },
+                    classList: {
+                        add: ["enhanced-button"]
+                    },
+                    addEventListener: ["click", (e) => {
+                        e.target.classList.toggle("active");
+                        logResult('collectionsLog', `Collection button clicked: ${e.target.textContent}`, 'success');
+                    }]
+                });
+
+                logResult('collectionsLog', 'Collections helper test completed successfully!', 'success');
+                logResult('collectionsLog', `Updated ${Collections.ClassName("collection-item").length} collection items`, 'info');
+                logResult('collectionsLog', `Updated ${Collections.ClassName("test-class").length} test buttons`, 'info');
+            } catch (error) {
+                logResult('collectionsLog', `Error: ${error.message}`, 'error');
+            }
+        }
+
+        function resetCollections() {
+            Collections.ClassName("collection-item").update({
+                textContent: (el, index) => `Collection Item ${index + 1}`,
+                className: "collection-item test-item",
+                style: { backgroundColor: "", color: "", fontWeight: "" },
+                removeAttribute: ["data-collection", "data-enhanced", "data-timestamp"]
+            });
+
+            Collections.ClassName("test-class").update({
+                textContent: (el, index) => `Test Button ${index + 1}`,
+                className: "test-class demo-button",
+                style: { background: "", transform: "", boxShadow: "" }
+            });
+
+            logResult('collectionsLog', 'Collections helper reset completed', 'info');
+        }
+
+        // Selector Helper Tests
+        function testSelector() {
+            logResult('selectorLog', 'Testing Selector helper with enhanced .update()...', 'info');
+
+            try {
+                // Test Selector.query (single element)
+                Selector.query(".selector-test").update({
+                    textContent: "Enhanced via Selector.query",
+                    style: {
+                        background: "linear-gradient(45deg, #ffd700, #ffed4e)",
+                        color: "#744210",
+                        fontWeight: "bold",
+                        transform: "rotate(2deg)"
+                    },
+                    classList: {
+                        add: ["selector-enhanced"]
+                    },
+                    setAttribute: ["data-selector", "single"]
+                });
+
+                // Test Selector.queryAll (multiple elements)
+                Selector.queryAll('[data-type="primary"]').update({
+                    style: {
+                        borderColor: "#e53e3e",
+                        borderWidth: "3px",
+                        backgroundColor: "#fed7d7"
+                    },
+                    classList: {
+                        add: ["primary-enhanced"],
+                        toggle: "active"
+                    },
+                    dataset: {
+                        enhanced: "primary",
+                        timestamp: Date.now()
+                    }
+                });
+
+                // Test Selector.queryAll with form inputs
+                Selector.queryAll(".form-input").update({
+                    style: {
+                        border: "3px solid #4ecdc4",
+                        borderRadius: "8px",
+                        padding: "10px",
+                        backgroundColor: "#f0fdfa"
+                    },
+                    setAttribute: ["data-enhanced", "selector"],
+                    addEventListener: ["focus", (e) => {
+                        e.target.style.boxShadow = "0 0 10px #4ecdc4";
+                        logResult('selectorLog', 'Form input focused via Selector', 'success');
+                    }],
+                    addEventListener: ["blur", (e) => {
+                        e.target.style.boxShadow = "";
+                    }]
+                });
+
+                logResult('selectorLog', 'Selector helper test completed successfully!', 'success');
+                logResult('selectorLog', `Updated ${Selector.queryAll('[data-type="primary"]').length} primary elements`, 'info');
+                logResult('selectorLog', `Updated ${Selector.queryAll('.form-input').length} form inputs`, 'info');
+            } catch (error) {
+                logResult('selectorLog', `Error: ${error.message}`, 'error');
+            }
+        }
+
+        function resetSelector() {
+            Selector.queryAll(".selector-test").update({
+                textContent: (el, index) => {
+                    const type = el.getAttribute('data-type');
+                    return `Selector Test ${index + 1}`;
+                },
+                className: "selector-test test-item",
+                style: { 
+                    background: "", 
+                    color: "", 
+                    fontWeight: "", 
+                    transform: "",
+                    borderColor: "",
+                    borderWidth: "",
+                    backgroundColor: ""
+                },
+                removeAttribute: ["data-selector", "data-enhanced", "data-timestamp"]
+            });
+
+            Selector.queryAll(".form-input").update({
+                style: { 
+                    border: "", 
+                    borderRadius: "", 
+                    padding: "", 
+                    backgroundColor: "",
+                    boxShadow: ""
+                },
+                removeAttribute: "data-enhanced"
+            });
+
+            logResult('selectorLog', 'Selector helper reset completed', 'info');
+        }
+
+        // Advanced Features Tests
+        function testAdvancedFeatures() {
+            logResult('advancedLog', 'Testing advanced .update() features...', 'info');
+
+            try {
+                // Test comprehensive classList operations
+                Elements.advancedBtn.update({
+                    textContent: "Advanced Enhanced Button",
+                    classList: {
+                        add: ["fancy", "highlight", "enhanced"],
+                        remove: ["demo-button"],
+                        toggle: ["active", "special"],
+                        replace: ["test-item", "advanced-item"]
+                    },
+                    style: {
+                        background: "linear-gradient(45deg, #667eea, #764ba2)",
+                        color: "white",
+                        padding: "15px 30px",
+                        borderRadius: "25px",
+                        boxShadow: "0 10px 20px rgba(0,0,0,0.3)",
+                        transform: "translateY(-2px)"
+                    },
+                    dataset: {
+                        advanced: "true",
+                        features: "classList,style,dataset,events",
+                        timestamp: Date.now()
+                    },
+                    setAttribute: ["aria-label", "Advanced enhanced button"],
+                    addEventListener: ["click", () => {
+                        Elements.advancedBtn.update({
+                            classList: { toggle: ["active", "clicked"] },
+                            style: { transform: "translateY(0px)" }
+                        });
+                        logResult('advancedLog', 'Advanced button clicked with classList toggle!', 'success');
+                        
+                        setTimeout(() => {
+                            Elements.advancedBtn.update({
+                                style: { transform: "translateY(-2px)" }
+                            });
+                        }, 200);
+                    }]
+                });
+
+                // Test removeAttribute and multiple event listeners
+                Elements.advancedDiv.update({
+                    innerHTML: "<em>Advanced</em> <strong>Enhanced</strong> Div",
+                    removeAttribute: ["class"],
+                    setAttribute: ["class", "advanced-div enhanced"],
+                    style: {
+                        background: "linear-gradient(135deg, #ff9a9e, #fecfef)",
+                        padding: "20px",
+                        borderRadius: "15px",
+                        border: "3px solid #ff6b9d",
+                        textAlign: "center"
+                    },
+                    addEventListener: ["mouseenter", (e) => {
+                        e.target.style.transform = "scale(1.05)";
+                    }],
+                    addEventListener: ["mouseleave", (e) => {
+                        e.target.style.transform = "scale(1)";
+                    }]
+                });
+
+                // Test DOM methods
+                Elements.advancedInput.update({
+                    value: "Advanced Enhanced Input",
+                    placeholder: "Advanced placeholder with focus",
+                    style: {
+                        border: "3px solid #4299e1",
+                        borderRadius: "10px",
+                        padding: "12px",
+                        fontSize: "16px",
+                        backgroundColor: "#f7fafc"
+                    },
+                    focus: [], // Call focus method
+                    setAttribute: ["data-focused", "true"]
+                });
+
+                logResult('advancedLog', 'Advanced features test completed successfully!', 'success');
+                logResult('advancedLog', `Button classes: ${Elements.advancedBtn.className}`, 'info');
+                logResult('advancedLog', `Button dataset: ${JSON.stringify(Elements.advancedBtn.dataset)}`, 'info');
+                logResult('advancedLog', 'Input should be focused automatically', 'info');
+            } catch (error) {
+                logResult('advancedLog', `Error: ${error.message}`, 'error');
+            }
+        }
+
+        function resetAdvanced() {
+            Elements.advancedBtn.update({
+                textContent: "Advanced Button",
+                className: "test-item demo-button",
+                style: { 
+                    background: "", 
+                    color: "", 
+                    padding: "", 
+                    borderRadius: "", 
+                    boxShadow: "", 
+                    transform: "" 
+                },
+                removeAttribute: ["data-advanced", "data-features", "data-timestamp", "aria-label"]
+            });
+
+            Elements.advancedDiv.update({
+                innerHTML: "Advanced Div",
+                className: "test-item",
+                style: { 
+                    background: "", 
+                    padding: "", 
+                    borderRadius: "", 
+                    border: "", 
+                    textAlign: "",
+                    transform: ""
+                }
+            });
+
+            Elements.advancedInput.update({
+                value: "Advanced Input",
+                placeholder: "Advanced Input",
+                style: { 
+                    border: "", 
+                    borderRadius: "", 
+                    padding: "", 
+                    fontSize: "", 
+                    backgroundColor: "" 
+                },
+                blur: [], // Remove focus
+                removeAttribute: "data-focused"
+            });
+
+            logResult('advancedLog', 'Advanced features reset completed', 'info');
+        }
+
+        // Initialize demo
+        document.addEventListener('DOMContentLoaded', () => {
+            logResult('elementsLog', 'Elements helper ready for testing', 'success');
+            logResult('collectionsLog', 'Collections helper ready for testing', 'success');
+            logResult('selectorLog', 'Selector helper ready for testing', 'success');
+            logResult('advancedLog', 'Advanced features ready for testing', 'success');
+        });
+    </script>
+</body>
+</html>

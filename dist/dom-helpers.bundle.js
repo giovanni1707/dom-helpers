@@ -17,10 +17,10 @@
 
   // ===== UPDATE UTILITY =====
   /**
-   * Universal Update Implementation
+   * Enhanced Update Implementation
    * This function can be applied to any element or collection
    */
-  function createUpdateMethod(context, isCollection = false) {
+  function createEnhancedUpdateMethod(context, isCollection = false) {
     return function update(updates = {}) {
       // Safety check - if no updates provided, return context for chaining
       if (!updates || typeof updates !== 'object') {
@@ -51,7 +51,7 @@
     try {
       // Process each update
       Object.entries(updates).forEach(([key, value]) => {
-        applyUpdate(element, key, value);
+        applyEnhancedUpdate(element, key, value);
       });
     } catch (error) {
       console.warn(`[DOM Helpers] Error in .update(): ${error.message}`);
@@ -98,7 +98,7 @@
       elements.forEach(element => {
         if (element && element.nodeType === Node.ELEMENT_NODE) {
           Object.entries(updates).forEach(([key, value]) => {
-            applyUpdate(element, key, value);
+            applyEnhancedUpdate(element, key, value);
           });
         }
       });
@@ -110,13 +110,14 @@
   }
 
   /**
-   * Apply a single update to an element
+   * Apply a single enhanced update to an element
    */
-  function applyUpdate(element, key, value) {
+  function applyEnhancedUpdate(element, key, value) {
     try {
       // Handle special cases first
+      
+      // 1. Style object - batch apply CSS styles
       if (key === 'style' && typeof value === 'object' && value !== null) {
-        // Batch apply CSS styles
         Object.entries(value).forEach(([styleProperty, styleValue]) => {
           if (styleValue !== null && styleValue !== undefined) {
             element.style[styleProperty] = styleValue;
@@ -125,7 +126,58 @@
         return;
       }
 
-      // Handle DOM methods (value should be an array of arguments)
+      // 2. classList methods - enhanced support with arrays
+      if (key === 'classList' && typeof value === 'object' && value !== null) {
+        handleClassListUpdate(element, value);
+        return;
+      }
+
+      // 3. setAttribute - enhanced support
+      if (key === 'setAttribute' && Array.isArray(value) && value.length >= 2) {
+        element.setAttribute(value[0], value[1]);
+        return;
+      }
+
+      // 4. removeAttribute - support for removing attributes
+      if (key === 'removeAttribute') {
+        if (Array.isArray(value)) {
+          value.forEach(attr => element.removeAttribute(attr));
+        } else if (typeof value === 'string') {
+          element.removeAttribute(value);
+        }
+        return;
+      }
+
+      // 5. getAttribute - for reading attributes (mainly for debugging/logging)
+      if (key === 'getAttribute' && typeof value === 'string') {
+        const attrValue = element.getAttribute(value);
+        console.log(`[DOM Helpers] getAttribute('${value}'):`, attrValue);
+        return;
+      }
+
+      // 6. addEventListener - enhanced event handling
+      if (key === 'addEventListener' && Array.isArray(value) && value.length >= 2) {
+        const [eventType, handler, options] = value;
+        element.addEventListener(eventType, handler, options);
+        return;
+      }
+
+      // 7. removeEventListener - support for removing event listeners
+      if (key === 'removeEventListener' && Array.isArray(value) && value.length >= 2) {
+        const [eventType, handler, options] = value;
+        element.removeEventListener(eventType, handler, options);
+        return;
+      }
+
+      // 8. dataset - support for data attributes
+      if (key === 'dataset' && typeof value === 'object' && value !== null) {
+        Object.entries(value).forEach(([dataKey, dataValue]) => {
+          element.dataset[dataKey] = dataValue;
+        });
+        return;
+      }
+
+      // 9. Handle DOM methods (value should be an array of arguments)
       if (typeof element[key] === 'function') {
         if (Array.isArray(value)) {
           // Call method with provided arguments
@@ -137,14 +189,14 @@
         return;
       }
 
-      // Handle regular DOM properties
+      // 10. Handle regular DOM properties
       if (key in element) {
         element[key] = value;
         return;
       }
 
-      // If property doesn't exist on element, try setAttribute as fallback
-      if (typeof value === 'string' || typeof value === 'number') {
+      // 11. If property doesn't exist on element, try setAttribute as fallback
+      if (typeof value === 'string' || typeof value === 'number' || typeof value === 'boolean') {
         element.setAttribute(key, value);
         return;
       }
@@ -156,24 +208,81 @@
   }
 
   /**
+   * Handle classList updates with enhanced functionality
+   */
+  function handleClassListUpdate(element, classListUpdates) {
+    Object.entries(classListUpdates).forEach(([method, classes]) => {
+      try {
+        switch (method) {
+          case 'add':
+            if (Array.isArray(classes)) {
+              element.classList.add(...classes);
+            } else if (typeof classes === 'string') {
+              element.classList.add(classes);
+            }
+            break;
+
+          case 'remove':
+            if (Array.isArray(classes)) {
+              element.classList.remove(...classes);
+            } else if (typeof classes === 'string') {
+              element.classList.remove(classes);
+            }
+            break;
+
+          case 'toggle':
+            if (Array.isArray(classes)) {
+              classes.forEach(cls => element.classList.toggle(cls));
+            } else if (typeof classes === 'string') {
+              element.classList.toggle(classes);
+            }
+            break;
+
+          case 'replace':
+            if (Array.isArray(classes) && classes.length === 2) {
+              element.classList.replace(classes[0], classes[1]);
+            }
+            break;
+
+          case 'contains':
+            // For debugging/logging purposes
+            if (Array.isArray(classes)) {
+              classes.forEach(cls => {
+                console.log(`[DOM Helpers] classList.contains('${cls}'):`, element.classList.contains(cls));
+              });
+            } else if (typeof classes === 'string') {
+              console.log(`[DOM Helpers] classList.contains('${classes}'):`, element.classList.contains(classes));
+            }
+            break;
+
+          default:
+            console.warn(`[DOM Helpers] Unknown classList method: ${method}`);
+        }
+      } catch (error) {
+        console.warn(`[DOM Helpers] Error in classList.${method}: ${error.message}`);
+      }
+    });
+  }
+
+  /**
    * Enhanced element wrapper that adds .update() method to any element
    */
   function enhanceElementWithUpdate(element) {
-    if (!element || element._hasUpdateMethod) {
+    if (!element || element._hasEnhancedUpdateMethod) {
       return element;
     }
 
-    // Add update method to the element
+    // Add enhanced update method to the element
     try {
       Object.defineProperty(element, 'update', {
-        value: createUpdateMethod(element, false),
+        value: createEnhancedUpdateMethod(element, false),
         writable: false,
         enumerable: false,
         configurable: true
       });
 
       // Mark as enhanced to avoid double-enhancement
-      Object.defineProperty(element, '_hasUpdateMethod', {
+      Object.defineProperty(element, '_hasEnhancedUpdateMethod', {
         value: true,
         writable: false,
         enumerable: false,
@@ -181,8 +290,8 @@
       });
     } catch (error) {
       // Fallback: attach as regular property if defineProperty fails
-      element.update = createUpdateMethod(element, false);
-      element._hasUpdateMethod = true;
+      element.update = createEnhancedUpdateMethod(element, false);
+      element._hasEnhancedUpdateMethod = true;
     }
 
     return element;
@@ -192,21 +301,21 @@
    * Enhanced collection wrapper that adds .update() method to any collection
    */
   function enhanceCollectionWithUpdate(collection) {
-    if (!collection || collection._hasUpdateMethod) {
+    if (!collection || collection._hasEnhancedUpdateMethod) {
       return collection;
     }
 
-    // Add update method to the collection
+    // Add enhanced update method to the collection
     try {
       Object.defineProperty(collection, 'update', {
-        value: createUpdateMethod(collection, true),
+        value: createEnhancedUpdateMethod(collection, true),
         writable: false,
         enumerable: false,
         configurable: true
       });
 
       // Mark as enhanced to avoid double-enhancement
-      Object.defineProperty(collection, '_hasUpdateMethod', {
+      Object.defineProperty(collection, '_hasEnhancedUpdateMethod', {
         value: true,
         writable: false,
         enumerable: false,
@@ -214,8 +323,8 @@
       });
     } catch (error) {
       // Fallback: attach as regular property if defineProperty fails
-      collection.update = createUpdateMethod(collection, true);
-      collection._hasUpdateMethod = true;
+      collection.update = createEnhancedUpdateMethod(collection, true);
+      collection._hasEnhancedUpdateMethod = true;
     }
 
     return collection;
@@ -235,7 +344,7 @@
   }
 
   /**
-   * Auto-enhance function that adds .update() to elements or collections
+   * Auto-enhance function that adds enhanced .update() to elements or collections
    */
   function autoEnhanceWithUpdate(obj) {
     if (!obj) return obj;
@@ -249,33 +358,97 @@
     return obj;
   }
 
-  // Export the utility functions
-  const UpdateUtility = {
-    createUpdateMethod,
+  /**
+   * Utility function to create a comprehensive update example
+   */
+  function createUpdateExample() {
+    return {
+      // Basic properties
+      textContent: "Enhanced Button",
+      innerHTML: "<strong>Enhanced</strong> Button",
+      id: "myEnhancedButton",
+      className: "btn btn-primary",
+      
+      // Style object
+      style: { 
+        color: "white",
+        backgroundColor: "#007bff",
+        padding: "10px 20px",
+        border: "none",
+        borderRadius: "5px"
+      },
+      
+      // classList methods
+      classList: {
+        add: ["fancy", "highlight"],
+        remove: ["old-class"],
+        toggle: "active",
+        replace: ["btn-old", "btn-new"]
+      },
+      
+      // Attributes
+      setAttribute: ["data-role", "button"],
+      removeAttribute: "disabled",
+      
+      // Dataset
+      dataset: {
+        userId: "123",
+        action: "submit"
+      },
+      
+      // Event handling
+      addEventListener: ["click", (e) => {
+        console.log("Button clicked!", e);
+        e.target.classList.toggle("clicked");
+      }],
+      
+      // Method calls
+      focus: [],
+      scrollIntoView: [{ behavior: "smooth" }]
+    };
+  }
+
+  // Export the enhanced utility functions
+  const EnhancedUpdateUtility = {
+    createEnhancedUpdateMethod,
     enhanceElementWithUpdate,
     enhanceCollectionWithUpdate,
     autoEnhanceWithUpdate,
     isCollection,
     updateSingleElement,
     updateCollection,
-    applyUpdate
+    applyEnhancedUpdate,
+    handleClassListUpdate,
+    createUpdateExample
   };
 
   // Export for different environments
   if (typeof module !== 'undefined' && module.exports) {
     // Node.js/CommonJS
-    module.exports = UpdateUtility;
+    module.exports = EnhancedUpdateUtility;
   } else if (typeof define === 'function' && define.amd) {
     // AMD/RequireJS
     define([], function() {
-      return UpdateUtility;
+      return EnhancedUpdateUtility;
     });
   } else {
     // Browser globals
-    global.UpdateUtility = UpdateUtility;
+    global.EnhancedUpdateUtility = EnhancedUpdateUtility;
   }
 
   // ===== ELEMENTS HELPER =====
+  // Import UpdateUtility if available
+  let UpdateUtility;
+  if (typeof require !== 'undefined') {
+    try {
+      UpdateUtility = require('./update-utility.js');
+    } catch (e) {
+      // UpdateUtility not available in this environment
+    }
+  } else if (typeof global !== 'undefined' && global.UpdateUtility) {
+    UpdateUtility = global.UpdateUtility;
+  }
+
   class ProductionElementsHelper {
     constructor(options = {}) {
       this.cache = new Map();
@@ -1442,18 +1615,160 @@
       }
     }
 
+    // Apply enhanced update to a single element (shared with Elements helper logic)
+    _applyEnhancedUpdateToElement(element, key, value) {
+      try {
+        // Handle special cases first
+        
+        // 1. Style object - batch apply CSS styles
+        if (key === 'style' && typeof value === 'object' && value !== null) {
+          Object.entries(value).forEach(([styleProperty, styleValue]) => {
+            if (styleValue !== null && styleValue !== undefined) {
+              element.style[styleProperty] = styleValue;
+            }
+          });
+          return;
+        }
+
+        // 2. classList methods - enhanced support with arrays
+        if (key === 'classList' && typeof value === 'object' && value !== null) {
+          this._handleClassListUpdate(element, value);
+          return;
+        }
+
+        // 3. setAttribute - enhanced support
+        if (key === 'setAttribute' && Array.isArray(value) && value.length >= 2) {
+          element.setAttribute(value[0], value[1]);
+          return;
+        }
+
+        // 4. removeAttribute - support for removing attributes
+        if (key === 'removeAttribute') {
+          if (Array.isArray(value)) {
+            value.forEach(attr => element.removeAttribute(attr));
+          } else if (typeof value === 'string') {
+            element.removeAttribute(value);
+          }
+          return;
+        }
+
+        // 5. addEventListener - enhanced event handling
+        if (key === 'addEventListener' && Array.isArray(value) && value.length >= 2) {
+          const [eventType, handler, options] = value;
+          element.addEventListener(eventType, handler, options);
+          return;
+        }
+
+        // 6. removeEventListener - support for removing event listeners
+        if (key === 'removeEventListener' && Array.isArray(value) && value.length >= 2) {
+          const [eventType, handler, options] = value;
+          element.removeEventListener(eventType, handler, options);
+          return;
+        }
+
+        // 7. dataset - support for data attributes
+        if (key === 'dataset' && typeof value === 'object' && value !== null) {
+          Object.entries(value).forEach(([dataKey, dataValue]) => {
+            element.dataset[dataKey] = dataValue;
+          });
+          return;
+        }
+
+        // 8. Handle DOM methods (value should be an array of arguments)
+        if (typeof element[key] === 'function') {
+          if (Array.isArray(value)) {
+            element[key](...value);
+          } else {
+            element[key](value);
+          }
+          return;
+        }
+
+        // 9. Handle regular DOM properties
+        if (key in element) {
+          element[key] = value;
+          return;
+        }
+
+        // 10. Fallback to setAttribute
+        if (typeof value === 'string' || typeof value === 'number' || typeof value === 'boolean') {
+          element.setAttribute(key, value);
+          return;
+        }
+
+        console.warn(`[DOM Helpers] Unknown property or method: ${key}`);
+      } catch (error) {
+        console.warn(`[DOM Helpers] Failed to apply update ${key}: ${error.message}`);
+      }
+    }
+
+    // Handle classList updates with enhanced functionality
+    _handleClassListUpdate(element, classListUpdates) {
+      Object.entries(classListUpdates).forEach(([method, classes]) => {
+        try {
+          switch (method) {
+            case 'add':
+              if (Array.isArray(classes)) {
+                element.classList.add(...classes);
+              } else if (typeof classes === 'string') {
+                element.classList.add(classes);
+              }
+              break;
+
+            case 'remove':
+              if (Array.isArray(classes)) {
+                element.classList.remove(...classes);
+              } else if (typeof classes === 'string') {
+                element.classList.remove(classes);
+              }
+              break;
+
+            case 'toggle':
+              if (Array.isArray(classes)) {
+                classes.forEach(cls => element.classList.toggle(cls));
+              } else if (typeof classes === 'string') {
+                element.classList.toggle(classes);
+              }
+              break;
+
+            case 'replace':
+              if (Array.isArray(classes) && classes.length === 2) {
+                element.classList.replace(classes[0], classes[1]);
+              }
+              break;
+
+            case 'contains':
+              // For debugging/logging purposes
+              if (Array.isArray(classes)) {
+                classes.forEach(cls => {
+                  console.log(`[DOM Helpers] classList.contains('${cls}'):`, element.classList.contains(cls));
+                });
+              } else if (typeof classes === 'string') {
+                console.log(`[DOM Helpers] classList.contains('${classes}'):`, element.classList.contains(classes));
+              }
+              break;
+
+            default:
+              console.warn(`[DOM Helpers] Unknown classList method: ${method}`);
+          }
+        } catch (error) {
+          console.warn(`[DOM Helpers] Error in classList.${method}: ${error.message}`);
+        }
+      });
+    }
+
     // Enhanced collection with update method
     _enhanceCollectionWithUpdate(collection) {
-      if (!collection || collection._hasUpdateMethod) {
+      if (!collection || collection._hasEnhancedUpdateMethod) {
         return collection;
       }
 
-      // Use UpdateUtility if available, otherwise create inline update method
-      if (UpdateUtility && UpdateUtility.enhanceCollectionWithUpdate) {
-        return UpdateUtility.enhanceCollectionWithUpdate(collection);
+      // Use EnhancedUpdateUtility if available, otherwise create comprehensive inline update method
+      if (EnhancedUpdateUtility && EnhancedUpdateUtility.enhanceCollectionWithUpdate) {
+        return EnhancedUpdateUtility.enhanceCollectionWithUpdate(collection);
       }
 
-      // Fallback: create update method inline
+      // Comprehensive fallback: create enhanced update method inline
       try {
         Object.defineProperty(collection, 'update', {
           value: (updates = {}) => {
@@ -1480,36 +1795,7 @@
               elements.forEach(element => {
                 if (element && element.nodeType === Node.ELEMENT_NODE) {
                   Object.entries(updates).forEach(([key, value]) => {
-                    // Handle style object
-                    if (key === 'style' && typeof value === 'object' && value !== null) {
-                      Object.entries(value).forEach(([styleProperty, styleValue]) => {
-                        if (styleValue !== null && styleValue !== undefined) {
-                          element.style[styleProperty] = styleValue;
-                        }
-                      });
-                      return;
-                    }
-
-                    // Handle DOM methods
-                    if (typeof element[key] === 'function') {
-                      if (Array.isArray(value)) {
-                        element[key](...value);
-                      } else {
-                        element[key](value);
-                      }
-                      return;
-                    }
-
-                    // Handle regular properties
-                    if (key in element) {
-                      element[key] = value;
-                      return;
-                    }
-
-                    // Fallback to setAttribute
-                    if (typeof value === 'string' || typeof value === 'number') {
-                      element.setAttribute(key, value);
-                    }
+                    this._applyEnhancedUpdateToElement(element, key, value);
                   });
                 }
               });
@@ -1525,7 +1811,7 @@
         });
 
         // Mark as enhanced
-        Object.defineProperty(collection, '_hasUpdateMethod', {
+        Object.defineProperty(collection, '_hasEnhancedUpdateMethod', {
           value: true,
           writable: false,
           enumerable: false,
@@ -1555,32 +1841,7 @@
             elements.forEach(element => {
               if (element && element.nodeType === Node.ELEMENT_NODE) {
                 Object.entries(updates).forEach(([key, value]) => {
-                  if (key === 'style' && typeof value === 'object' && value !== null) {
-                    Object.entries(value).forEach(([styleProperty, styleValue]) => {
-                      if (styleValue !== null && styleValue !== undefined) {
-                        element.style[styleProperty] = styleValue;
-                      }
-                    });
-                    return;
-                  }
-
-                  if (typeof element[key] === 'function') {
-                    if (Array.isArray(value)) {
-                      element[key](...value);
-                    } else {
-                      element[key](value);
-                    }
-                    return;
-                  }
-
-                  if (key in element) {
-                    element[key] = value;
-                    return;
-                  }
-
-                  if (typeof value === 'string' || typeof value === 'number') {
-                    element.setAttribute(key, value);
-                  }
+                  this._applyEnhancedUpdateToElement(element, key, value);
                 });
               }
             });
@@ -1590,7 +1851,7 @@
 
           return collection;
         };
-        collection._hasUpdateMethod = true;
+        collection._hasEnhancedUpdateMethod = true;
       }
 
       return collection;
@@ -2469,13 +2730,13 @@
 
     // Enhanced element with update method
     _enhanceElementWithUpdate(element) {
-      if (!element || element._hasUpdateMethod) {
+      if (!element || element._hasEnhancedUpdateMethod) {
         return element;
       }
 
-      // Use UpdateUtility if available, otherwise create inline update method
-      if (UpdateUtility && UpdateUtility.enhanceElementWithUpdate) {
-        return UpdateUtility.enhanceElementWithUpdate(element);
+      // Use EnhancedUpdateUtility if available, otherwise create comprehensive inline update method
+      if (EnhancedUpdateUtility && EnhancedUpdateUtility.enhanceElementWithUpdate) {
+        return EnhancedUpdateUtility.enhanceElementWithUpdate(element);
       }
 
       // Fallback: create update method inline
@@ -2589,13 +2850,13 @@
 
     // Enhanced collection with update method
     _enhanceCollectionWithUpdate(collection) {
-      if (!collection || collection._hasUpdateMethod) {
+      if (!collection || collection._hasEnhancedUpdateMethod) {
         return collection;
       }
 
-      // Use UpdateUtility if available, otherwise create inline update method
-      if (UpdateUtility && UpdateUtility.enhanceCollectionWithUpdate) {
-        return UpdateUtility.enhanceCollectionWithUpdate(collection);
+      // Use EnhancedUpdateUtility if available, otherwise create comprehensive inline update method
+      if (EnhancedUpdateUtility && EnhancedUpdateUtility.enhanceCollectionWithUpdate) {
+        return EnhancedUpdateUtility.enhanceCollectionWithUpdate(collection);
       }
 
       // Fallback: create update method inline

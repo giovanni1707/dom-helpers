@@ -1,16 +1,16 @@
 (function(global) {
   'use strict';
 
-  // Import UpdateUtility if available
-  let UpdateUtility;
+  // Import Enhanced UpdateUtility if available
+  let EnhancedUpdateUtility;
   if (typeof require !== 'undefined') {
     try {
-      UpdateUtility = require('./update-utility.js');
+      EnhancedUpdateUtility = require('./enhanced-update-utility.js');
     } catch (e) {
-      // UpdateUtility not available in this environment
+      // EnhancedUpdateUtility not available in this environment
     }
-  } else if (typeof global !== 'undefined' && global.UpdateUtility) {
-    UpdateUtility = global.UpdateUtility;
+  } else if (typeof global !== 'undefined' && global.EnhancedUpdateUtility) {
+    EnhancedUpdateUtility = global.EnhancedUpdateUtility;
   }
 
   class ProductionSelectorHelper {
@@ -729,13 +729,13 @@
 
     // Enhanced element with update method
     _enhanceElementWithUpdate(element) {
-      if (!element || element._hasUpdateMethod) {
+      if (!element || element._hasEnhancedUpdateMethod) {
         return element;
       }
 
-      // Use UpdateUtility if available, otherwise create inline update method
-      if (UpdateUtility && UpdateUtility.enhanceElementWithUpdate) {
-        return UpdateUtility.enhanceElementWithUpdate(element);
+      // Use EnhancedUpdateUtility if available, otherwise create comprehensive inline update method
+      if (EnhancedUpdateUtility && EnhancedUpdateUtility.enhanceElementWithUpdate) {
+        return EnhancedUpdateUtility.enhanceElementWithUpdate(element);
       }
 
       // Fallback: create update method inline
@@ -849,13 +849,13 @@
 
     // Enhanced collection with update method
     _enhanceCollectionWithUpdate(collection) {
-      if (!collection || collection._hasUpdateMethod) {
+      if (!collection || collection._hasEnhancedUpdateMethod) {
         return collection;
       }
 
-      // Use UpdateUtility if available, otherwise create inline update method
-      if (UpdateUtility && UpdateUtility.enhanceCollectionWithUpdate) {
-        return UpdateUtility.enhanceCollectionWithUpdate(collection);
+      // Use EnhancedUpdateUtility if available, otherwise create comprehensive inline update method
+      if (EnhancedUpdateUtility && EnhancedUpdateUtility.enhanceCollectionWithUpdate) {
+        return EnhancedUpdateUtility.enhanceCollectionWithUpdate(collection);
       }
 
       // Fallback: create update method inline

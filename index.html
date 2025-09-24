@@ -1,0 +1,1249 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>DOM Helpers - Enhanced JavaScript DOM Utilities</title>
+    <meta name="description" content="High-performance vanilla JavaScript DOM utilities with intelligent caching and a powerful .update() method that supports the complete DOM API.">
+    <meta name="keywords" content="javascript, dom, utilities, vanilla js, performance, caching, update method">
+    <meta name="author" content="DOM Helpers Team">
+    
+    <!-- Open Graph / Facebook -->
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="https://giovanni1707.github.io/elements-helper/">
+    <meta property="og:title" content="DOM Helpers - Enhanced JavaScript DOM Utilities">
+    <meta property="og:description" content="High-performance vanilla JavaScript DOM utilities with intelligent caching and a powerful .update() method.">
+    <meta property="og:image" content="https://giovanni1707.github.io/elements-helper/assets/og-image.png">
+
+    <!-- Twitter -->
+    <meta property="twitter:card" content="summary_large_image">
+    <meta property="twitter:url" content="https://giovanni1707.github.io/elements-helper/">
+    <meta property="twitter:title" content="DOM Helpers - Enhanced JavaScript DOM Utilities">
+    <meta property="twitter:description" content="High-performance vanilla JavaScript DOM utilities with intelligent caching and a powerful .update() method.">
+    <meta property="twitter:image" content="https://giovanni1707.github.io/elements-helper/assets/og-image.png">
+
+    <!-- Favicon -->
+    <link rel="icon" type="image/x-icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🚀</text></svg>">
+    
+    <style>
+        :root {
+            --primary-color: #667eea;
+            --secondary-color: #764ba2;
+            --accent-color: #4299e1;
+            --success-color: #48bb78;
+            --warning-color: #ed8936;
+            --error-color: #f56565;
+            --text-primary: #2d3748;
+            --text-secondary: #4a5568;
+            --text-muted: #718096;
+            --bg-primary: #ffffff;
+            --bg-secondary: #f7fafc;
+            --bg-accent: #edf2f7;
+            --border-color: #e2e8f0;
+            --shadow-sm: 0 1px 3px rgba(0,0,0,0.12), 0 1px 2px rgba(0,0,0,0.24);
+            --shadow-md: 0 4px 6px rgba(0,0,0,0.07), 0 1px 3px rgba(0,0,0,0.06);
+            --shadow-lg: 0 10px 15px rgba(0,0,0,0.1), 0 4px 6px rgba(0,0,0,0.05);
+            --shadow-xl: 0 20px 25px rgba(0,0,0,0.1), 0 10px 10px rgba(0,0,0,0.04);
+        }
+
+        [data-theme="dark"] {
+            --text-primary: #f7fafc;
+            --text-secondary: #e2e8f0;
+            --text-muted: #a0aec0;
+            --bg-primary: #1a202c;
+            --bg-secondary: #2d3748;
+            --bg-accent: #4a5568;
+            --border-color: #4a5568;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            line-height: 1.6;
+            color: var(--text-primary);
+            background: var(--bg-primary);
+            transition: all 0.3s ease;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px;
+        }
+
+        /* Header */
+        .header {
+            background: linear-gradient(135deg, var(--primary-color) 0%, var(--secondary-color) 100%);
+            color: white;
+            padding: 4rem 0;
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .header::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><defs><pattern id="grid" width="10" height="10" patternUnits="userSpaceOnUse"><path d="M 10 0 L 0 0 0 10" fill="none" stroke="rgba(255,255,255,0.1)" stroke-width="0.5"/></pattern></defs><rect width="100" height="100" fill="url(%23grid)"/></svg>');
+            opacity: 0.3;
+        }
+
+        .header-content {
+            position: relative;
+            z-index: 1;
+        }
+
+        .header h1 {
+            font-size: 3.5rem;
+            font-weight: 700;
+            margin-bottom: 1rem;
+            text-shadow: 0 2px 4px rgba(0,0,0,0.3);
+        }
+
+        .header .subtitle {
+            font-size: 1.25rem;
+            margin-bottom: 2rem;
+            opacity: 0.9;
+        }
+
+        .header .badges {
+            display: flex;
+            justify-content: center;
+            gap: 1rem;
+            flex-wrap: wrap;
+            margin-bottom: 2rem;
+        }
+
+        .badge {
+            display: inline-flex;
+            align-items: center;
+            padding: 0.5rem 1rem;
+            background: rgba(255,255,255,0.2);
+            border-radius: 25px;
+            font-size: 0.875rem;
+            font-weight: 600;
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255,255,255,0.3);
+        }
+
+        .cta-buttons {
+            display: flex;
+            justify-content: center;
+            gap: 1rem;
+            flex-wrap: wrap;
+        }
+
+        .btn {
+            display: inline-flex;
+            align-items: center;
+            padding: 0.75rem 2rem;
+            border: none;
+            border-radius: 8px;
+            font-size: 1rem;
+            font-weight: 600;
+            text-decoration: none;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            box-shadow: var(--shadow-md);
+        }
+
+        .btn-primary {
+            background: white;
+            color: var(--primary-color);
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: var(--shadow-lg);
+        }
+
+        .btn-secondary {
+            background: rgba(255,255,255,0.2);
+            color: white;
+            border: 2px solid rgba(255,255,255,0.3);
+        }
+
+        .btn-secondary:hover {
+            background: rgba(255,255,255,0.3);
+            transform: translateY(-2px);
+        }
+
+        /* Navigation */
+        .nav {
+            background: var(--bg-primary);
+            border-bottom: 1px solid var(--border-color);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            backdrop-filter: blur(10px);
+        }
+
+        .nav-content {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 1rem 0;
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 2rem;
+            list-style: none;
+        }
+
+        .nav-links a {
+            color: var(--text-secondary);
+            text-decoration: none;
+            font-weight: 500;
+            transition: color 0.2s ease;
+        }
+
+        .nav-links a:hover {
+            color: var(--accent-color);
+        }
+
+        .theme-toggle {
+            background: var(--bg-secondary);
+            border: 1px solid var(--border-color);
+            color: var(--text-primary);
+            padding: 0.5rem 1rem;
+            border-radius: 6px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .theme-toggle:hover {
+            background: var(--bg-accent);
+        }
+
+        /* Main Content */
+        .main {
+            padding: 4rem 0;
+        }
+
+        .section {
+            margin-bottom: 4rem;
+        }
+
+        .section-header {
+            text-align: center;
+            margin-bottom: 3rem;
+        }
+
+        .section-title {
+            font-size: 2.5rem;
+            font-weight: 700;
+            margin-bottom: 1rem;
+            color: var(--text-primary);
+        }
+
+        .section-subtitle {
+            font-size: 1.125rem;
+            color: var(--text-muted);
+            max-width: 600px;
+            margin: 0 auto;
+        }
+
+        /* Feature Grid */
+        .features-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 2rem;
+            margin-bottom: 3rem;
+        }
+
+        .feature-card {
+            background: var(--bg-primary);
+            border: 1px solid var(--border-color);
+            border-radius: 12px;
+            padding: 2rem;
+            text-align: center;
+            transition: all 0.3s ease;
+            box-shadow: var(--shadow-sm);
+        }
+
+        .feature-card:hover {
+            transform: translateY(-4px);
+            box-shadow: var(--shadow-lg);
+            border-color: var(--accent-color);
+        }
+
+        .feature-icon {
+            font-size: 3rem;
+            margin-bottom: 1rem;
+        }
+
+        .feature-title {
+            font-size: 1.25rem;
+            font-weight: 600;
+            margin-bottom: 1rem;
+            color: var(--text-primary);
+        }
+
+        .feature-description {
+            color: var(--text-muted);
+            line-height: 1.6;
+        }
+
+        /* Demo Section */
+        .demo-container {
+            background: var(--bg-secondary);
+            border-radius: 12px;
+            padding: 2rem;
+            margin-bottom: 3rem;
+        }
+
+        .demo-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 2rem;
+            flex-wrap: wrap;
+            gap: 1rem;
+        }
+
+        .demo-title {
+            font-size: 1.5rem;
+            font-weight: 600;
+            color: var(--text-primary);
+        }
+
+        .demo-controls {
+            display: flex;
+            gap: 1rem;
+            flex-wrap: wrap;
+        }
+
+        .demo-btn {
+            padding: 0.5rem 1rem;
+            border: 1px solid var(--border-color);
+            border-radius: 6px;
+            background: var(--bg-primary);
+            color: var(--text-primary);
+            cursor: pointer;
+            font-size: 0.875rem;
+            font-weight: 500;
+            transition: all 0.2s ease;
+        }
+
+        .demo-btn:hover {
+            background: var(--accent-color);
+            color: white;
+            border-color: var(--accent-color);
+        }
+
+        .demo-btn.active {
+            background: var(--accent-color);
+            color: white;
+            border-color: var(--accent-color);
+        }
+
+        .demo-content {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 2rem;
+            align-items: start;
+        }
+
+        .demo-playground {
+            background: var(--bg-primary);
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            padding: 2rem;
+            min-height: 300px;
+        }
+
+        .demo-code {
+            background: #2d3748;
+            color: #e2e8f0;
+            border-radius: 8px;
+            padding: 1.5rem;
+            font-family: 'Courier New', monospace;
+            font-size: 0.875rem;
+            line-height: 1.5;
+            overflow-x: auto;
+            border-left: 4px solid var(--accent-color);
+        }
+
+        /* Demo Elements */
+        .demo-element {
+            display: inline-block;
+            padding: 0.75rem 1.5rem;
+            margin: 0.5rem;
+            border: 2px solid var(--border-color);
+            border-radius: 8px;
+            background: var(--bg-primary);
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-weight: 500;
+        }
+
+        .demo-element:hover {
+            transform: translateY(-2px);
+            box-shadow: var(--shadow-md);
+        }
+
+        /* Enhanced styles for demo */
+        .enhanced {
+            background: linear-gradient(45deg, #667eea, #764ba2) !important;
+            color: white !important;
+            border-color: transparent !important;
+            box-shadow: var(--shadow-lg) !important;
+        }
+
+        .fancy {
+            background: linear-gradient(45deg, #ffd700, #ffed4e) !important;
+            color: #744210 !important;
+            font-weight: bold !important;
+            transform: scale(1.05) !important;
+        }
+
+        .highlight {
+            background: linear-gradient(45deg, #ff6b6b, #4ecdc4) !important;
+            color: white !important;
+            font-weight: bold !important;
+        }
+
+        .active {
+            border: 3px solid var(--accent-color) !important;
+            box-shadow: 0 0 15px rgba(66, 153, 225, 0.5) !important;
+        }
+
+        /* Stats Display */
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1rem;
+            margin-top: 2rem;
+        }
+
+        .stat-card {
+            background: var(--bg-primary);
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            padding: 1.5rem;
+            text-align: center;
+        }
+
+        .stat-number {
+            font-size: 2rem;
+            font-weight: 700;
+            color: var(--accent-color);
+            display: block;
+        }
+
+        .stat-label {
+            color: var(--text-muted);
+            font-size: 0.875rem;
+            margin-top: 0.5rem;
+        }
+
+        /* Footer */
+        .footer {
+            background: var(--bg-secondary);
+            border-top: 1px solid var(--border-color);
+            padding: 3rem 0;
+            text-align: center;
+        }
+
+        .footer-content {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 2rem;
+            margin-bottom: 2rem;
+        }
+
+        .footer-section h3 {
+            font-size: 1.125rem;
+            font-weight: 600;
+            margin-bottom: 1rem;
+            color: var(--text-primary);
+        }
+
+        .footer-links {
+            list-style: none;
+        }
+
+        .footer-links li {
+            margin-bottom: 0.5rem;
+        }
+
+        .footer-links a {
+            color: var(--text-muted);
+            text-decoration: none;
+            transition: color 0.2s ease;
+        }
+
+        .footer-links a:hover {
+            color: var(--accent-color);
+        }
+
+        .footer-bottom {
+            border-top: 1px solid var(--border-color);
+            padding-top: 2rem;
+            color: var(--text-muted);
+        }
+
+        /* Responsive Design */
+        @media (max-width: 768px) {
+            .header h1 {
+                font-size: 2.5rem;
+            }
+
+            .demo-content {
+                grid-template-columns: 1fr;
+            }
+
+            .nav-content {
+                flex-direction: column;
+                gap: 1rem;
+            }
+
+            .nav-links {
+                gap: 1rem;
+            }
+
+            .cta-buttons {
+                flex-direction: column;
+                align-items: center;
+            }
+        }
+
+        /* Animations */
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .animate-fade-in {
+            animation: fadeInUp 0.6s ease-out;
+        }
+
+        /* Loading States */
+        .loading {
+            opacity: 0.6;
+            pointer-events: none;
+        }
+
+        .loading::after {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: 20px;
+            height: 20px;
+            margin: -10px 0 0 -10px;
+            border: 2px solid var(--accent-color);
+            border-radius: 50%;
+            border-top-color: transparent;
+            animation: spin 1s linear infinite;
+        }
+
+        @keyframes spin {
+            to {
+                transform: rotate(360deg);
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Header -->
+    <header class="header">
+        <div class="container">
+            <div class="header-content">
+                <h1>🚀 DOM Helpers</h1>
+                <p class="subtitle">Enhanced JavaScript DOM utilities with intelligent caching and a powerful .update() method</p>
+                
+                <div class="badges">
+                    <span class="badge">⚡ Zero Dependencies</span>
+                    <span class="badge">🛡️ TypeScript Ready</span>
+                    <span class="badge">📱 Universal Support</span>
+                    <span class="badge">🔄 Chainable API</span>
+                </div>
+
+                <div class="cta-buttons">
+                    <a href="#demo" class="btn btn-primary">Try Live Demo</a>
+                    <a href="https://github.com/giovanni1707/elements-helper" class="btn btn-secondary" target="_blank">View on GitHub</a>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- Navigation -->
+    <nav class="nav">
+        <div class="container">
+            <div class="nav-content">
+                <ul class="nav-links">
+                    <li><a href="#features">Features</a></li>
+                    <li><a href="#demo">Demo</a></li>
+                    <li><a href="#examples">Examples</a></li>
+                    <li><a href="#docs">Documentation</a></li>
+                </ul>
+                <button id="themeToggle" class="theme-toggle">🌙 Dark Mode</button>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Main Content -->
+    <main class="main">
+        <div class="container">
+            <!-- Features Section -->
+            <section id="features" class="section">
+                <div class="section-header">
+                    <h2 class="section-title">✨ Powerful Features</h2>
+                    <p class="section-subtitle">Everything you need for modern DOM manipulation with performance and developer experience in mind</p>
+                </div>
+
+                <div class="features-grid">
+                    <div class="feature-card">
+                        <div class="feature-icon">🎯</div>
+                        <h3 class="feature-title">Elements Helper</h3>
+                        <p class="feature-description">Access DOM elements by ID with intelligent caching and automatic cleanup. Simple, fast, and reliable.</p>
+                    </div>
+
+                    <div class="feature-card">
+                        <div class="feature-icon">📦</div>
+                        <h3 class="feature-title">Collections Helper</h3>
+                        <p class="feature-description">Work with element collections by class name, tag name, or name attribute. Batch operations made easy.</p>
+                    </div>
+
+                    <div class="feature-card">
+                        <div class="feature-icon">🔍</div>
+                        <h3 class="feature-title">Selector Helper</h3>
+                        <p class="feature-description">Enhanced querySelector/querySelectorAll with intelligent caching and performance optimizations.</p>
+                    </div>
+
+                    <div class="feature-card">
+                        <div class="feature-icon">🔄</div>
+                        <h3 class="feature-title">Universal .update()</h3>
+                        <p class="feature-description">Declarative DOM manipulation supporting the complete DOM API. Properties, attributes, events, and more.</p>
+                    </div>
+
+                    <div class="feature-card">
+                        <div class="feature-icon">⚡</div>
+                        <h3 class="feature-title">High Performance</h3>
+                        <p class="feature-description">Intelligent caching, optimized operations, and minimal overhead for maximum performance.</p>
+                    </div>
+
+                    <div class="feature-card">
+                        <div class="feature-icon">🛡️</div>
+                        <h3 class="feature-title">Type Safe</h3>
+                        <p class="feature-description">Full TypeScript support with comprehensive type definitions for better development experience.</p>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Demo Section -->
+            <section id="demo" class="section">
+                <div class="section-header">
+                    <h2 class="section-title">🎮 Interactive Demo</h2>
+                    <p class="section-subtitle">Try the powerful .update() method with real examples. See the code and results side by side.</p>
+                </div>
+
+                <div class="demo-container">
+                    <div class="demo-header">
+                        <h3 class="demo-title">Live Playground</h3>
+                        <div class="demo-controls">
+                            <button class="demo-btn active" data-demo="basic">Basic Properties</button>
+                            <button class="demo-btn" data-demo="classList">classList Arrays</button>
+                            <button class="demo-btn" data-demo="styles">Style Objects</button>
+                            <button class="demo-btn" data-demo="events">Event Handling</button>
+                            <button class="demo-btn" data-demo="advanced">Advanced Features</button>
+                        </div>
+                    </div>
+
+                    <div class="demo-content">
+                        <div class="demo-playground">
+                            <h4>Interactive Elements:</h4>
+                            <div id="demoElement1" class="demo-element">Demo Element 1</div>
+                            <div id="demoElement2" class="demo-element">Demo Element 2</div>
+                            <div id="demoElement3" class="demo-element">Demo Element 3</div>
+                            <button id="demoButton" class="demo-element">Demo Button</button>
+                            <input id="demoInput" class="demo-element" type="text" placeholder="Demo Input" value="Test Value">
+                        </div>
+
+                        <div class="demo-code" id="demoCode">
+// Click a demo button above to see the code
+// and watch the elements transform in real-time!
+
+Elements.demoElement1.update({
+  textContent: "Updated Element",
+  style: { backgroundColor: "#4299e1", color: "white" },
+  classList: { add: ["enhanced"] }
+});
+                        </div>
+                    </div>
+
+                    <!-- Performance Stats -->
+                    <div class="stats-grid" id="statsGrid">
+                        <div class="stat-card">
+                            <span class="stat-number" id="cacheHits">0</span>
+                            <div class="stat-label">Cache Hits</div>
+                        </div>
+                        <div class="stat-card">
+                            <span class="stat-number" id="cacheSize">0</span>
+                            <div class="stat-label">Cached Elements</div>
+                        </div>
+                        <div class="stat-card">
+                            <span class="stat-number" id="hitRate">0%</span>
+                            <div class="stat-label">Hit Rate</div>
+                        </div>
+                        <div class="stat-card">
+                            <span class="stat-number" id="operations">0</span>
+                            <div class="stat-label">Operations</div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Examples Section -->
+            <section id="examples" class="section">
+                <div class="section-header">
+                    <h2 class="section-title">💡 Code Examples</h2>
+                    <p class="section-subtitle">Real-world examples showing the power and flexibility of DOM Helpers</p>
+                </div>
+
+                <div class="demo-container">
+                    <h3 class="demo-title">Your Requested Example - Working!</h3>
+                    <div class="demo-code">
+Elements.myBtn.update({
+  textContent: "Enhanced Button",
+  style: { color: "white" },
+  classList: {
+    add: ["fancy", "highlight"],   // add multiple classes
+    toggle: "active"               // toggle class on load
+  },
+  setAttribute: ["data-role", "button"],
+  addEventListener: ["click", () => {
+    Elements.myBtn.update({
+      classList: { toggle: "active" }
+    });
+    alert("Clicked ✅ and toggled 'active'!");
+  }]
+});
+                    </div>
+                </div>
+
+                <div class="demo-container">
+                    <h3 class="demo-title">Complete DOM API Support</h3>
+                    <div class="demo-code">
+// Properties, Attributes, Classes, Styles, Events, Methods - All in one call!
+Elements.myElement.update({
+  // DOM Properties
+  textContent: "Complete Example",
+  className: "enhanced-element",
+  
+  // Attributes
+  setAttribute: ["data-enhanced", "true"],
+  removeAttribute: "disabled",
+  
+  // Styles
+  style: {
+    background: "linear-gradient(45deg, #667eea, #764ba2)",
+    color: "white",
+    padding: "15px 30px",
+    borderRadius: "25px"
+  },
+  
+  // Classes with Arrays
+  classList: {
+    add: ["fancy", "interactive"],
+    toggle: "active",
+    remove: ["old-class"]
+  },
+  
+  // Dataset
+  dataset: {
+    component: "enhanced-button",
+    version: "2.1.0"
+  },
+  
+  // Events
+  addEventListener: ["click", handleClick],
+  
+  // DOM Methods
+  focus: []
+});
+                    </div>
+                </div>
+            </section>
+
+            <!-- Documentation Section -->
+            <section id="docs" class="section">
+                <div class="section-header">
+                    <h2 class="section-title">📚 Quick Start</h2>
+                    <p class="section-subtitle">Get started with DOM Helpers in seconds</p>
+                </div>
+
+                <div class="demo-container">
+                    <h3 class="demo-title">CDN Installation (Recommended)</h3>
+                    <div class="demo-code">
+&lt;!-- Latest version --&gt;
+&lt;script src="https://cdn.jsdelivr.net/npm/dom-helpers@latest/dist/dom-helpers.min.js"&gt;&lt;/script&gt;
+
+&lt;!-- Start using immediately --&gt;
+&lt;script&gt;
+  // Elements Helper
+  Elements.myButton.update({
+    textContent: "Click me!",
+    style: { backgroundColor: "blue" }
+  });
+
+  // Collections Helper
+  Collections.ClassName('card').update({
+    style: { boxShadow: "0 4px 8px rgba(0,0,0,0.1)" }
+  });
+
+  // Selector Helper
+  Selector.queryAll('.btn').update({
+    classList: { add: ["enhanced"] }
+  });
+&lt;/script&gt;
+                    </div>
+                </div>
+
+                <div class="demo-container">
+                    <h3 class="demo-title">NPM Installation</h3>
+                    <div class="demo-code">
+# Install via npm
+npm install dom-helpers
+
+# ES6 Modules
+import { Elements, Collections, Selector } from 'dom-helpers';
+
+# CommonJS
+const { Elements, Collections, Selector } = require('dom-helpers');
+                    </div>
+                </div>
+            </section>
+        </div>
+    </main>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="container">
+            <div class="footer-content">
+                <div class="footer-section">
+                    <h3>🚀 DOM Helpers</h3>
+                    <p>High-performance vanilla JavaScript DOM utilities with intelligent caching and a powerful .update() method.</p>
+                </div>
+
+                <div class="footer-section">
+                    <h3>Resources</h3>
+                    <ul class="footer-links">
+                        <li><a href="https://github.com/giovanni1707/elements-helper">GitHub Repository</a></li>
+                        <li><a href="https://github.com/giovanni1707/elements-helper/wiki">Documentation</a></li>
+                        <li><a href="https://github.com/giovanni1707/elements-helper/issues">Issue Tracker</a></li>
+                        <li><a href="https://github.com/giovanni1707/elements-helper/discussions">Discussions</a></li>
+                    </ul>
+                </div>
+
+                <div class="footer-section">
+                    <h3>CDN Links</h3>
+                    <ul class="footer-links">
+                        <li><a href="https://cdn.jsdelivr.net/npm/dom-helpers@latest/dist/dom-helpers.min.js">Complete Bundle</a></li>
+                        <li><a href="https://cdn.jsdelivr.net/npm/dom-helpers@latest/dist/elements.min.js">Elements Helper</a></li>
+                        <li><a href="https://cdn.jsdelivr.net/npm/dom-helpers@latest/dist/collections.min.js">Collections Helper</a></li>
+                        <li><a href="https://cdn.jsdelivr.net/npm/dom-helpers@latest/dist/selector.min.js">Selector Helper</a></li>
+                    </ul>
+                </div>
+
+                <div class="footer-section">
+                    <h3>Community</h3>
+                    <ul class="footer-links">
+                        <li><a href="https://github.com/giovanni1707/elements-helper/discussions">Discussions</a></li>
+                        <li><a href="https://github.com/giovanni1707/elements-helper/issues">Report Issues</a></li>
+                        <li><a href="https://github.com/giovanni1707/elements-helper/blob/main/CONTRIBUTING.md">Contributing</a></li>
+                        <li><a href="mailto:support@dom-helpers.dev">Email Support</a></li>
+                    </ul>
+                </div>
+            </div>
+
+            <div class="footer-bottom">
+                <p>&copy; 2024 DOM Helpers. Licensed under the MIT License. Made with ❤️ for the JavaScript community.</p>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Load DOM Helpers -->
+    <script src="dist/dom-helpers.min.js"></script>
+
+    <script>
+        // Demo functionality
+        let operationCount = 0;
+
+        // Demo examples
+        const demoExamples = {
+            basic: {
+                code: `// Basic DOM Properties
+Elements.demoElement1.update({
+  textContent: "Updated with .update()!",
+  className: "demo-element enhanced"
+});
+
+Elements.demoInput.update({
+  value: "Enhanced Input Value",
+  placeholder: "Enhanced placeholder"
+});`,
+                execute: () => {
+                    Elements.demoElement1.update({
+                        textContent: "Updated with .update()!",
+                        className: "demo-element enhanced"
+                    });
+
+                    Elements.demoInput.update({
+                        value: "Enhanced Input Value",
+                        placeholder: "Enhanced placeholder"
+                    });
+                }
+            },
+
+            classList: {
+                code: `// classList with Arrays
+Elements.demoElement2.update({
+  classList: {
+    add: ["fancy", "highlight"],
+    toggle: "active"
+  }
+});
+
+Elements.demoElement3.update({
+  classList: {
+    add: ["enhanced"],
+    remove: ["demo-element"]
+  }
+});`,
+                execute: () => {
+                    Elements.demoElement2.update({
+                        classList: {
+                            add: ["fancy", "highlight"],
+                            toggle: "active"
+                        }
+                    });
+
+                    Elements.demoElement3.update({
+                        classList: {
+                            add: ["enhanced"],
+                            remove: ["demo-element"]
+                        }
+                    });
+                }
+            },
+
+            styles: {
+                code: `// Style Objects
+Elements.demoElement1.update({
+  style: {
+    background: "linear-gradient(45deg, #667eea, #764ba2)",
+    color: "white",
+    padding: "20px",
+    borderRadius: "15px",
+    transform: "scale(1.1)"
+  }
+});
+
+Elements.demoButton.update({
+  style: {
+    background: "#48bb78",
+    color: "white",
+    border: "none",
+    boxShadow: "0 4px 8px rgba(0,0,0,0.2)"
+  }
+});`,
+                execute: () => {
+                    Elements.demoElement1.update({
+                        style: {
+                            background: "linear-gradient(45deg, #667eea, #764ba2)",
+                            color: "white",
+                            padding: "20px",
+                            borderRadius: "15px",
+                            transform: "scale(1.1)"
+                        }
+                    });
+
+                    Elements.demoButton.update({
+                        style: {
+                            background: "#48bb78",
+                            color: "white",
+                            border: "none",
+                            boxShadow: "0 4px 8px rgba(0,0,0,0.2)"
+                        }
+                    });
+                }
+            },
+
+            events: {
+                code: `// Event Handling
+Elements.demoButton.update({
+  textContent: "Click me! (Enhanced)",
+  addEventListener: ["click", () => {
+    alert("Button clicked via .update() method!");
+    Elements.demoButton.update({
+      classList: { toggle: "active" }
+    });
+  }]
+});
+
+Elements.demoInput.update({
+  addEventListener: ["focus", (e) => {
+    e.target.style.borderColor = "#4299e1";
+  }],
+  addEventListener: ["blur", (e) => {
+    e.target.style.borderColor = "";
+  }]
+});`,
+                execute: () => {
+                    Elements.demoButton.update({
+                        textContent: "Click me! (Enhanced)",
+                        addEventListener: ["click", () => {
+                            alert("Button clicked via .update() method!");
+                            Elements.demoButton.update({
+                                classList: { toggle: "active" }
+                            });
+                        }]
+                    });
+
+                    Elements.demoInput.update({
+                        addEventListener: ["focus", (e) => {
+                            e.target.style.borderColor = "#4299e1";
+                        }],
+                        addEventListener: ["blur", (e) => {
+                            e.target.style.borderColor = "";
+                        }]
+                    });
+                }
+            },
+
+            advanced: {
+                code: `// Advanced Features - Everything at once!
+Elements.demoElement1.update({
+  textContent: "🚀 Advanced Enhanced Element",
+  classList: {
+    add: ["fancy", "highlight", "enhanced"],
+    toggle: "active"
+  },
+  style: {
+    background: "linear-gradient(45deg, #ff6b6b, #4ecdc4)",
+    color: "white",
+    padding: "20px 30px",
+    borderRadius: "25px",
+    transform: "translateY(-5px)",
+    boxShadow: "0 10px 20px rgba(0,0,0,0.3)"
+  },
+  setAttribute: ["data-enhanced", "true"],
+  dataset: {
+    component: "advanced-demo",
+    timestamp: Date.now()
+  },
+  addEventListener: ["mouseenter", (e) => {
+    e.target.style.transform = "translateY(-8px) scale(1.05)";
+  }],
+  addEventListener: ["mouseleave", (e) => {
+    e.target.style.transform = "translateY(-5px) scale(1)";
+  }]
+});`,
+                execute: () => {
+                    Elements.demoElement1.update({
+                        textContent: "🚀 Advanced Enhanced Element",
+                        classList: {
+                            add: ["fancy", "highlight", "enhanced"],
+                            toggle: "active"
+                        },
+                        style: {
+                            background: "linear-gradient(45deg, #ff6b6b, #4ecdc4)",
+                            color: "white",
+                            padding: "20px 30px",
+                            borderRadius: "25px",
+                            transform: "translateY(-5px)",
+                            boxShadow: "0 10px 20px rgba(0,0,0,0.3)"
+                        },
+                        setAttribute: ["data-enhanced", "true"],
+                        dataset: {
+                            component: "advanced-demo",
+                            timestamp: Date.now()
+                        },
+                        addEventListener: ["mouseenter", (e) => {
+                            e.target.style.transform = "translateY(-8px) scale(1.05)";
+                        }],
+                        addEventListener: ["mouseleave", (e) => {
+                            e.target.style.transform = "translateY(-5px) scale(1)";
+                        }]
+                    });
+                }
+            }
+        };
+
+        // Demo controls
+        function initDemo() {
+            const demoButtons = document.querySelectorAll('.demo-btn');
+            const demoCode = document.getElementById('demoCode');
+
+            demoButtons.forEach(button => {
+                button.addEventListener('click', () => {
+                    // Update active state
+                    demoButtons.forEach(btn => btn.classList.remove('active'));
+                    button.classList.add('active');
+
+                    // Get demo type
+                    const demoType = button.getAttribute('data-demo');
+                    const demo = demoExamples[demoType];
+
+                    if (demo) {
+                        // Update code display
+                        demoCode.textContent = demo.code;
+
+                        // Reset elements first
+                        resetDemoElements();
+
+                        // Execute demo
+                        setTimeout(() => {
+                            demo.execute();
+                            operationCount++;
+                            updateStats();
+                        }, 100);
+                    }
+                });
+            });
+
+            // Initialize with basic demo
+            demoExamples.basic.execute();
+            updateStats();
+        }
+
+        // Reset demo elements
+        function resetDemoElements() {
+            const elements = ['demoElement1', 'demoElement2', 'demoElement3', 'demoButton', 'demoInput'];
+            
+            elements.forEach((id, index) => {
+                const element = document.getElementById(id);
+                if (element) {
+                    // Reset all properties
+                    element.className = 'demo-element';
+                    element.style.cssText = '';
+                    element.removeAttribute('data-enhanced');
+                    
+                    // Reset content based on element type
+                    if (id === 'demoButton') {
+                        element.textContent = 'Demo Button';
+                    } else if (id === 'demoInput') {
+                        element.value = 'Test Value';
+                        element.placeholder = 'Demo Input';
+                    } else {
+                        element.textContent = `Demo Element ${index + 1}`;
+                    }
+
+                    // Remove event listeners by cloning
+                    const newElement = element.cloneNode(true);
+                    element.parentNode.replaceChild(newElement, element);
+                }
+            });
+        }
+
+        // Update performance stats
+        function updateStats() {
+            if (typeof Elements !== 'undefined' && Elements.stats) {
+                const stats = Elements.stats();
+                
+                document.getElementById('cacheHits').textContent = stats.hits || 0;
+                document.getElementById('cacheSize').textContent = stats.cacheSize || 0;
+                document.getElementById('hitRate').textContent = 
+                    stats.hitRate ? (stats.hitRate * 100).toFixed(1) + '%' : '0%';
+                document.getElementById('operations').textContent = operationCount;
+            }
+        }
+
+        // Theme toggle functionality
+        function initThemeToggle() {
+            const themeToggle = document.getElementById('themeToggle');
+            const currentTheme = localStorage.getItem('theme') || 'light';
+            
+            // Apply saved theme
+            document.documentElement.setAttribute('data-theme', currentTheme);
+            updateThemeToggleText(currentTheme);
+
+            themeToggle.addEventListener('click', () => {
+                const currentTheme = document.documentElement.getAttribute('data-theme') || 'light';
+                const newTheme = currentTheme === 'dark' ? 'light' : 'dark';
+                
+                document.documentElement.setAttribute('data-theme', newTheme);
+                localStorage.setItem('theme', newTheme);
+                updateThemeToggleText(newTheme);
+            });
+        }
+
+        function updateThemeToggleText(theme) {
+            const themeToggle = document.getElementById('themeToggle');
+            themeToggle.textContent = theme === 'dark' ? '☀️ Light Mode' : '🌙 Dark Mode';
+        }
+
+        // Smooth scrolling for navigation links
+        function initSmoothScrolling() {
+            document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+                anchor.addEventListener('click', function (e) {
+                    e.preventDefault();
+                    const target = document.querySelector(this.getAttribute('href'));
+                    if (target) {
+                        target.scrollIntoView({
+                            behavior: 'smooth',
+                            block: 'start'
+                        });
+                    }
+                });
+            });
+        }
+
+        // Initialize everything when DOM is ready
+        document.addEventListener('DOMContentLoaded', () => {
+            // Wait a bit for DOM Helpers to load
+            setTimeout(() => {
+                initDemo();
+                initThemeToggle();
+                initSmoothScrolling();
+                
+                // Initial stats update
+                updateStats();
+                
+                // Update stats periodically
+                setInterval(updateStats, 2000);
+            }, 100);
+        });
+
+        // Add some interactive animations
+        document.addEventListener('DOMContentLoaded', () => {
+            // Animate feature cards on scroll
+            const observerOptions = {
+                threshold: 0.1,
+                rootMargin: '0px 0px -50px 0px'
+            };
+
+            const observer = new IntersectionObserver((entries) => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        entry.target.classList.add('animate-fade-in');
+                    }
+                });
+            }, observerOptions);
+
+            // Observe feature cards
+            document.querySelectorAll('.feature-card').forEach(card => {
+                observer.observe(card);
+            });
+        });
+    </script>
+</body>
+</html>

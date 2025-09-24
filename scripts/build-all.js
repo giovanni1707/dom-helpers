@@ -172,15 +172,15 @@ async function buildSelector() {
 async function buildCombined() {
   console.log('📦 Building Combined Bundle...');
   
-  const updateUtilityContent = readSourceFile('update-utility.js');
+  const updateUtilityContent = readSourceFile('enhanced-update-utility.js');
   const elementsContent = readSourceFile('elements-helper.js');
   const collectionsContent = readSourceFile('collections.js');
   const selectorContent = readSourceFile('querySelector-helper.js');
   
-  // Remove UpdateUtility imports from individual helpers for combined bundle
-  const cleanElementsContent = elementsContent.replace(/\/\/ Import UpdateUtility[\s\S]*?UpdateUtility = global\.UpdateUtility;\s*}/g, '');
-  const cleanCollectionsContent = collectionsContent.replace(/\/\/ Import UpdateUtility[\s\S]*?UpdateUtility = global\.UpdateUtility;\s*}/g, '');
-  const cleanSelectorContent = selectorContent.replace(/\/\/ Import UpdateUtility[\s\S]*?UpdateUtility = global\.UpdateUtility;\s*}/g, '');
+  // Remove EnhancedUpdateUtility imports from individual helpers for combined bundle
+  const cleanElementsContent = elementsContent.replace(/\/\/ Import Enhanced UpdateUtility[\s\S]*?EnhancedUpdateUtility = global\.EnhancedUpdateUtility;\s*}/g, '');
+  const cleanCollectionsContent = collectionsContent.replace(/\/\/ Import Enhanced UpdateUtility[\s\S]*?EnhancedUpdateUtility = global\.EnhancedUpdateUtility;\s*}/g, '');
+  const cleanSelectorContent = selectorContent.replace(/\/\/ Import Enhanced UpdateUtility[\s\S]*?EnhancedUpdateUtility = global\.EnhancedUpdateUtility;\s*}/g, '');
   
   // Create combined unminified bundle: dom-helpers.bundle.js
   const combinedBundle = `/**

@@ -1,0 +1,1108 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Enhanced .update() Method Demo - Full DOM API Support</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: #333;
+            line-height: 1.6;
+        }
+
+        .container {
+            background: white;
+            border-radius: 15px;
+            padding: 30px;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.1);
+            margin-bottom: 20px;
+        }
+
+        h1 {
+            text-align: center;
+            color: #4a5568;
+            margin-bottom: 10px;
+            font-size: 2.5em;
+        }
+
+        .subtitle {
+            text-align: center;
+            color: #718096;
+            margin-bottom: 30px;
+            font-size: 1.2em;
+        }
+
+        .demo-section {
+            margin: 30px 0;
+            padding: 25px;
+            border: 2px solid #e2e8f0;
+            border-radius: 10px;
+            background: #f8fafc;
+        }
+
+        .demo-section h2 {
+            color: #2d3748;
+            margin-bottom: 15px;
+            font-size: 1.8em;
+            border-bottom: 3px solid #4299e1;
+            padding-bottom: 10px;
+        }
+
+        .test-elements {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 20px;
+            margin: 20px 0;
+        }
+
+        .test-item {
+            padding: 15px;
+            border: 2px solid #cbd5e0;
+            border-radius: 8px;
+            background: white;
+            text-align: center;
+            transition: all 0.3s ease;
+        }
+
+        .test-item:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+        }
+
+        .button-group {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            margin: 20px 0;
+            justify-content: center;
+        }
+
+        .demo-button {
+            padding: 12px 24px;
+            border: none;
+            border-radius: 6px;
+            background: #4299e1;
+            color: white;
+            cursor: pointer;
+            font-size: 14px;
+            font-weight: 600;
+            transition: all 0.2s ease;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+
+        .demo-button:hover {
+            background: #3182ce;
+            transform: translateY(-1px);
+            box-shadow: 0 4px 8px rgba(0,0,0,0.15);
+        }
+
+        .demo-button.secondary {
+            background: #38a169;
+        }
+
+        .demo-button.secondary:hover {
+            background: #2f855a;
+        }
+
+        .demo-button.danger {
+            background: #e53e3e;
+        }
+
+        .demo-button.danger:hover {
+            background: #c53030;
+        }
+
+        .code-block {
+            background: #2d3748;
+            color: #e2e8f0;
+            padding: 20px;
+            border-radius: 8px;
+            font-family: 'Courier New', monospace;
+            font-size: 14px;
+            overflow-x: auto;
+            margin: 15px 0;
+            border-left: 4px solid #4299e1;
+        }
+
+        .result-log {
+            background: #f0fff4;
+            border: 1px solid #9ae6b4;
+            border-radius: 6px;
+            padding: 15px;
+            margin: 15px 0;
+            font-family: monospace;
+            font-size: 13px;
+            max-height: 200px;
+            overflow-y: auto;
+        }
+
+        /* Dynamic styles for testing */
+        .fancy {
+            background: linear-gradient(45deg, #ffd700, #ffed4e) !important;
+            color: #744210 !important;
+            font-weight: bold !important;
+            transform: scale(1.05) !important;
+        }
+
+        .highlight {
+            background: linear-gradient(45deg, #ff6b6b, #4ecdc4) !important;
+            color: white !important;
+            font-weight: bold !important;
+        }
+
+        .active {
+            border: 3px solid #4299e1 !important;
+            box-shadow: 0 0 15px rgba(66, 153, 225, 0.5) !important;
+        }
+
+        .pulse {
+            animation: pulse 2s infinite;
+        }
+
+        @keyframes pulse {
+            0% { opacity: 1; }
+            50% { opacity: 0.5; }
+            100% { opacity: 1; }
+        }
+
+        .rotate {
+            animation: rotate 2s linear infinite;
+        }
+
+        @keyframes rotate {
+            from { transform: rotate(0deg); }
+            to { transform: rotate(360deg); }
+        }
+
+        .shake {
+            animation: shake 0.5s ease-in-out;
+        }
+
+        @keyframes shake {
+            0%, 100% { transform: translateX(0); }
+            25% { transform: translateX(-5px); }
+            75% { transform: translateX(5px); }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🚀 Enhanced .update() Method Demo</h1>
+        <p class="subtitle">Complete DOM API Support - classList, attributes, events, and more!</p>
+
+        <div class="demo-section">
+            <h2>✨ Your Example Code - Working!</h2>
+            <p>This demonstrates the exact code you requested:</p>
+
+            <div class="test-elements">
+                <button id="myBtn" class="test-item demo-button">Original Button</button>
+            </div>
+
+            <div class="button-group">
+                <button class="demo-button" onclick="runYourExample()">Run Your Example</button>
+                <button class="demo-button secondary" onclick="resetButton()">Reset Button</button>
+            </div>
+
+            <div class="code-block" id="yourExampleCode">
+// Your exact example code:
+Elements.myBtn.update({
+  textContent: "Enhanced Button",
+  style: { color: "white" },
+  classList: {
+    add: ["fancy", "highlight"],   // add multiple classes
+    toggle: "active"               // toggle class on load
+  },
+  setAttribute: ["data-role", "button"],
+  addEventListener: ["click", () => {
+    Elements.myBtn.update({
+      classList: { toggle: "active" }
+    });
+    alert("Clicked ✅ and toggled 'active'!");
+  }]
+});
+            </div>
+
+            <div class="result-log" id="yourExampleLog">
+Ready to test your example code...
+            </div>
+        </div>
+    </div>
+
+    <!-- Comprehensive Feature Tests -->
+    <div class="container">
+        <div class="demo-section">
+            <h2>🎯 DOM Properties Support</h2>
+            <p>Test all DOM element properties (textContent, innerHTML, id, etc.)</p>
+
+            <div class="test-elements">
+                <div id="propTest1" class="test-item">Original Text</div>
+                <input id="propTest2" class="test-item" type="text" value="Original Value">
+                <div id="propTest3" class="test-item">Original HTML</div>
+            </div>
+
+            <div class="button-group">
+                <button class="demo-button" onclick="testDOMProperties()">Test DOM Properties</button>
+                <button class="demo-button secondary" onclick="resetDOMProperties()">Reset</button>
+            </div>
+
+            <div class="code-block" id="domPropsCode">
+// Click button above to see code
+            </div>
+
+            <div class="result-log" id="domPropsLog">
+Ready to test DOM properties...
+            </div>
+        </div>
+    </div>
+
+    <div class="container">
+        <div class="demo-section">
+            <h2>🏷️ Attributes & Dataset Support</h2>
+            <p>Test setAttribute, removeAttribute, and dataset operations</p>
+
+            <div class="test-elements">
+                <div id="attrTest1" class="test-item" data-original="true">Attribute Test 1</div>
+                <div id="attrTest2" class="test-item" disabled title="Original Title">Attribute Test 2</div>
+                <div id="attrTest3" class="test-item">Dataset Test</div>
+            </div>
+
+            <div class="button-group">
+                <button class="demo-button" onclick="testAttributes()">Test Attributes</button>
+                <button class="demo-button" onclick="testDataset()">Test Dataset</button>
+                <button class="demo-button secondary" onclick="resetAttributes()">Reset</button>
+            </div>
+
+            <div class="code-block" id="attrsCode">
+// Click button above to see code
+            </div>
+
+            <div class="result-log" id="attrsLog">
+Ready to test attributes and dataset...
+            </div>
+        </div>
+    </div>
+
+    <div class="container">
+        <div class="demo-section">
+            <h2>🎨 classList Methods with Arrays</h2>
+            <p>Test add, remove, toggle, replace with single classes and arrays</p>
+
+            <div class="test-elements">
+                <div id="classTest1" class="test-item old-class">classList Test 1</div>
+                <div id="classTest2" class="test-item another-class">classList Test 2</div>
+                <div id="classTest3" class="test-item">classList Test 3</div>
+            </div>
+
+            <div class="button-group">
+                <button class="demo-button" onclick="testClassListAdd()">Add Classes</button>
+                <button class="demo-button" onclick="testClassListRemove()">Remove Classes</button>
+                <button class="demo-button" onclick="testClassListToggle()">Toggle Classes</button>
+                <button class="demo-button" onclick="testClassListReplace()">Replace Classes</button>
+                <button class="demo-button secondary" onclick="resetClassList()">Reset</button>
+            </div>
+
+            <div class="code-block" id="classListCode">
+// Click button above to see code
+            </div>
+
+            <div class="result-log" id="classListLog">
+Ready to test classList methods...
+            </div>
+        </div>
+    </div>
+
+    <div class="container">
+        <div class="demo-section">
+            <h2>🎭 Style Object Updates</h2>
+            <p>Test batch CSS property updates via style objects</p>
+
+            <div class="test-elements">
+                <div id="styleTest1" class="test-item">Style Test 1</div>
+                <div id="styleTest2" class="test-item">Style Test 2</div>
+                <div id="styleTest3" class="test-item">Style Test 3</div>
+            </div>
+
+            <div class="button-group">
+                <button class="demo-button" onclick="testStyleBasic()">Basic Styles</button>
+                <button class="demo-button" onclick="testStyleAdvanced()">Advanced Styles</button>
+                <button class="demo-button" onclick="testStyleAnimation()">Animation Styles</button>
+                <button class="demo-button secondary" onclick="resetStyles()">Reset</button>
+            </div>
+
+            <div class="code-block" id="styleCode">
+// Click button above to see code
+            </div>
+
+            <div class="result-log" id="styleLog">
+Ready to test style updates...
+            </div>
+        </div>
+    </div>
+
+    <div class="container">
+        <div class="demo-section">
+            <h2>🎧 Event Handling</h2>
+            <p>Test addEventListener and removeEventListener</p>
+
+            <div class="test-elements">
+                <button id="eventTest1" class="test-item demo-button">Event Test 1</button>
+                <button id="eventTest2" class="test-item demo-button">Event Test 2</button>
+                <button id="eventTest3" class="test-item demo-button">Event Test 3</button>
+            </div>
+
+            <div class="button-group">
+                <button class="demo-button" onclick="testAddEventListeners()">Add Event Listeners</button>
+                <button class="demo-button" onclick="testRemoveEventListeners()">Remove Event Listeners</button>
+                <button class="demo-button secondary" onclick="resetEventHandlers()">Reset</button>
+            </div>
+
+            <div class="code-block" id="eventCode">
+// Click button above to see code
+            </div>
+
+            <div class="result-log" id="eventLog">
+Ready to test event handling...
+            </div>
+        </div>
+    </div>
+
+    <div class="container">
+        <div class="demo-section">
+            <h2>🔧 DOM Methods</h2>
+            <p>Test DOM method calls (focus, scrollIntoView, etc.)</p>
+
+            <div class="test-elements">
+                <input id="methodTest1" class="test-item" type="text" placeholder="Focus Test">
+                <div id="methodTest2" class="test-item">Scroll Test</div>
+                <button id="methodTest3" class="test-item demo-button">Method Test</button>
+            </div>
+
+            <div class="button-group">
+                <button class="demo-button" onclick="testDOMMethods()">Test DOM Methods</button>
+                <button class="demo-button secondary" onclick="resetDOMMethods()">Reset</button>
+            </div>
+
+            <div class="code-block" id="methodCode">
+// Click button above to see code
+            </div>
+
+            <div class="result-log" id="methodLog">
+Ready to test DOM methods...
+            </div>
+        </div>
+    </div>
+
+    <!-- Load the Enhanced DOM Helpers -->
+    <script src="../src/enhanced-update-utility.js"></script>
+    <script src="../Elements.js"></script>
+
+    <script>
+        // Utility functions
+        function logResult(logId, message, type = 'info') {
+            const log = document.getElementById(logId);
+            const timestamp = new Date().toLocaleTimeString();
+            const statusClass = type === 'error' ? '❌' : type === 'success' ? '✅' : 'ℹ️';
+            log.innerHTML += `<div>[${timestamp}] ${statusClass} ${message}</div>`;
+            log.scrollTop = log.scrollHeight;
+        }
+
+        function showCode(codeId, code) {
+            document.getElementById(codeId).textContent = code;
+        }
+
+        // Your Example Code Test
+        function runYourExample() {
+            const code = `Elements.myBtn.update({
+  textContent: "Enhanced Button",
+  style: { color: "white" },
+  classList: {
+    add: ["fancy", "highlight"],   // add multiple classes
+    toggle: "active"               // toggle class on load
+  },
+  setAttribute: ["data-role", "button"],
+  addEventListener: ["click", () => {
+    Elements.myBtn.update({
+      classList: { toggle: "active" }
+    });
+    alert("Clicked ✅ and toggled 'active'!");
+  }]
+});`;
+
+            showCode('yourExampleCode', code);
+
+            try {
+                Elements.myBtn.update({
+                    textContent: "Enhanced Button",
+                    style: { color: "white" },
+                    classList: {
+                        add: ["fancy", "highlight"],   // add multiple classes
+                        toggle: "active"               // toggle class on load
+                    },
+                    setAttribute: ["data-role", "button"],
+                    addEventListener: ["click", () => {
+                        Elements.myBtn.update({
+                            classList: { toggle: "active" }
+                        });
+                        alert("Clicked ✅ and toggled 'active'!");
+                    }]
+                });
+
+                logResult('yourExampleLog', 'Your example code executed successfully! Click the button to test the event handler.', 'success');
+                logResult('yourExampleLog', `Button classes: ${Elements.myBtn.className}`, 'info');
+                logResult('yourExampleLog', `Button data-role: ${Elements.myBtn.getAttribute('data-role')}`, 'info');
+            } catch (error) {
+                logResult('yourExampleLog', `Error: ${error.message}`, 'error');
+            }
+        }
+
+        function resetButton() {
+            Elements.myBtn.update({
+                textContent: "Original Button",
+                className: "test-item demo-button",
+                style: { color: "" },
+                removeAttribute: "data-role"
+            });
+            logResult('yourExampleLog', 'Button reset to original state', 'info');
+        }
+
+        // DOM Properties Tests
+        function testDOMProperties() {
+            const code = `// Test all DOM properties
+Elements.propTest1.update({
+  textContent: "Updated Text Content! 🎯",
+  id: "propTest1-updated",
+  title: "Updated via .update()"
+});
+
+Elements.propTest2.update({
+  value: "Updated Input Value",
+  placeholder: "New placeholder text",
+  disabled: false
+});
+
+Elements.propTest3.update({
+  innerHTML: "<strong>Updated</strong> <em>HTML</em> Content! ✨",
+  className: "test-item highlight"
+});`;
+
+            showCode('domPropsCode', code);
+
+            try {
+                Elements.propTest1.update({
+                    textContent: "Updated Text Content! 🎯",
+                    id: "propTest1-updated",
+                    title: "Updated via .update()"
+                });
+
+                Elements.propTest2.update({
+                    value: "Updated Input Value",
+                    placeholder: "New placeholder text",
+                    disabled: false
+                });
+
+                Elements.propTest3.update({
+                    innerHTML: "<strong>Updated</strong> <em>HTML</em> Content! ✨",
+                    className: "test-item highlight"
+                });
+
+                logResult('domPropsLog', 'DOM properties updated successfully!', 'success');
+                logResult('domPropsLog', 'Check textContent, innerHTML, value, and other properties', 'info');
+            } catch (error) {
+                logResult('domPropsLog', `Error: ${error.message}`, 'error');
+            }
+        }
+
+        function resetDOMProperties() {
+            Elements.propTest1.update({
+                textContent: "Original Text",
+                id: "propTest1",
+                title: ""
+            });
+
+            Elements.propTest2.update({
+                value: "Original Value",
+                placeholder: "",
+                disabled: false
+            });
+
+            Elements.propTest3.update({
+                innerHTML: "Original HTML",
+                className: "test-item"
+            });
+
+            logResult('domPropsLog', 'DOM properties reset to original state', 'info');
+        }
+
+        // Attributes Tests
+        function testAttributes() {
+            const code = `// Test setAttribute and removeAttribute
+Elements.attrTest1.update({
+  setAttribute: ["data-updated", "true"],
+  setAttribute: ["aria-label", "Updated element"],
+  removeAttribute: "data-original"
+});
+
+Elements.attrTest2.update({
+  setAttribute: ["title", "Updated Title"],
+  removeAttribute: ["disabled"],
+  setAttribute: ["data-test", "attribute-test"]
+});`;
+
+            showCode('attrsCode', code);
+
+            try {
+                Elements.attrTest1.update({
+                    setAttribute: ["data-updated", "true"],
+                    removeAttribute: "data-original"
+                });
+
+                // Multiple setAttribute calls
+                Elements.attrTest1.update({
+                    setAttribute: ["aria-label", "Updated element"]
+                });
+
+                Elements.attrTest2.update({
+                    setAttribute: ["title", "Updated Title"],
+                    removeAttribute: "disabled"
+                });
+
+                Elements.attrTest2.update({
+                    setAttribute: ["data-test", "attribute-test"]
+                });
+
+                logResult('attrsLog', 'Attributes updated successfully!', 'success');
+                logResult('attrsLog', 'Check data-updated, aria-label, title attributes', 'info');
+            } catch (error) {
+                logResult('attrsLog', `Error: ${error.message}`, 'error');
+            }
+        }
+
+        function testDataset() {
+            const code = `// Test dataset updates
+Elements.attrTest3.update({
+  dataset: {
+    userId: "12345",
+    action: "test",
+    timestamp: Date.now(),
+    active: "true"
+  }
+});`;
+
+            showCode('attrsCode', code);
+
+            try {
+                Elements.attrTest3.update({
+                    dataset: {
+                        userId: "12345",
+                        action: "test",
+                        timestamp: Date.now(),
+                        active: "true"
+                    }
+                });
+
+                logResult('attrsLog', 'Dataset updated successfully!', 'success');
+                logResult('attrsLog', `Dataset: ${JSON.stringify(Elements.attrTest3.dataset)}`, 'info');
+            } catch (error) {
+                logResult('attrsLog', `Error: ${error.message}`, 'error');
+            }
+        }
+
+        function resetAttributes() {
+            Elements.attrTest1.update({
+                setAttribute: ["data-original", "true"],
+                removeAttribute: ["data-updated", "aria-label"]
+            });
+
+            Elements.attrTest2.update({
+                setAttribute: ["title", "Original Title"],
+                setAttribute: ["disabled", ""],
+                removeAttribute: ["data-test"]
+            });
+
+            Elements.attrTest3.update({
+                removeAttribute: ["data-user-id", "data-action", "data-timestamp", "data-active"]
+            });
+
+            logResult('attrsLog', 'Attributes reset to original state', 'info');
+        }
+
+        // classList Tests
+        function testClassListAdd() {
+            const code = `// Test classList.add with arrays
+Elements.classTest1.update({
+  classList: {
+    add: ["fancy", "highlight", "pulse"]  // Add multiple classes
+  }
+});
+
+Elements.classTest2.update({
+  classList: {
+    add: "active"  // Add single class
+  }
+});`;
+
+            showCode('classListCode', code);
+
+            try {
+                Elements.classTest1.update({
+                    classList: {
+                        add: ["fancy", "highlight", "pulse"]
+                    }
+                });
+
+                Elements.classTest2.update({
+                    classList: {
+                        add: "active"
+                    }
+                });
+
+                logResult('classListLog', 'Classes added successfully!', 'success');
+                logResult('classListLog', `Test1 classes: ${Elements.classTest1.className}`, 'info');
+                logResult('classListLog', `Test2 classes: ${Elements.classTest2.className}`, 'info');
+            } catch (error) {
+                logResult('classListLog', `Error: ${error.message}`, 'error');
+            }
+        }
+
+        function testClassListRemove() {
+            const code = `// Test classList.remove with arrays
+Elements.classTest1.update({
+  classList: {
+    remove: ["pulse", "fancy"]  // Remove multiple classes
+  }
+});
+
+Elements.classTest2.update({
+  classList: {
+    remove: "another-class"  // Remove single class
+  }
+});`;
+
+            showCode('classListCode', code);
+
+            try {
+                Elements.classTest1.update({
+                    classList: {
+                        remove: ["pulse", "fancy"]
+                    }
+                });
+
+                Elements.classTest2.update({
+                    classList: {
+                        remove: "another-class"
+                    }
+                });
+
+                logResult('classListLog', 'Classes removed successfully!', 'success');
+                logResult('classListLog', `Test1 classes: ${Elements.classTest1.className}`, 'info');
+                logResult('classListLog', `Test2 classes: ${Elements.classTest2.className}`, 'info');
+            } catch (error) {
+                logResult('classListLog', `Error: ${error.message}`, 'error');
+            }
+        }
+
+        function testClassListToggle() {
+            const code = `// Test classList.toggle with arrays
+Elements.classTest1.update({
+  classList: {
+    toggle: ["active", "highlight"]  // Toggle multiple classes
+  }
+});
+
+Elements.classTest3.update({
+  classList: {
+    toggle: "rotate"  // Toggle single class
+  }
+});`;
+
+            showCode('classListCode', code);
+
+            try {
+                Elements.classTest1.update({
+                    classList: {
+                        toggle: ["active", "highlight"]
+                    }
+                });
+
+                Elements.classTest3.update({
+                    classList: {
+                        toggle: "rotate"
+                    }
+                });
+
+                logResult('classListLog', 'Classes toggled successfully!', 'success');
+                logResult('classListLog', `Test1 classes: ${Elements.classTest1.className}`, 'info');
+                logResult('classListLog', `Test3 classes: ${Elements.classTest3.className}`, 'info');
+            } catch (error) {
+                logResult('classListLog', `Error: ${error.message}`, 'error');
+            }
+        }
+
+        function testClassListReplace() {
+            const code = `// Test classList.replace
+Elements.classTest1.update({
+  classList: {
+    replace: ["test-item", "test-item-updated"]
+  }
+});
+
+Elements.classTest2.update({
+  classList: {
+    replace: ["test-item", "test-item-new"]
+  }
+});`;
+
+            showCode('classListCode', code);
+
+            try {
+                Elements.classTest1.update({
+                    classList: {
+                        replace: ["test-item", "test-item-updated"]
+                    }
+                });
+
+                Elements.classTest2.update({
+                    classList: {
+                        replace: ["test-item", "test-item-new"]
+                    }
+                });
+
+                logResult('classListLog', 'Classes replaced successfully!', 'success');
+                logResult('classListLog', `Test1 classes: ${Elements.classTest1.className}`, 'info');
+                logResult('classListLog', `Test2 classes: ${Elements.classTest2.className}`, 'info');
+            } catch (error) {
+                logResult('classListLog', `Error: ${error.message}`, 'error');
+            }
+        }
+
+        function resetClassList() {
+            Elements.classTest1.update({
+                className: "test-item old-class"
+            });
+
+            Elements.classTest2.update({
+                className: "test-item another-class"
+            });
+
+            Elements.classTest3.update({
+                className: "test-item"
+            });
+
+            logResult('classListLog', 'classList reset to original state', 'info');
+        }
+
+        // Style Tests
+        function testStyleBasic() {
+            const code = `// Test basic style updates
+Elements.styleTest1.update({
+  style: {
+    backgroundColor: "#ff6b6b",
+    color: "white",
+    padding: "20px",
+    borderRadius: "10px",
+    fontWeight: "bold"
+  }
+});`;
+
+            showCode('styleCode', code);
+
+            try {
+                Elements.styleTest1.update({
+                    style: {
+                        backgroundColor: "#ff6b6b",
+                        color: "white",
+                        padding: "20px",
+                        borderRadius: "10px",
+                        fontWeight: "bold"
+                    }
+                });
+
+                logResult('styleLog', 'Basic styles applied successfully!', 'success');
+            } catch (error) {
+                logResult('styleLog', `Error: ${error.message}`, 'error');
+            }
+        }
+
+        function testStyleAdvanced() {
+            const code = `// Test advanced style updates
+Elements.styleTest2.update({
+  style: {
+    background: "linear-gradient(45deg, #667eea, #764ba2)",
+    color: "white",
+    transform: "rotate(5deg) scale(1.1)",
+    boxShadow: "0 10px 20px rgba(0,0,0,0.3)",
+    border: "3px solid #4299e1",
+    transition: "all 0.3s ease"
+  }
+});`;
+
+            showCode('styleCode', code);
+
+            try {
+                Elements.styleTest2.update({
+                    style: {
+                        background: "linear-gradient(45deg, #667eea, #764ba2)",
+                        color: "white",
+                        transform: "rotate(5deg) scale(1.1)",
+                        boxShadow: "0 10px 20px rgba(0,0,0,0.3)",
+                        border: "3px solid #4299e1",
+                        transition: "all 0.3s ease"
+                    }
+                });
+
+                logResult('styleLog', 'Advanced styles applied successfully!', 'success');
+            } catch (error) {
+                logResult('styleLog', `Error: ${error.message}`, 'error');
+            }
+        }
+
+        function testStyleAnimation() {
+            const code = `// Test animation styles
+Elements.styleTest3.update({
+  style: {
+    backgroundColor: "#4ecdc4",
+    color: "white",
+    animation: "pulse 2s infinite",
+    transform: "translateY(-5px)",
+    boxShadow: "0 5px 15px rgba(78, 205, 196, 0.4)"
+  }
+});`;
+
+            showCode('styleCode', code);
+
+            try {
+                Elements.styleTest3.update({
+                    style: {
+                        backgroundColor: "#4ecdc4",
+                        color: "white",
+                        animation: "pulse 2s infinite",
+                        transform: "translateY(-5px)",
+                        boxShadow: "0 5px 15px rgba(78, 205, 196, 0.4)"
+                    }
+                });
+
+                logResult('styleLog', 'Animation styles applied successfully!', 'success');
+            } catch (error) {
+                logResult('styleLog', `Error: ${error.message}`, 'error');
+            }
+        }
+
+        function resetStyles() {
+            [Elements.styleTest1, Elements.styleTest2, Elements.styleTest3].forEach(element => {
+                element.update({
+                    style: {
+                        backgroundColor: "",
+                        color: "",
+                        padding: "",
+                        borderRadius: "",
+                        fontWeight: "",
+                        background: "",
+                        transform: "",
+                        boxShadow: "",
+                        border: "",
+                        transition: "",
+                        animation: ""
+                    }
+                });
+            });
+
+            logResult('styleLog', 'Styles reset to original state', 'info');
+        }
+
+        // Event Handling Tests
+        let eventHandlers = {};
+
+        function testAddEventListeners() {
+            const code = `// Test addEventListener
+Elements.eventTest1.update({
+  addEventListener: ["click", () => {
+    alert("Event Test 1 clicked!");
+  }]
+});
+
+Elements.eventTest2.update({
+  addEventListener: ["mouseover", (e) => {
+    e.target.style.backgroundColor = "#ff6b6b";
+  }],
+  addEventListener: ["mouseout", (e) => {
+    e.target.style.backgroundColor = "";
+  }]
+});`;
+
+            showCode('eventCode', code);
+
+            try {
+                // Store handlers for later removal
+                eventHandlers.clickHandler = () => {
+                    alert("Event Test 1 clicked!");
+                };
+
+                eventHandlers.mouseoverHandler = (e) => {
+                    e.target.style.backgroundColor = "#ff6b6b";
+                };
+
+                eventHandlers.mouseoutHandler = (e) => {
+                    e.target.style.backgroundColor = "";
+                };
+
+                Elements.eventTest1.update({
+                    addEventListener: ["click", eventHandlers.clickHandler]
+                });
+
+                Elements.eventTest2.update({
+                    addEventListener: ["mouseover", eventHandlers.mouseoverHandler]
+                });
+
+                Elements.eventTest2.update({
+                    addEventListener: ["mouseout", eventHandlers.mouseoutHandler]
+                });
+
+                Elements.eventTest3.update({
+                    addEventListener: ["click", (e) => {
+                        e.target.classList.add("shake");
+                        setTimeout(() => e.target.classList.remove("shake"), 500);
+                    }]
+                });
+
+                logResult('eventLog', 'Event listeners added successfully!', 'success');
+                logResult('eventLog', 'Try clicking and hovering over the buttons', 'info');
+            } catch (error) {
+                logResult('eventLog', `Error: ${error.message}`, 'error');
+            }
+        }
+
+        function testRemoveEventListeners() {
+            const code = `// Test removeEventListener
+Elements.eventTest1.update({
+  removeEventListener: ["click", clickHandler]
+});
+
+Elements.eventTest2.update({
+  removeEventListener: ["mouseover", mouseoverHandler],
+  removeEventListener: ["mouseout", mouseoutHandler]
+});`;
+
+            showCode('eventCode', code);
+
+            try {
+                if (eventHandlers.clickHandler) {
+                    Elements.eventTest1.update({
+                        removeEventListener: ["click", eventHandlers.clickHandler]
+                    });
+                }
+
+                if (eventHandlers.mouseoverHandler) {
+                    Elements.eventTest2.update({
+                        removeEventListener: ["mouseover", eventHandlers.mouseoverHandler]
+                    });
+                }
+
+                if (eventHandlers.mouseoutHandler) {
+                    Elements.eventTest2.update({
+                        removeEventListener: ["mouseout", eventHandlers.mouseoutHandler]
+                    });
+                }
+
+                logResult('eventLog', 'Event listeners removed successfully!', 'success');
+                logResult('eventLog', 'Buttons should no longer respond to events', 'info');
+            } catch (error) {
+                logResult('eventLog', `Error: ${error.message}`, 'error');
+            }
+        }
+
+        function resetEventHandlers() {
+            // Remove any existing event listeners
+            testRemoveEventListeners();
+            
+            // Reset button styles
+            [Elements.eventTest1, Elements.eventTest2, Elements.eventTest3].forEach(element => {
+                element.update({
+                    style: { backgroundColor: "" },
+                    className: "test-item demo-button"
+                });
+            });
+
+            logResult('eventLog', 'Event handlers reset', 'info');
+        }
+
+        // DOM Methods Tests
+        function testDOMMethods() {
+            const code = `// Test DOM method calls
+Elements.methodTest1.update({
+  focus: [],  // Focus the input
+  setAttribute: ["placeholder", "Focused!"]
+});
+
+Elements.methodTest2.update({
+  scrollIntoView: [{ behavior: "smooth", block: "center" }],
+  style: { backgroundColor: "#4ecdc4", color: "white" }
+});
+
+Elements.methodTest3.update({
+  click: [],  // Programmatically click
+  blur: []    // Then blur
+});`;
+
+            showCode('methodCode', code);
+
+            try {
+                Elements.methodTest1.update({
+                    focus: [],
+                    setAttribute: ["placeholder", "Focused!"]
+                });
+
+                Elements.methodTest2.update({
+                    scrollIntoView: [{ behavior: "smooth", block: "center" }],
+                    style: { backgroundColor: "#4ecdc4", color: "white" }
+                });
+
+                // Add a click handler first, then trigger click
+                Elements.methodTest3.update({
+                    addEventListener: ["click", () => {
+                        logResult('methodLog', 'Button was programmatically clicked!', 'success');
+                    }]
+                });
+
+                setTimeout(() => {
+                    Elements.methodTest3.update({
+                        click: []
+                    });
+                }, 100);
+
+                logResult('methodLog', 'DOM methods executed successfully!', 'success');
+                logResult('methodLog', 'Input should be focused, div scrolled into view', 'info');
+            } catch (error) {
+                logResult('methodLog', `Error: ${error.message}`, 'error');
+            }
+        }
+
+        function resetDOMMethods() {
+            Elements.methodTest1.update({
+                setAttribute: ["placeholder", "Focus Test"],
+                blur: []
+            });
+
+            Elements.methodTest2.update({
+                style: { backgroundColor: "", color: "" }
+            });
+
+            Elements.methodTest3.update({
+                className: "test-item demo-button"
+            });
+
+            logResult('methodLog', 'DOM methods reset', 'info');
+        }
+
+        // Initialize demo
+        document.addEventListener('DOMContentLoaded', () => {
+            logResult('yourExampleLog', 'Enhanced .update() method demo ready!', 'success');
+            logResult('yourExampleLog', 'All DOM API features are now supported', 'info');
+        });
+    </script>
+</body>
+</html>

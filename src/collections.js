@@ -1,16 +1,16 @@
 (function(global) {
   'use strict';
 
-  // Import UpdateUtility if available
-  let UpdateUtility;
+  // Import Enhanced UpdateUtility if available
+  let EnhancedUpdateUtility;
   if (typeof require !== 'undefined') {
     try {
-      UpdateUtility = require('./update-utility.js');
+      EnhancedUpdateUtility = require('./enhanced-update-utility.js');
     } catch (e) {
-      // UpdateUtility not available in this environment
+      // EnhancedUpdateUtility not available in this environment
     }
-  } else if (typeof global !== 'undefined' && global.UpdateUtility) {
-    UpdateUtility = global.UpdateUtility;
+  } else if (typeof global !== 'undefined' && global.EnhancedUpdateUtility) {
+    EnhancedUpdateUtility = global.EnhancedUpdateUtility;
   }
 
   class ProductionCollectionHelper {
@@ -577,18 +577,160 @@
       }
     }
 
+    // Apply enhanced update to a single element (shared with Elements helper logic)
+    _applyEnhancedUpdateToElement(element, key, value) {
+      try {
+        // Handle special cases first
+        
+        // 1. Style object - batch apply CSS styles
+        if (key === 'style' && typeof value === 'object' && value !== null) {
+          Object.entries(value).forEach(([styleProperty, styleValue]) => {
+            if (styleValue !== null && styleValue !== undefined) {
+              element.style[styleProperty] = styleValue;
+            }
+          });
+          return;
+        }
+
+        // 2. classList methods - enhanced support with arrays
+        if (key === 'classList' && typeof value === 'object' && value !== null) {
+          this._handleClassListUpdate(element, value);
+          return;
+        }
+
+        // 3. setAttribute - enhanced support
+        if (key === 'setAttribute' && Array.isArray(value) && value.length >= 2) {
+          element.setAttribute(value[0], value[1]);
+          return;
+        }
+
+        // 4. removeAttribute - support for removing attributes
+        if (key === 'removeAttribute') {
+          if (Array.isArray(value)) {
+            value.forEach(attr => element.removeAttribute(attr));
+          } else if (typeof value === 'string') {
+            element.removeAttribute(value);
+          }
+          return;
+        }
+
+        // 5. addEventListener - enhanced event handling
+        if (key === 'addEventListener' && Array.isArray(value) && value.length >= 2) {
+          const [eventType, handler, options] = value;
+          element.addEventListener(eventType, handler, options);
+          return;
+        }
+
+        // 6. removeEventListener - support for removing event listeners
+        if (key === 'removeEventListener' && Array.isArray(value) && value.length >= 2) {
+          const [eventType, handler, options] = value;
+          element.removeEventListener(eventType, handler, options);
+          return;
+        }
+
+        // 7. dataset - support for data attributes
+        if (key === 'dataset' && typeof value === 'object' && value !== null) {
+          Object.entries(value).forEach(([dataKey, dataValue]) => {
+            element.dataset[dataKey] = dataValue;
+          });
+          return;
+        }
+
+        // 8. Handle DOM methods (value should be an array of arguments)
+        if (typeof element[key] === 'function') {
+          if (Array.isArray(value)) {
+            element[key](...value);
+          } else {
+            element[key](value);
+          }
+          return;
+        }
+
+        // 9. Handle regular DOM properties
+        if (key in element) {
+          element[key] = value;
+          return;
+        }
+
+        // 10. Fallback to setAttribute
+        if (typeof value === 'string' || typeof value === 'number' || typeof value === 'boolean') {
+          element.setAttribute(key, value);
+          return;
+        }
+
+        console.warn(`[DOM Helpers] Unknown property or method: ${key}`);
+      } catch (error) {
+        console.warn(`[DOM Helpers] Failed to apply update ${key}: ${error.message}`);
+      }
+    }
+
+    // Handle classList updates with enhanced functionality
+    _handleClassListUpdate(element, classListUpdates) {
+      Object.entries(classListUpdates).forEach(([method, classes]) => {
+        try {
+          switch (method) {
+            case 'add':
+              if (Array.isArray(classes)) {
+                element.classList.add(...classes);
+              } else if (typeof classes === 'string') {
+                element.classList.add(classes);
+              }
+              break;
+
+            case 'remove':
+              if (Array.isArray(classes)) {
+                element.classList.remove(...classes);
+              } else if (typeof classes === 'string') {
+                element.classList.remove(classes);
+              }
+              break;
+
+            case 'toggle':
+              if (Array.isArray(classes)) {
+                classes.forEach(cls => element.classList.toggle(cls));
+              } else if (typeof classes === 'string') {
+                element.classList.toggle(classes);
+              }
+              break;
+
+            case 'replace':
+              if (Array.isArray(classes) && classes.length === 2) {
+                element.classList.replace(classes[0], classes[1]);
+              }
+              break;
+
+            case 'contains':
+              // For debugging/logging purposes
+              if (Array.isArray(classes)) {
+                classes.forEach(cls => {
+                  console.log(`[DOM Helpers] classList.contains('${cls}'):`, element.classList.contains(cls));
+                });
+              } else if (typeof classes === 'string') {
+                console.log(`[DOM Helpers] classList.contains('${classes}'):`, element.classList.contains(classes));
+              }
+              break;
+
+            default:
+              console.warn(`[DOM Helpers] Unknown classList method: ${method}`);
+          }
+        } catch (error) {
+          console.warn(`[DOM Helpers] Error in classList.${method}: ${error.message}`);
+        }
+      });
+    }
+
     // Enhanced collection with update method
     _enhanceCollectionWithUpdate(collection) {
-      if (!collection || collection._hasUpdateMethod) {
+      if (!collection || collection._hasEnhancedUpdateMethod) {
         return collection;
       }
 
-      // Use UpdateUtility if available, otherwise create inline update method
-      if (UpdateUtility && UpdateUtility.enhanceCollectionWithUpdate) {
-        return UpdateUtility.enhanceCollectionWithUpdate(collection);
+      // Use EnhancedUpdateUtility if available, otherwise create comprehensive inline update method
+      if (EnhancedUpdateUtility && EnhancedUpdateUtility.enhanceCollectionWithUpdate) {
+        return EnhancedUpdateUtility.enhanceCollectionWithUpdate(collection);
       }
 
-      // Fallback: create update method inline
+      // Comprehensive fallback: create enhanced update method inline
       try {
         Object.defineProperty(collection, 'update', {
           value: (updates = {}) => {
@@ -615,36 +757,7 @@
               elements.forEach(element => {
                 if (element && element.nodeType === Node.ELEMENT_NODE) {
                   Object.entries(updates).forEach(([key, value]) => {
-                    // Handle style object
-                    if (key === 'style' && typeof value === 'object' && value !== null) {
-                      Object.entries(value).forEach(([styleProperty, styleValue]) => {
-                        if (styleValue !== null && styleValue !== undefined) {
-                          element.style[styleProperty] = styleValue;
-                        }
-                      });
-                      return;
-                    }
-
-                    // Handle DOM methods
-                    if (typeof element[key] === 'function') {
-                      if (Array.isArray(value)) {
-                        element[key](...value);
-                      } else {
-                        element[key](value);
-                      }
-                      return;
-                    }
-
-                    // Handle regular properties
-                    if (key in element) {
-                      element[key] = value;
-                      return;
-                    }
-
-                    // Fallback to setAttribute
-                    if (typeof value === 'string' || typeof value === 'number') {
-                      element.setAttribute(key, value);
-                    }
+                    this._applyEnhancedUpdateToElement(element, key, value);
                   });
                 }
               });
@@ -660,7 +773,7 @@
         });
 
         // Mark as enhanced
-        Object.defineProperty(collection, '_hasUpdateMethod', {
+        Object.defineProperty(collection, '_hasEnhancedUpdateMethod', {
           value: true,
           writable: false,
           enumerable: false,
@@ -690,32 +803,7 @@
             elements.forEach(element => {
               if (element && element.nodeType === Node.ELEMENT_NODE) {
                 Object.entries(updates).forEach(([key, value]) => {
-                  if (key === 'style' && typeof value === 'object' && value !== null) {
-                    Object.entries(value).forEach(([styleProperty, styleValue]) => {
-                      if (styleValue !== null && styleValue !== undefined) {
-                        element.style[styleProperty] = styleValue;
-                      }
-                    });
-                    return;
-                  }
-
-                  if (typeof element[key] === 'function') {
-                    if (Array.isArray(value)) {
-                      element[key](...value);
-                    } else {
-                      element[key](value);
-                    }
-                    return;
-                  }
-
-                  if (key in element) {
-                    element[key] = value;
-                    return;
-                  }
-
-                  if (typeof value === 'string' || typeof value === 'number') {
-                    element.setAttribute(key, value);
-                  }
+                  this._applyEnhancedUpdateToElement(element, key, value);
                 });
               }
             });
@@ -725,7 +813,7 @@
 
           return collection;
         };
-        collection._hasUpdateMethod = true;
+        collection._hasEnhancedUpdateMethod = true;
       }
 
       return collection;
