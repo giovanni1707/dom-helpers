@@ -24,7 +24,9 @@ High-performance vanilla JavaScript DOM utilities with intelligent caching and a
 
 ```html
 <!-- Latest version -->
-<script src="https://cdn.jsdelivr.net/npm/dom-helpers@latest/dist/dom-helpers.min.js"></script>
+>
+<script src="https://cdn.jsdelivr.net/npm/@giovanni1707/dom-helpers@latest/dist/dom-helpers.min.js"></script>
+   
 
 <!-- Specific version -->
 <script src="https://cdn.jsdelivr.net/npm/dom-helpers@2.1.0/dist/dom-helpers.min.js"></script>
