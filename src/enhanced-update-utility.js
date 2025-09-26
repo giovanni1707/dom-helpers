@@ -117,11 +117,7 @@
       // Handle special cases first
 
 
-// 2. classList methods - enhanced support with arrays
-      if (key === 'classList' && typeof value === 'object' && value !== null) {
-        handleClassListUpdate(element, value);
-        return;
-      }
+
       
       // 1. Style object - batch apply CSS styles
       if (key === 'style' && typeof value === 'object' && value !== null) {
@@ -133,7 +129,11 @@
         return;
       }
 
-      
+      // 2. classList methods - enhanced support with arrays
+      if (key === 'classList' && typeof value === 'object' && value !== null) {
+        handleClassListUpdate(element, value);
+        return;
+      }
 
       // 3. setAttribute - enhanced support
       if (key === 'setAttribute' && Array.isArray(value) && value.length >= 2) {
